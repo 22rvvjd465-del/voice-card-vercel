@@ -1,69 +1,195 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#fff8f3">
-  <title>ばあばへ｜お誕生日おめでとう！</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(180deg,#fff8f3 0%,#fffdf9 100%);
-      font-family: -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
-      color: #5e463e;
-    }
-    .wrap { max-width: 560px; margin: 0 auto; padding: 20px 16px 42px; }
-    .card {
-      background:#fffefb;
-      border:1px solid #f3d9d5;
-      border-radius:28px;
-      padding:20px;
-      box-shadow:0 12px 34px rgba(91,61,52,.10);
-    }
-    .to {
-      text-align:center; font-size:24px; font-weight:700;
-      background:#f8d7dc; border-radius:18px; padding:10px 14px; margin-bottom:16px;
-    }
-    h1 { text-align:center; font-size:31px; margin:18px 0 10px; line-height:1.3; }
-    .photo {
-      width:100%; display:block; border-radius:20px; border:6px solid #fff;
-      box-shadow:0 6px 20px rgba(0,0,0,.08);
-    }
-    .msg { text-align:center; font-size:18px; line-height:1.8; margin:14px 0 6px; }
-    .voicebox {
-      margin-top:22px; padding:16px; border-radius:20px; background:#fff3f4;
-      border:1px solid #f0c8ce;
-    }
-    .voice-title { text-align:center; font-weight:700; margin-bottom:10px; }
-    audio { width:100%; display:block; }
-    .sender { text-align:center; margin-top:22px; font-weight:700; color:#cf7280; letter-spacing:.05em; }
-    .note { text-align:center; font-size:12px; color:#927b73; margin-top:10px; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4efe5">
+<title>ばあばへ｜お誕生日おめでとう！</title>
+<style>
+:root{
+  --paper:#fbf8f0;
+  --paper2:#f4eee2;
+  --gold:#b58a3a;
+  --gold2:#d6bc78;
+  --ink:#493b2f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#eee8dd;color:var(--ink)}
+body{
+  font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,255,255,.9),transparent 28%),
+    linear-gradient(135deg,#f5f0e7,#e8e0d3);
+}
+.page{
+  min-height:100svh;
+  padding:clamp(14px,3vw,34px);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.envelope{
+  position:relative;
+  width:min(760px,100%);
+  margin:0 auto;
+  padding:clamp(22px,5vw,52px) clamp(14px,3.5vw,34px) clamp(18px,4vw,38px);
+  background:
+    repeating-linear-gradient(0deg,rgba(120,90,40,.018) 0 1px,transparent 1px 4px),
+    var(--paper);
+  border:1px solid rgba(181,138,58,.65);
+  box-shadow:0 18px 55px rgba(62,48,28,.18);
+  overflow:hidden;
+}
+.envelope:before,.envelope:after{
+  content:"";
+  position:absolute;
+  top:0;
+  width:58%;
+  height:150px;
+  background:linear-gradient(160deg,#fffdf8,#eee5d5);
+  border-bottom:1px solid rgba(181,138,58,.5);
+  z-index:0;
+  pointer-events:none;
+}
+.envelope:before{left:-13%;transform:skewY(24deg)}
+.envelope:after{right:-13%;transform:skewY(-24deg)}
+.header,.card{position:relative;z-index:1}
+.header{text-align:center;padding:10px 10px 28px}
+.monogram{
+  color:var(--gold);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(48px,10vw,78px);
+  line-height:.95;
+  letter-spacing:-7px;
+  text-shadow:0 1px 0 #fff,0 2px 2px rgba(116,79,17,.12);
+}
+.kicker{
+  margin-top:18px;
+  color:#9a7431;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(10px,2.6vw,14px);
+  letter-spacing:.28em;
+}
+.card{
+  background:
+    repeating-linear-gradient(90deg,rgba(120,90,40,.012) 0 1px,transparent 1px 5px),
+    #fffdf8;
+  border:1px solid rgba(181,138,58,.65);
+  outline:1px solid rgba(181,138,58,.28);
+  outline-offset:-9px;
+  padding:clamp(16px,4vw,34px);
+  box-shadow:0 14px 30px rgba(64,48,24,.16);
+}
+.photo-frame{
+  padding:clamp(5px,1.5vw,9px);
+  border:1px solid var(--gold);
+  background:#f8f2e6;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.8);
+}
+.photo{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  display:block;
+}
+h1{
+  margin:clamp(24px,5vw,42px) 0 10px;
+  text-align:center;
+  color:#a47b32;
+  font-size:clamp(29px,7vw,50px);
+  font-weight:500;
+  letter-spacing:.06em;
+  line-height:1.35;
+}
+.ornament{
+  display:flex;align-items:center;gap:12px;
+  width:min(230px,58%);margin:13px auto 22px;color:var(--gold);
+}
+.ornament:before,.ornament:after{content:"";height:1px;background:var(--gold2);flex:1}
+.ornament span{font-size:12px}
+.message{
+  text-align:center;
+  font-size:clamp(17px,4.5vw,24px);
+  line-height:1.9;
+  letter-spacing:.06em;
+  margin:0 auto clamp(24px,5vw,38px);
+}
+.voice{
+  width:min(580px,100%);
+  margin:0 auto;
+  padding:clamp(16px,4vw,24px);
+  border:1px solid rgba(181,138,58,.72);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,253,248,.96),rgba(247,240,226,.82));
+}
+.voice-title{
+  text-align:center;
+  color:#80622c;
+  font-size:clamp(17px,4.3vw,21px);
+  font-weight:600;
+  margin-bottom:12px;
+}
+audio{display:block;width:100%;height:46px}
+.hint{
+  margin:12px 0 0;
+  text-align:center;
+  font-size:clamp(11px,3vw,14px);
+  color:#746858;
+  line-height:1.6;
+}
+.sender{
+  margin:clamp(25px,5vw,38px) auto 5px;
+  text-align:center;
+  color:#9d7632;
+  font-family:Georgia,"Times New Roman","Yu Mincho",serif;
+  font-size:clamp(17px,4vw,22px);
+  letter-spacing:.16em;
+}
+.sender .jp{display:block;margin-top:6px;color:#5d5144;font-family:"Yu Mincho",serif;font-size:.72em;letter-spacing:.12em}
+@media(max-width:430px){
+  .page{padding:10px}
+  .envelope{padding:20px 10px 18px}
+  .envelope:before,.envelope:after{height:105px}
+  .header{padding:6px 6px 22px}
+  .card{padding:14px 13px 20px;outline-offset:-6px}
+  .photo-frame{padding:4px}
+  h1{letter-spacing:.025em}
+}
+</style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="card">
-      <div class="to">ばあばへ</div>
-      <img class="photo" src="https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/card-public?id=99e887e0-1814-4d4a-b463-fbbfa1d4424b&media=photo" alt="RITSUとSAKURAの写真">
+<main class="page">
+  <section class="envelope">
+    <header class="header">
+      <div class="monogram">R&amp;S</div>
+      <div class="kicker">A SPECIAL MESSAGE FOR YOU</div>
+    </header>
+
+    <article class="card">
+      <div class="photo-frame">
+        <img class="photo"
+          src="https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/card-public?id=99e887e0-1814-4d4a-b463-fbbfa1d4424b&amp;media=photo"
+          alt="RITSU &amp; SAKURA">
+      </div>
+
       <h1>お誕生日おめでとう！</h1>
-      <div class="msg">
-        いつもありがとう。<br>
-        これからも元気でいてね！
-      </div>
+      <div class="ornament"><span>◆</span></div>
 
-      <div class="voicebox">
-        <div class="voice-title">♪ 声を聞いてね</div>
+      <p class="message">いつもありがとう。<br>これからも元気でいてね！</p>
+
+      <section class="voice">
+        <div class="voice-title">♬&nbsp; 声を聞いてね</div>
         <audio controls playsinline preload="metadata">
-          <source src="https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/card-public?id=99e887e0-1814-4d4a-b463-fbbfa1d4424b&media=audio" type="audio/mp4">
-          音声を再生できません。
+          <source
+            src="https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/card-public?id=99e887e0-1814-4d4a-b463-fbbfa1d4424b&amp;media=audio"
+            type="audio/mp4">
         </audio>
-        <div class="note">再生ボタンを押すと音声が流れます</div>
-      </div>
+        <p class="hint">再生ボタンを押すと音声のメッセージが流れます</p>
+      </section>
 
-      <div class="sender">RITSU &amp; SAKURA より</div>
-    </section>
-  </main>
+      <div class="sender">RITSU &amp; SAKURA</div>
+    </article>
+  </section>
+</main>
 </body>
 </html>
