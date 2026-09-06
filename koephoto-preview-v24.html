@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>コエフォト｜Classic Birthday プレビュー v24</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f1ea;color:#4e4339;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 60px}.top{text-align:center}.top h1{font-size:21px;margin:7px}.top p{font-size:12px;color:#827568}
+.badge{display:inline-block;background:#eee4d6;padding:4px 8px;border-radius:999px;font-size:10px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}.tabs button{padding:12px;border:1px solid #cbb79c;background:#fffaf2;border-radius:12px;color:#655648;font-weight:700}.tabs button.on{background:#9f8064;color:white}
+.pane{display:none}.pane.on{display:block}.caption{text-align:center;font-size:12px;color:#817466;margin:8px 0 12px}
+.voiceFrameWrap{background:#0b1f3a;border-radius:16px;overflow:hidden}
+iframe{display:block;width:100%;height:980px;border:0;background:#091a33}
+.canvasWrap{background:#e9e4db;border-radius:16px;padding:10px;overflow:auto}canvas{display:block;width:100%;height:auto;max-width:600px;margin:auto;background:white}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.actions button{padding:14px;border-radius:13px;border:1px solid #bca68d;background:#fffaf2;color:#655648;font-weight:700}.actions .buy{background:#9f8064;color:#fff;border:0}.price{text-align:center;font-size:12px;color:#817466;margin-top:10px}
+@media(max-width:480px){iframe{height:860px}}
+</style></head><body><main class="wrap">
+<div class="top"><span class="badge">Classic Birthday</span><h1>2つのプレビューを確認</h1><p>ボイスページとメッセージカードは同じ入力内容から作成されます。</p></div>
+<div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
+<section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe src="classic-birthday-voice-v5-preview.html" title="Classic Birthday ボイスページ"></iframe></div></section>
+<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div></section>
+<div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
+<div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+$('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');$('pv').classList.add('on');$('pm').classList.remove('on')};
+$('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on')};
+function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
+async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
+function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
+(async()=>{
+ const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');if(!draft.message){alert('作成データがありません。作成画面に戻ります。');location.href='koephoto-create-v24.html';return}
+ const photo=await get('photo');const pu=URL.createObjectURL(photo);
+ const c=$('card'),ctx=c.getContext('2d');const base=new Image();base.src='classic-birthday-message.png';await base.decode();ctx.drawImage(base,0,0,c.width,c.height);
+ const img=new Image();img.src=pu;await img.decode();
+ // Classic Birthdayの実際の写真枠は長方形ではなく、わずかに傾いた四角形。
+ // 枠の内側4点にクリップして写真を配置する（生成AIなし・座標固定）。
+ // 写真枠内に写真を配置。ただし、右上リボン/花束と左下ハートの装飾領域は避け、
+ // 固定テンプレートの装飾が常に最前面で見えるようにする。
+ const p1={x:39,y:283}, p2={x:998,y:249}, p3={x:1021,y:882}, p4={x:61,y:916};
+ const minX=39,maxX=1021,minY=249,maxY=916;
+ const fw=maxX-minX, fh=maxY-minY, ir=img.width/img.height, fr=fw/fh;
+ let sx=0,sy=0,sw=img.width,sh=img.height;
+ if(ir>fr){sw=img.height*fr;sx=(img.width-sw)/2}else{sh=img.width/fr;sy=(img.height-sh)/2}
+ ctx.save();
+ ctx.beginPath();
+ // 上辺→右上リボン部分を避けるノッチ→右辺→左下ハートを避けるノッチ→左辺
+ ctx.moveTo(39,283);
+ ctx.lineTo(814,256);
+ ctx.lineTo(814,315);
+ ctx.lineTo(905,315);
+ ctx.lineTo(905,390);
+ ctx.lineTo(1003,386);
+ ctx.lineTo(1021,882);
+ ctx.lineTo(146,912);
+ ctx.lineTo(146,830);
+ ctx.lineTo(92,830);
+ ctx.lineTo(92,878);
+ ctx.lineTo(61,916);
+ ctx.closePath();
+ ctx.clip();
+ ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);
+ ctx.restore();
+ ctx.fillStyle='#2b3c50';ctx.textBaseline='alphabetic';
+ ctx.font='300 24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText(draft.recipient+'へ',102,1040);
+ const rules=[1094,1144,1193,1243],maxw=485;
+ // 文字数に応じて初期フォントサイズを自動調整。短文ほど大きく、長文ほど小さく。
+ const n=draft.message.length;
+ let size = n<=25 ? 26 : n<=45 ? 24 : n<=65 ? 22 : n<=82 ? 20 : 18;
+ let lines=[];
+ while(size>=16){
+   ctx.font='300 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';
+   lines=wrap(ctx,draft.message,maxw);
+   if(lines.length<=4)break;
+   size--;
+ }
+ // 行数が少ない場合は使用する罫線の上から順に配置
+ lines.slice(0,4).forEach((line,i)=>ctx.fillText(line,102,rules[i]-5));
+ ctx.fillStyle='#9a793f';ctx.font='500 26px "Hiragino Sans","Yu Gothic",sans-serif';ctx.textAlign='center';ctx.fillText(draft.sender,(221+562)/2,1307);ctx.textAlign='left';
+})();
+</script></body></html>
