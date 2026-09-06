@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>コエフォト｜作成テスト v22</title>
+<style>
+*{box-sizing:border-box} :root{--bg:#faf7f2;--ink:#5b4b3f;--muted:#8e8176;--line:#d8c7b5;--accent:#9d7f63}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.wrap{max-width:720px;margin:auto;padding:22px 16px 60px}.brand{font-weight:900;letter-spacing:.08em;font-size:24px}
+.hero{padding:36px 2px 22px;border-bottom:1px solid var(--line)}h1{font-size:34px;line-height:1.35;margin:10px 0}.hero em{font-style:normal;color:var(--accent)}
+.step{display:flex;gap:12px;padding:20px 0;border-bottom:1px solid #e3d7ca}.n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#b28f6e;color:#fff;font-size:12px;font-weight:800}.content{width:100%}.content b{display:block;margin-bottom:9px}
+input,textarea{width:100%;padding:13px 14px;border:1px solid #c7b5a4;border-radius:12px;background:#fffdf9;font:inherit;color:var(--ink)}textarea{min-height:105px;resize:vertical}.count{text-align:right;font-size:11px;color:var(--muted);margin-top:5px}
+.upload{display:block;padding:14px;text-align:center;border:1.5px solid #bda58d;background:#fffdf9;border-radius:13px}.upload input{display:none}
+#photoPreview{display:none;width:100%;margin-top:10px;border-radius:12px;max-height:320px;object-fit:cover}audio{display:none;width:100%;margin-top:10px}
+.consent{display:flex;gap:9px;font-size:12px;line-height:1.65;margin:20px 0;padding:13px;background:#f3ede5;border-radius:14px}.consent input{width:auto}
+button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;color:#fff;font-size:16px;font-weight:800}button:disabled{opacity:.4}.note{text-align:center;font-size:11px;color:var(--muted);margin-top:10px}
+.flow{text-align:center;font-size:11px;color:var(--muted);margin-bottom:12px}
+</style></head><body><main class="wrap">
+<div class="flow">1 作成　→　2 プレビュー　→　3 発行</div>
+<div class="brand">コエフォト</div>
+<section class="hero"><small>PHOTO × VOICE</small><h1>写真に、<em>声をのせて</em><br>贈ろう。</h1><p>Classic Birthday を無料で作成・プレビューできます。</p></section>
+<form id="form">
+<div class="step"><div class="n">1</div><div class="content"><b>贈る相手</b><input id="recipient" maxlength="20" required placeholder="例：おばあちゃん"><div class="count"><span id="rc">0</span> / 20文字</div></div></div>
+<div class="step"><div class="n">2</div><div class="content"><b>メッセージ</b><textarea id="message" maxlength="100" required placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
+<div class="step"><div class="n">3</div><div class="content"><b>送り主の名前</b><input id="sender" maxlength="30" required placeholder="例：さくら"><div class="count"><span id="sc">0</span> / 30文字</div></div></div>
+<div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><label class="upload">＋ 写真を選ぶ<input id="photo" type="file" accept="image/*" required></label><img id="photoPreview"></div></div>
+<div class="step"><div class="n">5</div><div class="content"><b>声をのせる</b><label class="upload">♬ 音声を選ぶ<input id="audio" type="file" required></label><audio id="audioPreview" controls></audio></div></div>
+<label class="consent"><input id="consent" type="checkbox" required><span>写真・音声をカードの作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span></label>
+<button id="go" type="submit">2つのプレビューを確認</button>
+<div class="note">作成・プレビューは0円。完成版は480円（税込）です。</div>
+</form></main>
+<script>
+const $=id=>document.getElementById(id);
+[['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
+$('photo').addEventListener('change',()=>{const f=$('photo').files[0];if(f){$('photoPreview').src=URL.createObjectURL(f);$('photoPreview').style.display='block'}});
+$('audio').addEventListener('change',()=>{
+  const f=$('audio').files[0];
+  if(!f)return;
+  const name=(f.name||'').toLowerCase();
+  const type=(f.type||'').toLowerCase();
+  const okExt=/\.(m4a|mp3|aac|mp4|mpeg|wav)$/i.test(name);
+  const okType=type.startsWith('audio/') || type==='video/mp4' || type==='application/octet-stream' || type==='';
+  if(!(okExt||okType)){
+    alert('この音声形式は選択できません。m4a / mp3 / aac / mp4 形式をお使いください。');
+    $('audio').value='';
+    return;
+  }
+  $('audioPreview').src=URL.createObjectURL(f);
+  $('audioPreview').style.display='block';
+});
+function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
+async function put(k,v){const x=await db();await new Promise((ok,ng)=>{const t=x.transaction('draft','readwrite');t.objectStore('draft').put(v,k);t.oncomplete=ok;t.onerror=()=>ng(t.error)});x.close()}
+$('form').addEventListener('submit',async e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;const p=$('photo').files[0],a=$('audio').files[0];if(!p||!a)return;
+const an=(a.name||'').toLowerCase(), at=(a.type||'').toLowerCase();
+if(!(/\.(m4a|mp3|aac|mp4|mpeg|wav)$/i.test(an) || at.startsWith('audio/') || at==='video/mp4' || at==='application/octet-stream' || at==='')){
+  alert('音声は m4a / mp3 / aac / mp4 形式をお使いください。'); return;
+}
+sessionStorage.setItem('koephoto-draft',JSON.stringify({recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()}));
+await put('photo',p);await put('audio',a);location.href='koephoto-preview-v22.html';
+});
+</script></body></html>
