@@ -1,0 +1,160 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>B-3｜サンドベージュ</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:760px;margin:auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;letter-spacing:.08em;font-size:24px}.brand small{display:block;font-size:9px;letter-spacing:.28em}
+.miniwave{display:flex;gap:4px;align-items:center}.miniwave i{width:4px;border-radius:9px;background:var(--wave)}.miniwave i:nth-child(odd){height:15px}.miniwave i:nth-child(even){height:29px}
+.hero{padding:42px 4px 28px;border-bottom:1.5px solid var(--line)}.hero h1{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;font-weight:700;letter-spacing:.015em;line-height:1.35;font-size:38px;margin:15px 0 10px}.hero em{font-style:normal;color:var(--accent)}.hero p{line-height:1.75;color:var(--muted)}
+.form{padding-top:12px}.step{display:flex;gap:13px;padding:23px 2px;border-bottom:1.5px solid var(--line2)}.n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--num);color:var(--numText)}
+.content{width:100%}.content>b{display:block;margin-bottom:10px}
+input:not([type=checkbox]):not([type=file]),textarea{width:100%;font:inherit;padding:13px 14px;border:1px solid var(--inputline);border-radius:12px;background:#fffdf9;color:var(--ink);outline:none}
+textarea{min-height:105px;resize:vertical}.upload{display:block;padding:14px;text-align:center;border:1.5px solid var(--uploadBorder);background:var(--uploadBg);border-radius:13px;cursor:pointer}.upload input{display:none}
+#photoPreview{display:none;width:100%;margin-top:10px;border-radius:14px}audio{display:none;width:100%;margin-top:10px}.consent{display:flex;gap:10px;font-size:12px;line-height:1.65;margin:22px 0;background:var(--consentBg);padding:14px;border-radius:15px}
+button{width:100%;padding:16px;border:0;font-size:16px;font-weight:800;border-radius:14px;background:var(--button);color:var(--buttonText)}button:disabled{opacity:.4}.note{text-align:center;font-size:12px;color:var(--muted)}
+:root{--bg:#faf7f2;--ink:#5b4b3f;--muted:#8e8176;--wave:#b6a08a;--accent:#9d7f63;--line:#cdbba9;--line2:#d8c7b5;--num:#b28f6e;--numText:#fff;--inputline:#c7b5a4;--uploadBorder:#bda58d;--uploadBg:#fffdf9;--consentBg:#f3ede5;--button:#9f8064;--buttonText:#fff;}
+.plans{margin:26px 0 18px}.plans h2{font-size:16px;margin:0 0 12px}
+.planGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.planCard{position:relative;display:flex;flex-direction:column;gap:7px;padding:15px;border:1px solid #d8c8b9;border-radius:15px;background:#fffdf9;font-size:12px;color:var(--muted);cursor:pointer}
+.planCard input{position:absolute;opacity:0}.planCard.selected{border:1.5px solid #aa896c;background:#fbf5ee;box-shadow:0 0 0 2px rgba(170,137,108,.08)}
+.planCard.premium.selected{border-color:#8f765f}.planTop{display:flex;justify-content:space-between;align-items:center;color:var(--ink);margin-bottom:3px}
+.planTop strong{font-size:14px}.planTop b{font-size:20px}.planNote{font-size:11px;line-height:1.65;color:var(--muted);margin:10px 2px 0}
+@media(max-width:520px){.planGrid{grid-template-columns:1fr}}
+
+.charcount{min-height:18px;margin-top:5px;text-align:right;font-size:11px;line-height:18px;color:var(--muted);font-variant-numeric:tabular-nums}
+.limit{display:block;margin:-3px 0 10px;color:var(--muted);font-size:11px}
+.plan-summary{margin:14px 0 10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.55);font-size:12px;line-height:1.6;color:var(--ink)}
+</style></head><body><main class="wrap"><header><div class="brand">コエフォト<small>koephoto</small></div><div class="miniwave"><i></i><i></i><i></i><i></i><i></i></div></header><section class="hero"><p>PHOTO × VOICE</p><h1>写真に、<em>声をのせて</em><br>贈ろう。</h1><p>いつもの写真が、声を聞いた瞬間にもっと特別になる。</p></section><div class="form">
+<div class="step"><div class="n">1</div><div class="content"><b>誰に贈りますか？</b><input id="recipient" maxlength="20" placeholder="例：おばあちゃん"><div class="charcount"><span id="recipientCount">0</span> / 20文字</div></div></div>
+<div class="step"><div class="n">2</div><div class="content"><b>メッセージ</b><textarea id="message" maxlength="180" placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="charcount"><span id="messageCount">0</span> / 180文字</div></div></div>
+<div class="step"><div class="n">3</div><div class="content"><b>送り主の名前</b><input id="sender" maxlength="30" placeholder="例：さくら"><div class="charcount"><span id="senderCount">0</span> / 30文字</div></div></div>
+<div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><small class="limit" id="photoLimit">JPEG・PNG・WebP・HEIC / 15MBまで</small><label class="upload">＋ 写真を選ぶ<input id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"></label><img id="photoPreview"></div></div>
+<div class="step"><div class="n">5</div><div class="content"><b>声をのせる</b><small class="limit" id="audioLimit">30秒まで</small><label class="upload">♬ 音声を選ぶ<input id="audio" type="file" accept="audio/mp4,audio/mpeg,audio/x-m4a,audio/aac"></label><audio id="audioPreview" controls></audio></div></div>
+<div id="selectedPlanSummary" class="plan-summary">無料プラン：写真15MBまで・音声30秒まで・Web公開1か月</div><label class="consent"><input id="consent" type="checkbox"><span>写真・音声がカードの作成・表示・再生のために<span id="consentPeriod">1か月間</span>保存・利用されることに同意します。また、アップロードする写真・音声について、使用に必要な許可を得ていることを確認済みです。</span></label>
+<section class="plans">
+  <h2>プランを選ぶ</h2>
+  <div class="planGrid">
+    <label class="planCard selected">
+      <input type="radio" name="plan" value="free" checked>
+      <span class="planTop"><strong>無料</strong><b>¥0</b></span>
+      <span>写真：15MBまで</span>
+      <span>音声：30秒まで</span>
+      <span>Web公開：1か月</span>
+      <span>作成したWebカードをURLやQRコードで共有できます</span>
+    </label>
+    <label class="planCard premium">
+      <input type="radio" name="plan" value="premium">
+      <span class="planTop"><strong>プレミアム</strong><b>¥500</b></span>
+      <span>写真：30MBまで</span>
+      <span>音声：120秒まで</span>
+      <span>Web公開：3か月</span>
+      <span>Webカードをダウンロードして保存できます</span>
+      <span>2Lサイズの印刷用データをダウンロードできます</span>
+    </label>
+  </div>
+  <p class="planNote">公開期間終了後、Webカードは閲覧できなくなり、サーバー上の写真・音声は削除されます。プレミアムでは、公開期間中にWebカードと印刷用データをダウンロードして保存できます。</p>
+</section>
+<button id="createBtn" disabled>無料でコエフォトを作る</button>
+</div></main>
+<script>
+(function(){
+  function byId(id){ return document.getElementById(id); }
+
+  function countChars(id, max){
+    var el = byId(id);
+    var out = byId(id + "Count");
+    if(!el || !out) return;
+    el.setAttribute("maxlength", String(max));
+    function update(){
+      out.textContent = Array.from(el.value).length;
+    }
+    el.addEventListener("input", function(){
+      update();
+      validate();
+    });
+    update();
+  }
+
+  function premiumSelected(){
+    var selected = document.querySelector('input[name="plan"]:checked');
+    return selected && selected.value === "premium";
+  }
+
+  function applyPlan(){
+    var premium = premiumSelected();
+
+    var cards = document.querySelectorAll(".planCard");
+    for(var i=0;i<cards.length;i++){
+      var radio = cards[i].querySelector('input[name="plan"]');
+      if(radio && radio.checked){ cards[i].classList.add("selected"); }
+      else { cards[i].classList.remove("selected"); }
+    }
+
+    byId("photoLimit").textContent = premium ? "JPEG・PNG・WebP・HEIC / 30MBまで" : "JPEG・PNG・WebP・HEIC / 15MBまで";
+    byId("audioLimit").textContent = premium ? "120秒まで" : "30秒まで";
+    byId("selectedPlanSummary").textContent = premium
+      ? "プレミアム：写真30MBまで・音声120秒まで・Web公開3か月"
+      : "無料プラン：写真15MBまで・音声30秒まで・Web公開1か月";
+    byId("consentPeriod").textContent = premium ? "3か月間" : "1か月間";
+    byId("createBtn").textContent = premium ? "プレミアム ¥500で作る" : "無料でコエフォトを作る";
+
+    validatePhoto(false);
+    validate();
+  }
+
+  function validatePhoto(showAlert){
+    var input = byId("photo");
+    if(!input || !input.files || !input.files.length) return true;
+    var maxMB = premiumSelected() ? 30 : 15;
+    if(input.files[0].size > maxMB * 1024 * 1024){
+      if(showAlert) alert("選択中のプランでは写真は" + maxMB + "MBまでです。");
+      input.value = "";
+      var p = byId("photoPreview");
+      if(p){ p.removeAttribute("src"); p.style.display = "none"; }
+      return false;
+    }
+    return true;
+  }
+
+  function validate(){
+    var btn = byId("createBtn");
+    if(!btn) return;
+    var ok =
+      byId("recipient").value.trim() &&
+      byId("message").value.trim() &&
+      byId("sender").value.trim() &&
+      byId("photo").files.length &&
+      byId("audio").files.length &&
+      byId("consent").checked;
+    btn.disabled = !ok;
+  }
+
+  countChars("recipient",20);
+  countChars("message",180);
+  countChars("sender",30);
+
+  byId("consent").addEventListener("change", validate);
+
+  byId("photo").addEventListener("change", function(){
+    if(validatePhoto(true) && this.files[0]){
+      byId("photoPreview").src = URL.createObjectURL(this.files[0]);
+      byId("photoPreview").style.display = "block";
+    }
+    validate();
+  });
+
+  byId("audio").addEventListener("change", function(){
+    if(this.files[0]){
+      byId("audioPreview").src = URL.createObjectURL(this.files[0]);
+      byId("audioPreview").style.display = "block";
+    }
+    validate();
+  });
+
+  var radios = document.querySelectorAll('input[name="plan"]');
+  for(var i=0;i<radios.length;i++){
+    radios[i].addEventListener("change", applyPlan);
+  }
+
+  applyPlan();
+  validate();
+})();
+</script></body></html>
