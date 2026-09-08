@@ -61,9 +61,9 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
  ctx.fillStyle='#2b3c50';ctx.textBaseline='alphabetic';
  const recipientText=draft.recipient+'へ';
  const rn=recipientText.length;
- let recipientSize = rn<=5 ? 36 : rn<=8 ? 33 : rn<=12 ? 29 : rn<=16 ? 25 : 22;
+ let recipientSize = rn<=5 ? 36 : rn<=8 ? 33 : 29;
  ctx.font='300 '+recipientSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
- while(recipientSize>20 && ctx.measureText(recipientText).width>485){
+ while(recipientSize>24 && ctx.measureText(recipientText).width>485){
    recipientSize--;
    ctx.font='300 '+recipientSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
  }
@@ -84,10 +84,10 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
  ctx.fillStyle='#9a793f';
  const senderText=draft.sender;
  const sn=senderText.length;
- let senderSize = sn<=6 ? 28 : sn<=10 ? 26 : sn<=12 ? 23 : 21;
+ let senderSize = sn<=6 ? 28 : 26;
  const senderMaxWidth=330;
  ctx.font='500 '+senderSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
- while(senderSize>18 && ctx.measureText(senderText).width>senderMaxWidth){
+ while(senderSize>22 && ctx.measureText(senderText).width>senderMaxWidth){
    senderSize--;
    ctx.font='500 '+senderSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
  }
