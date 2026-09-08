@@ -13,8 +13,20 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
 .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
 .recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:Georgia,"Times New Roman",serif;font-weight:600;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recipient{top:16.2%;left:34%;width:37.5%;text-align:center;font-size:clamp(15px,3.5vw,22px)}
-.sender{top:78.6%;left:40.5%;width:29%;text-align:center;font-size:clamp(14px,3.2vw,21px)}
+/* 固定アート内の実際の罫線座標に合わせて配置。
+   To line:   x=338..760, y=272 / 1060x1484
+   From line: x=421..747, y=1237 / 1060x1484
+   名前は罫線の5px上に置き、罫線中央に正確に揃える。 */
+.recipient{
+  left:31.887%;width:39.811%;top:18.329%;
+  transform:translateY(calc(-100% - 5px));
+  text-align:center;font-size:clamp(15px,3.5vw,22px)
+}
+.sender{
+  left:39.717%;width:30.755%;top:83.356%;
+  transform:translateY(calc(-100% - 5px));
+  text-align:center;font-size:clamp(14px,3.2vw,21px)
+}
 .player{
   position:absolute;z-index:4;
   left:11.13%;top:70.35%;width:77.83%;height:7.41%;
