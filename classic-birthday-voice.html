@@ -198,5 +198,93 @@ audio.addEventListener('timeupdate',()=>{cur.textContent=fmt(audio.currentTime);
 audio.addEventListener('ended',()=>{btn.textContent='▶';audio.currentTime=0;cur.textContent='0:00';syncSeek()});
 seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(seek.value)/100)*audio.duration;syncSeek()}});
 </script>
+
+
+<script>
+(function(){
+  const LIMITS = {
+    recipient: { maxChars: 20, maxPx: 22, minPx: 9 },
+    sender:    { maxChars: 15, maxPx: 21, minPx: 9 }
+  };
+
+  function fitName(el){
+    if(!el) return;
+
+    const isRecipient = el.classList.contains('recipient');
+    const spec = isRecipient ? LIMITS.recipient : LIMITS.sender;
+    const chars = [...(el.textContent || '').trim()];
+
+    if(chars.length > spec.maxChars){
+      el.textContent = chars.slice(0, spec.maxChars).join('');
+    }
+
+    const style = getComputedStyle(el);
+    const available =
+      el.clientWidth
+      - (parseFloat(style.paddingLeft) || 0)
+      - (parseFloat(style.paddingRight) || 0);
+
+    if(available <= 0) return;
+
+    const canvas = fitName.canvas || (fitName.canvas = document.createElement('canvas'));
+    const ctx = canvas.getContext('2d');
+
+    let low = spec.minPx;
+    let high = spec.maxPx;
+    let best = low;
+
+    for(let i=0; i<20; i++){
+      const size = (low + high) / 2;
+
+      ctx.font =
+        `${style.fontStyle} ${style.fontVariant} ${style.fontWeight} ${size}px ${style.fontFamily}`;
+
+      const textWidth = ctx.measureText(el.textContent).width;
+      const ls = parseFloat(style.letterSpacing);
+      const letterSpacingWidth =
+        Number.isFinite(ls) ? Math.max(0, [...el.textContent].length - 1) * ls : 0;
+
+      const totalWidth = textWidth + letterSpacingWidth;
+
+      if(totalWidth <= available - 1){
+        best = size;
+        low = size;
+      }else{
+        high = size;
+      }
+    }
+
+    el.style.fontSize = best.toFixed(2) + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.overflow = 'visible';
+    el.style.textOverflow = 'clip';
+  }
+
+  function fitAllNames(){
+    document.querySelectorAll('.recipient,.sender').forEach(fitName);
+  }
+
+  function runFit(){
+    requestAnimationFrame(() => requestAnimationFrame(fitAllNames));
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(runFit);
+  }else{
+    window.addEventListener('load', runFit, {once:true});
+  }
+
+  window.addEventListener('resize', runFit);
+
+  document.querySelectorAll('.recipient,.sender').forEach(el=>{
+    new MutationObserver(runFit).observe(el,{
+      childList:true,
+      characterData:true,
+      subtree:true
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
