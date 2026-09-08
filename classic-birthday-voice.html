@@ -30,6 +30,7 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
   font-size:15px;line-height:1;cursor:pointer;
   flex:0 0 auto;padding:0;
   -webkit-tap-highlight-color:transparent;
+  transform:translateY(-2px);
 }
 .track{min-width:0;align-self:center}
 .seek{
@@ -62,6 +63,7 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .brand{width:var(--card-w);text-align:center;padding-top:18px;line-height:1.25}
 .brand-name{font-family:Georgia,"Times New Roman",serif;font-size:18px;letter-spacing:.08em}
 .tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
+body.embedded .page{min-height:0;padding-bottom:18px}
 @media(max-width:390px){.page{padding-left:8px;padding-right:8px}.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
 </style>
 </head>
@@ -88,6 +90,22 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 </main>
 <script>
 const $=id=>document.getElementById(id);
+
+// プレビュー内（iframe）では、実コンテンツ高さを親ページへ通知して余白をなくす。
+if(window.self !== window.top){
+  document.body.classList.add('embedded');
+  const reportHeight=()=>{
+    const page=document.querySelector('.page');
+    if(!page)return;
+    const h=Math.ceil(page.getBoundingClientRect().height);
+    parent.postMessage({type:'koefoto-voice-height',height:h},location.origin);
+  };
+  window.addEventListener('load',()=>requestAnimationFrame(reportHeight));
+  if('ResizeObserver' in window){
+    new ResizeObserver(()=>requestAnimationFrame(reportHeight)).observe(document.querySelector('.page'));
+  }
+}
+
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=Math.floor(s%60);return `${m}:${String(sec).padStart(2,'0')}`};
