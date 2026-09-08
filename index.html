@@ -18,11 +18,11 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;co
 <div class="brand">コエフォト</div>
 <section class="hero"><small>PHOTO × VOICE</small><h1>写真に、<em>声をのせて</em><br>贈ろう。</h1><p>カードを無料で作成・プレビューできます。</p></section>
 <form id="form">
-<div class="step"><div class="n">1</div><div class="content"><b>贈る相手の名前</b><div class="field-help">メッセージカードには「〇〇へ」と表示されます</div><input id="recipient" maxlength="12" required placeholder="例：おばあちゃん"><div class="count"><span id="rc">0</span> / 12文字</div></div></div>
-<div class="step"><div class="n">2</div><div class="content"><b>メッセージ</b><textarea id="message" maxlength="100" required placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
-<div class="step"><div class="n">3</div><div class="content"><b>送り主の名前</b><input id="sender" maxlength="10" required placeholder="例：さくら"><div class="count"><span id="sc">0</span> / 10文字</div></div></div>
+<div class="step"><div class="n">1</div><div class="content"><b>贈る相手のお名前</b><div class="field-help">メッセージカードとボイスページに表示されます</div><input id="recipient" maxlength="12" required placeholder="例：おばあちゃん"><div class="count"><span id="rc">0</span> / 12文字</div></div></div>
+<div class="step"><div class="n">2</div><div class="content"><b>メッセージ</b><div class="field-help">メッセージカードに表示されます</div><textarea id="message" maxlength="100" required placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
+<div class="step"><div class="n">3</div><div class="content"><b>贈り主のお名前</b><div class="field-help">メッセージカードとボイスページに表示されます</div><input id="sender" maxlength="10" required placeholder="例：さくら"><div class="count"><span id="sc">0</span> / 10文字</div></div></div>
 <div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><label class="upload">＋ 写真を選ぶ<input id="photo" type="file" accept="image/*" required></label><img id="photoPreview"></div></div>
-<div class="step"><div class="n">5</div><div class="content"><b>声をのせる</b><label class="upload">♬ 音声を選ぶ<input id="audio" type="file" required></label><audio id="audioPreview" controls></audio></div></div>
+<div class="step"><div class="n">5</div><div class="content"><b>音声を選ぶ</b><label class="upload">♬ 音声を選ぶ<input id="audio" type="file" required></label><audio id="audioPreview" controls></audio></div></div>
 <label class="consent"><input id="consent" type="checkbox" required><span>写真・音声をカードの作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span></label>
 <button id="go" type="submit">2つのプレビューを確認</button>
 <div class="note">作成・プレビューは0円。完成版は480円（税込）です。</div>
