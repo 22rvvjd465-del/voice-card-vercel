@@ -19,11 +19,13 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
    名前は罫線の5px上に置き、罫線中央に正確に揃える。 */
 .recipient{
   left:31.887%;width:39.811%;top:18.329%;
+  padding-left:3px;padding-right:3px;box-sizing:border-box;
   transform:translateY(calc(-100% + 0.6px));
   text-align:center;font-size:clamp(15px,3.5vw,22px)
 }
 .sender{
   left:39.717%;width:30.755%;top:83.356%;
+  padding-left:3px;padding-right:3px;box-sizing:border-box;
   transform:translateY(calc(-100% + 0.6px));
   text-align:center;font-size:clamp(14px,3.2vw,21px)
 }
@@ -203,50 +205,57 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
 <script>
 (function(){
   const LIMITS = {
-    recipient: { maxChars: 12, maxPx: 22, minPx: 15 },
-    sender:    { maxChars: 10, maxPx: 21, minPx: 14 }
+    recipient: { maxChars: 12, maxPx: 22 },
+    sender:    { maxChars: 10, maxPx: 21 }
   };
 
   function fitName(el){
     if(!el) return;
 
-    const isRecipient = el.classList.contains('recipient');
-    const spec = isRecipient ? LIMITS.recipient : LIMITS.sender;
-    const chars = [...(el.textContent || '').trim()];
+    const spec = el.classList.contains('recipient')
+      ? LIMITS.recipient
+      : LIMITS.sender;
 
+    const chars = [...(el.textContent || '').trim()];
     if(chars.length > spec.maxChars){
       el.textContent = chars.slice(0, spec.maxChars).join('');
     }
 
-    const style = getComputedStyle(el);
+    // 金色の下線と同じ幅の要素から、左右3pxずつ安全余白を引いた実幅。
+    const cs = getComputedStyle(el);
     const available =
-      el.clientWidth
-      - (parseFloat(style.paddingLeft) || 0)
-      - (parseFloat(style.paddingRight) || 0);
+      el.getBoundingClientRect().width
+      - (parseFloat(cs.paddingLeft) || 0)
+      - (parseFloat(cs.paddingRight) || 0);
 
     if(available <= 0) return;
 
-    const canvas = fitName.canvas || (fitName.canvas = document.createElement('canvas'));
-    const ctx = canvas.getContext('2d');
+    // Safariでも実際に描画されるWebフォントの幅をDOMで直接測定。
+    const measure = document.createElement('span');
+    measure.textContent = el.textContent;
+    measure.style.position = 'fixed';
+    measure.style.left = '-10000px';
+    measure.style.top = '-10000px';
+    measure.style.visibility = 'hidden';
+    measure.style.whiteSpace = 'nowrap';
+    measure.style.fontFamily = cs.fontFamily;
+    measure.style.fontWeight = cs.fontWeight;
+    measure.style.fontStyle = cs.fontStyle;
+    measure.style.fontVariant = cs.fontVariant;
+    measure.style.letterSpacing = cs.letterSpacing;
+    document.body.appendChild(measure);
 
-    let low = spec.minPx;
+    // 実測幅が下線内に入る最大サイズを0.1px精度で探索。
+    let low = 8;
     let high = spec.maxPx;
     let best = low;
 
-    for(let i=0; i<20; i++){
+    for(let i=0; i<18; i++){
       const size = (low + high) / 2;
+      measure.style.fontSize = size + 'px';
+      const width = measure.getBoundingClientRect().width;
 
-      ctx.font =
-        `${style.fontStyle} ${style.fontVariant} ${style.fontWeight} ${size}px ${style.fontFamily}`;
-
-      const textWidth = ctx.measureText(el.textContent).width;
-      const ls = parseFloat(style.letterSpacing);
-      const letterSpacingWidth =
-        Number.isFinite(ls) ? Math.max(0, [...el.textContent].length - 1) * ls : 0;
-
-      const totalWidth = textWidth + letterSpacingWidth;
-
-      if(totalWidth <= available - 1){
+      if(width <= available){
         best = size;
         low = size;
       }else{
@@ -254,10 +263,13 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
       }
     }
 
-    el.style.fontSize = best.toFixed(2) + 'px';
+    measure.remove();
+
+    el.style.fontSize = best.toFixed(1) + 'px';
     el.style.whiteSpace = 'nowrap';
-    el.style.overflow = 'visible';
+    el.style.overflow = 'hidden';
     el.style.textOverflow = 'clip';
+    el.style.textAlign = 'center';
   }
 
   function fitAllNames(){
@@ -268,6 +280,7 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
     requestAnimationFrame(() => requestAnimationFrame(fitAllNames));
   }
 
+  // Zen Maru Gothicの読込完了後に必ず計測する。
   if(document.fonts && document.fonts.ready){
     document.fonts.ready.then(runFit);
   }else{
