@@ -1,31 +1,27 @@
-コエフォト GitHub更新用 v28
+コエフォト GitHub更新用 v29
 
-目的
-- 既存 v27 の作成画面／メッセージカード側を維持
-- ボイスページだけ、今回固定した Classic Birthday デザインへ差し替え
-- 写真と音声は既存の sessionStorage + IndexedDB プレビュー方式をそのまま利用
-- ボイスページには閲覧期限を表示しない
-- カード外に「コエフォト」「A PHOTO, A VOICE, A MEMORY.」を表示
+今回の修正
+- 生成AIでデザインは変更していません
+- 固定済み Classic Birthday 画像はそのまま使用
+- 写真を単純な長方形配置から、前スレッドで確定した4点クリップ方式へ戻しました
+- 写真枠の4点:
+  左上 (39,283)
+  右上 (998,249)
+  右下 (1021,882)
+  左下 (61,916)
+- プレーヤーはHTML/CSS側だけ微調整
+- 花束・リボン・ハート等の装飾画像は変更していません
 
-このZIPに入っているファイル
+GitHubへアップロードするもの
 - index.html
-- koephoto-create-v28.html
-- koephoto-preview-v28.html
-- classic-birthday-voice-v6-preview.html
+- koephoto-create-v29.html
+- koephoto-preview-v29.html
+- classic-birthday-voice-v7-preview.html
 - koefoto_classic_birthday_overlay.png
 - vercel.json
 
-重要
-既存GitHubリポジトリにある以下のメッセージカード用素材は削除しないでください。
+既存リポジトリにある以下は削除しないでください
 - classic-birthday-message.png
 - classic-birthday-decor-overlay.png
 
-アップロード方法
-1. GitHubのこれまで使っていたコエフォトのリポジトリを開く
-2. 上記ファイルを同じ階層へ追加／上書きする
-3. Commit changes
-4. Vercelの自動デプロイ完了を待つ
-5. index.html → 作成 → プレビューを確認
-
-今回、Supabaseの voice-card-public Edge Function はまだ変更していません。
-まずGitHub/Vercel側で固定デザインの表示を確認し、その後、本番QRの公開先をこのデザインへ接続します。
+アップロード後、Vercelの自動デプロイ完了後に作成→プレビューを確認してください。

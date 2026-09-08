@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>コエフォト｜作成テスト v28</title>
+<title>コエフォト｜作成テスト v29</title>
 <style>
 *{box-sizing:border-box} :root{--bg:#faf7f2;--ink:#5b4b3f;--muted:#8e8176;--line:#d8c7b5;--accent:#9d7f63}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -54,6 +54,6 @@ if(!(/\.(m4a|mp3|aac|mp4|mpeg|wav)$/i.test(an) || at.startsWith('audio/') || at=
   alert('音声は m4a / mp3 / aac / mp4 形式をお使いください。'); return;
 }
 sessionStorage.setItem('koephoto-draft',JSON.stringify({recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()}));
-await put('photo',p);await put('audio',a);location.href='koephoto-preview-v28.html';
+await put('photo',p);await put('audio',a);location.href='koephoto-preview-v29.html';
 });
 </script></body></html>

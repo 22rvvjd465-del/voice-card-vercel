@@ -15,7 +15,7 @@ iframe{display:block;width:100%;height:980px;border:0;background:#091a33}
 </style></head><body><main class="wrap">
 <div class="top"><span class="badge">Classic Birthday</span><h1>2つのプレビューを確認</h1><p>ボイスページとメッセージカードは同じ入力内容から作成されます。</p></div>
 <div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
-<section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe src="classic-birthday-voice-v5-preview.html" title="Classic Birthday ボイスページ"></iframe></div></section>
+<section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe src="classic-birthday-voice-v7-preview.html" title="Classic Birthday ボイスページ"></iframe></div></section>
 <section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div></section>
 <div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
 <div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
@@ -28,7 +28,7 @@ function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-prev
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
 (async()=>{
- const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');if(!draft.message){alert('作成データがありません。作成画面に戻ります。');location.href='koephoto-create-v29.html';return}
+ const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');if(!draft.message){alert('作成データがありません。作成画面に戻ります。');location.href='koephoto-create-v28.html';return}
  const photo=await get('photo');const pu=URL.createObjectURL(photo);
  const c=$('card'),ctx=c.getContext('2d');const base=new Image();base.src='classic-birthday-message.png';await base.decode();ctx.drawImage(base,0,0,c.width,c.height);
  const img=new Image();img.src=pu;await img.decode();
@@ -48,7 +48,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
  ctx.restore();
  const decor=new Image();decor.src='classic-birthday-decor-overlay.png';await decor.decode();ctx.drawImage(decor,0,0,c.width,c.height);
  ctx.fillStyle='#2b3c50';ctx.textBaseline='alphabetic';
- const recipientText=draft.recipient;
+ const recipientText=draft.recipient+'へ';
  const rn=recipientText.length;
  let recipientSize = rn<=5 ? 36 : rn<=8 ? 33 : rn<=12 ? 29 : rn<=16 ? 25 : 22;
  ctx.font='300 '+recipientSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
