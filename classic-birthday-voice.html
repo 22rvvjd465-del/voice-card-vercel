@@ -71,9 +71,26 @@ const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=M
       ctx.clearRect(0,0,c.width,c.height);
 
       // 前スレッドで確定した Classic Birthday 写真枠の4点。
-      const p1={x:36.3,y:322.25}, p2={x:1017.58,y:300.26}, p3={x:1029.80,y:863.73}, p4={x:48.02,y:883.88};
-      const minX=Math.min(p1.x,p2.x,p3.x,p4.x), maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
-      const minY=Math.min(p1.y,p2.y,p3.y,p4.y), maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
+      // 固定デザインの写真枠4点
+      const frame=[
+        {x:36.3,y:322.25},
+        {x:1017.58,y:300.26},
+        {x:1029.80,y:863.73},
+        {x:48.02,y:883.88}
+      ];
+
+      // 写真だけを枠の内側へ少し縮める。
+      // デザイン画像・花束・ハート・プレーヤーは一切変更しない。
+      const cx=frame.reduce((s,p)=>s+p.x,0)/4;
+      const cy=frame.reduce((s,p)=>s+p.y,0)/4;
+      const scale=0.972;
+      const pts=frame.map(p=>({
+        x:cx+(p.x-cx)*scale,
+        y:cy+(p.y-cy)*scale
+      }));
+
+      const minX=Math.min(...pts.map(p=>p.x)), maxX=Math.max(...pts.map(p=>p.x));
+      const minY=Math.min(...pts.map(p=>p.y)), maxY=Math.max(...pts.map(p=>p.y));
       const fw=maxX-minX, fh=maxY-minY;
       const ir=img.width/img.height, fr=fw/fh;
       let sx=0,sy=0,sw=img.width,sh=img.height;
@@ -81,10 +98,10 @@ const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=M
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(p1.x,p1.y);
-      ctx.lineTo(p2.x,p2.y);
-      ctx.lineTo(p3.x,p3.y);
-      ctx.lineTo(p4.x,p4.y);
+      ctx.moveTo(pts[0].x,pts[0].y);
+      ctx.lineTo(pts[1].x,pts[1].y);
+      ctx.lineTo(pts[2].x,pts[2].y);
+      ctx.lineTo(pts[3].x,pts[3].y);
       ctx.closePath();
       ctx.clip();
       ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);
