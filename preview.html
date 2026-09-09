@@ -120,7 +120,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   // MESSAGE本文：最大5行、自動縮小。
   ctx.textAlign='left';ctx.fillStyle='#46515c';
   const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
-  while(size>=24){ctx.font='400 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
+  while(size>=24){ctx.font='300 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
