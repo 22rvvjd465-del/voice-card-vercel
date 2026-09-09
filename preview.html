@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>コエフォト｜Classic Birthday プレビュー v27</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f1ea;color:#4e4339;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
 .wrap{max-width:760px;margin:auto;padding:18px 14px 60px}.top{text-align:center}.top h1{font-size:21px;margin:7px}.top p{font-size:12px;color:#827568}
@@ -97,19 +98,19 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
   const recipient=(draft.recipient||'').slice(0,12);
   let rs=34;ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.font='600 '+rs+'px "Hiragino Sans","Yu Gothic",sans-serif';
+  ctx.font='600 '+rs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
   while(rs>18&&ctx.measureText(recipient).width>470){rs--;ctx.font='600 '+rs+'px "Hiragino Sans","Yu Gothic",sans-serif'}
   ctx.fillText(recipient,548,252);
 
   // MESSAGE本文：最大5行、自動縮小。
   ctx.textAlign='left';ctx.fillStyle='#46515c';
   const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
-  while(size>=24){ctx.font='400 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
+  while(size>=24){ctx.font='500 '+size+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
   const sender=(draft.sender||'').slice(0,10);let ss=29;ctx.fillStyle='#123d7a';ctx.textAlign='center';
-  ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif';
+  ctx.font='600 '+ss+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
   while(ss>20&&ctx.measureText(sender).width>330){ss--;ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif'}
   ctx.fillText(sender,400,1265);
 
@@ -117,6 +118,6 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   ctx.fillStyle='#9b8e7c';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',847,1086);
 
   // 期限は背景画像ではなくプログラム側で表示。
-  ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1254);ctx.textAlign='left';
+  ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1248);ctx.textAlign='left';
 })();
 </script></body></html>
