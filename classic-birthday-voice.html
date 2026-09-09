@@ -20,13 +20,13 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .recipient{
   left:31.887%;width:39.811%;top:18.329%;
   padding-left:3px;padding-right:3px;box-sizing:border-box;
-  transform:translateY(calc(-100% + 0.6px));
+  transform:translateY(calc(-100% + 3.6px));
   text-align:center;font-size:clamp(15px,3.5vw,22px)
 }
 .sender{
   left:39.717%;width:30.755%;top:83.356%;
   padding-left:3px;padding-right:3px;box-sizing:border-box;
-  transform:translateY(calc(-100% + 0.6px));
+  transform:translateY(calc(-100% + 3.6px));
   text-align:center;font-size:clamp(14px,3.2vw,21px)
 }
 .player{
@@ -205,8 +205,8 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
 <script>
 (function(){
   const LIMITS = {
-    recipient: { maxChars: 12, maxPx: 22 },
-    sender:    { maxChars: 10, maxPx: 21 }
+    recipient: { maxChars: 12, maxPx: 20 },
+    sender:    { maxChars: 10, maxPx: 19 }
   };
 
   function fitName(el){
