@@ -71,6 +71,18 @@ $('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');
 $('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on')};
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
+
+  function fitCanvasName(ctx,text,fontFamily,fontWeight,maxPx,minPx,maxWidth){
+    let lo=minPx, hi=maxPx, best=minPx;
+    for(let i=0;i<18;i++){
+      const px=(lo+hi)/2;
+      ctx.font=fontWeight+' '+px+'px '+fontFamily;
+      if(ctx.measureText(text).width<=maxWidth){best=px;lo=px}else{hi=px}
+    }
+    ctx.font=fontWeight+' '+best.toFixed(1)+'px '+fontFamily;
+    return best;
+  }
+
 function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
 (async()=>{
   const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
@@ -97,13 +109,12 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
 
   // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
   const recipient=[...(draft.recipient||'')].slice(0,15).join('');
-  let rs=34;ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  const recipientMaxWidth=455;
-  ctx.font='600 '+rs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  while(rs>16&&ctx.measureText(recipient).width>recipientMaxWidth){
-    rs--;
-    ctx.font='600 '+rs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  }
+  ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  fitCanvasName(
+    ctx,recipient,
+    '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
+    '600',34,14,455
+  );
   ctx.fillText(recipient,548,252);
 
   // MESSAGE本文：最大5行、自動縮小。
@@ -113,13 +124,13 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
-  const sender=[...(draft.sender||'')].slice(0,15).join('');let ss=29;ctx.fillStyle='#123d7a';ctx.textAlign='center';
-  const senderMaxWidth=310;
-  ctx.font='600 '+ss+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  while(ss>16&&ctx.measureText(sender).width>senderMaxWidth){
-    ss--;
-    ctx.font='600 '+ss+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  }
+  const sender=[...(draft.sender||'')].slice(0,15).join('');
+  ctx.fillStyle='#123d7a';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  fitCanvasName(
+    ctx,sender,
+    '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
+    '600',29,13,310
+  );
   ctx.fillText(sender,400,1265);
 
   // プレビューではQRを生成しない。実QRは完成版で差し込む。

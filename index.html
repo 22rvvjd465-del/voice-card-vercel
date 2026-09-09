@@ -29,7 +29,20 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;co
 </form></main>
 <script>
 const $=id=>document.getElementById(id);
-[['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
+function limitName15(id,countId){
+  const el=$(id), count=$(countId);
+  const apply=()=>{
+    const chars=[...el.value];
+    if(chars.length>15) el.value=chars.slice(0,15).join('');
+    count.textContent=[...el.value].length;
+  };
+  el.setAttribute('maxlength','15');
+  el.addEventListener('input',apply);
+  apply();
+}
+limitName15('recipient','rc');
+$('message').addEventListener('input',()=>$('mc').textContent=$('message').value.length);
+limitName15('sender','sc');
 $('photo').addEventListener('change',()=>{const f=$('photo').files[0];if(f){$('photoPreview').src=URL.createObjectURL(f);$('photoPreview').style.display='block'}});
 $('audio').addEventListener('change',()=>{
   const f=$('audio').files[0];
