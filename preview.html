@@ -82,7 +82,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const img=new Image();img.src=pu;await img.decode();
 
   // 新しい写真枠。写真位置・形は固定。
-  const p1={x:48,y:334},p2={x:988,y:285},p3={x:1012,y:853},p4={x:70,y:902};
+  const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
   const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
   const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
   const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
@@ -108,8 +108,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
-  const sender=(draft.sender||'').slice(0,10);
-let ss=24;ctx.fillStyle='#123d7a';ctx.textAlign='center';
+  const sender=(draft.sender||'').slice(0,10);let ss=24;ctx.fillStyle='#123d7a';ctx.textAlign='center';
   ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif';
   while(ss>17&&ctx.measureText(sender).width>330){ss--;ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif'}
   ctx.fillText(sender,398,1304);
@@ -118,6 +117,6 @@ let ss=24;ctx.fillStyle='#123d7a';ctx.textAlign='center';
   ctx.fillStyle='#9b8e7c';ctx.font='13px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',842,1110);
 
   // 期限は背景画像ではなくプログラム側で表示。
-  ctx.font='12px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',842,1228);ctx.fillText('購入日から1年間',842,1248);ctx.textAlign='left';
+  ctx.font='12px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',842,1224);ctx.fillText('購入日から1年間',842,1244);ctx.textAlign='left';
 })();
 </script></body></html>
