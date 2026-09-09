@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>コエフォト｜Classic Birthday プレビュー</title>
+<title>コエフォト｜Classic Birthday プレビュー v27</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f1ea;color:#4e4339;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
 .wrap{max-width:760px;margin:auto;padding:18px 14px 60px}.top{text-align:center}.top h1{font-size:21px;margin:7px}.top p{font-size:12px;color:#827568}
@@ -8,38 +8,63 @@
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}.tabs button{padding:12px;border:1px solid #cbb79c;background:#fffaf2;border-radius:12px;color:#655648;font-weight:700}.tabs button.on{background:#9f8064;color:white}
 .pane{display:none}.pane.on{display:block}.caption{text-align:center;font-size:12px;color:#817466;margin:8px 0 12px}
 .voiceFrameWrap{background:#0b1f3a;border-radius:16px;overflow:hidden}
-iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
+iframe{display:block;width:100%;height:980px;border:0;background:#091a33}
 .canvasWrap{background:#e9e4db;border-radius:16px;padding:10px;overflow:auto}canvas{display:block;width:100%;height:auto;max-width:600px;margin:auto;background:white}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.actions button{padding:14px;border-radius:13px;border:1px solid #bca68d;background:#fffaf2;color:#655648;font-weight:700}.actions .buy{background:#9f8064;color:#fff;border:0}.price{text-align:center;font-size:12px;color:#817466;margin-top:10px}
+@media(max-width:480px){iframe{height:860px}}
+
+.flow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:18px;
+  font-size:11px;
+  color:#8e8176;
+}
+.flow .step-current{
+  position:relative;
+  color:#4e4339;
+  font-weight:700;
+  padding:0 2px;
+}
+.flow .step-current::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-6px;
+  height:2px;
+  border-radius:999px;
+  background:#b69570;
+}
+.flow .step-future{color:#8e8176;font-weight:400}
+.flow .arrow{color:#b9afa4}
 
 </style></head><body><main class="wrap">
-<div class="top"><span class="badge">Classic Birthday</span><h1>2つのプレビューを確認</h1><p>ボイスページとメッセージカードは同じ入力内容から作成されます。</p></div>
+<div class="flow">
+  <span class="step-future">1 入力</span>
+  <span class="arrow">→</span>
+  <span class="step-current">2 プレビュー</span>
+  <span class="arrow">→</span>
+  <span class="step-future">3 完成</span>
+</div>
+<div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
 <div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
-<section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe id="voiceFrame" src="classic-birthday-voice.html" title="Classic Birthday ボイスページ"></iframe></div></section>
+<section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe src="classic-birthday-voice-v5-preview.html" title="Classic Birthday ボイスページ"></iframe></div></section>
 <section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div></section>
 <div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
 <div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
-
-// ボイスページから通知された実高さに合わせてiframeを自動調整。
-// 固定860/980pxによる下部の大きな空白をなくす。
-window.addEventListener('message',e=>{
-  if(e.origin!==location.origin)return;
-  const d=e.data||{};
-  if(d.type==='koefoto-voice-height' && Number.isFinite(d.height)){
-    const f=$('voiceFrame');
-    if(f)f.style.height=Math.ceil(d.height)+'px';
-  }
-});
 $('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');$('pv').classList.add('on');$('pm').classList.remove('on')};
 $('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on')};
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
 (async()=>{
- const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');if(!draft.message){alert('作成データがありません。作成画面に戻ります。');location.href='koephoto-create-v28.html';return}
+ const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');if(!draft.message){alert('作成データがありません。作成画面に戻ります。');location.href='koephoto-create-v27.html';return}
  const photo=await get('photo');const pu=URL.createObjectURL(photo);
  const c=$('card'),ctx=c.getContext('2d');const base=new Image();base.src='classic-birthday-message.png';await base.decode();ctx.drawImage(base,0,0,c.width,c.height);
  const img=new Image();img.src=pu;await img.decode();
@@ -61,9 +86,9 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
  ctx.fillStyle='#2b3c50';ctx.textBaseline='alphabetic';
  const recipientText=draft.recipient+'へ';
  const rn=recipientText.length;
- let recipientSize = rn<=5 ? 36 : rn<=8 ? 33 : 29;
+ let recipientSize = rn<=5 ? 36 : rn<=8 ? 33 : rn<=12 ? 29 : rn<=16 ? 25 : 22;
  ctx.font='300 '+recipientSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
- while(recipientSize>24 && ctx.measureText(recipientText).width>485){
+ while(recipientSize>20 && ctx.measureText(recipientText).width>485){
    recipientSize--;
    ctx.font='300 '+recipientSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
  }
@@ -84,10 +109,10 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
  ctx.fillStyle='#9a793f';
  const senderText=draft.sender;
  const sn=senderText.length;
- let senderSize = sn<=6 ? 28 : 26;
+ let senderSize = sn<=6 ? 28 : sn<=10 ? 26 : sn<=12 ? 23 : 21;
  const senderMaxWidth=330;
  ctx.font='500 '+senderSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
- while(senderSize>22 && ctx.measureText(senderText).width>senderMaxWidth){
+ while(senderSize>18 && ctx.measureText(senderText).width>senderMaxWidth){
    senderSize--;
    ctx.font='500 '+senderSize+'px "Hiragino Sans","Yu Gothic",sans-serif';
  }
