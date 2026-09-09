@@ -103,7 +103,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
 
   // MESSAGE本文：最大5行、自動縮小。
   ctx.textAlign='left';ctx.fillStyle='#46515c';
-  const rules=[1018,1070,1122,1174,1226],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
+  const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
   while(size>=24){ctx.font='400 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
@@ -111,7 +111,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const sender=(draft.sender||'').slice(0,10);let ss=29;ctx.fillStyle='#123d7a';ctx.textAlign='center';
   ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif';
   while(ss>20&&ctx.measureText(sender).width>330){ss--;ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif'}
-  ctx.fillText(sender,398,1289);
+  ctx.fillText(sender,400,1265);
 
   // プレビューではQRを生成しない。実QRは完成版で差し込む。
   ctx.fillStyle='#9b8e7c';ctx.font='13px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',842,1110);
