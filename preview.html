@@ -82,7 +82,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const img=new Image();img.src=pu;await img.decode();
 
   // 新しい写真枠。写真位置・形は固定。
-  const p1={x:48,y:332},p2={x:988,y:304},p3={x:1011,y:863},p4={x:70,y:897};
+  const p1={x:48,y:334},p2={x:988,y:285},p3={x:1012,y:853},p4={x:70,y:902};
   const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
   const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
   const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
@@ -103,22 +103,21 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
 
   // MESSAGE本文：最大5行、自動縮小。
   ctx.textAlign='left';ctx.fillStyle='#46515c';
-  const rules=[1018,1070,1122,1174,1226],maxw=480;let size=(draft.message||'').length<=35?25:(draft.message||'').length<=65?22:20,lines=[];
-  while(size>=17){ctx.font='400 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
+  const rules=[1018,1070,1122,1174,1226],maxw=480;let size=(draft.message||'').length<=35?28:(draft.message||'').length<=65?25:22,lines=[];
+  while(size>=19){ctx.font='400 '+size+'px "Hiragino Sans","Yu Gothic",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
   const sender=(draft.sender||'').slice(0,10);
-ctx.fillStyle='#123d7a';
-ctx.font='600 19px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';let ss=28;ctx.fillStyle='#9a793f';ctx.textAlign='center';
+let ss=24;ctx.fillStyle='#123d7a';ctx.textAlign='center';
   ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif';
   while(ss>17&&ctx.measureText(sender).width>330){ss--;ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif'}
   ctx.fillText(sender,398,1304);
 
   // プレビューではQRを生成しない。実QRは完成版で差し込む。
-  ctx.fillStyle='#9b8e7c';ctx.font='13px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',842,1104);
+  ctx.fillStyle='#9b8e7c';ctx.font='13px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',842,1110);
 
   // 期限は背景画像ではなくプログラム側で表示。
-  ctx.font='12px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',842,1218);ctx.fillText('購入日から1年間',842,1238);ctx.textAlign='left';
+  ctx.font='12px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',842,1228);ctx.fillText('購入日から1年間',842,1248);ctx.textAlign='left';
 })();
 </script></body></html>
