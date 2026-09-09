@@ -205,8 +205,8 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
 <script>
 (function(){
   const LIMITS = {
-    recipient: { maxChars: 12, maxPx: 20 },
-    sender:    { maxChars: 10, maxPx: 19 }
+    recipient: { maxChars: 15, maxPx: 20, minPx: 9 },
+    sender:    { maxChars: 15, maxPx: 19, minPx: 9 }
   };
 
   function fitName(el){

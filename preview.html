@@ -96,10 +96,14 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const decor=new Image();decor.src='classic-birthday-decor-overlay.png';await decor.decode();ctx.drawImage(decor,0,0,c.width,c.height);
 
   // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
-  const recipient=(draft.recipient||'').slice(0,12);
+  const recipient=[...(draft.recipient||'')].slice(0,15).join('');
   let rs=34;ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  const recipientMaxWidth=455;
   ctx.font='600 '+rs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  while(rs>18&&ctx.measureText(recipient).width>470){rs--;ctx.font='600 '+rs+'px "Hiragino Sans","Yu Gothic",sans-serif'}
+  while(rs>16&&ctx.measureText(recipient).width>recipientMaxWidth){
+    rs--;
+    ctx.font='600 '+rs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
+  }
   ctx.fillText(recipient,548,252);
 
   // MESSAGE本文：最大5行、自動縮小。
@@ -109,9 +113,13 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
   // FROM欄：贈り主名。
-  const sender=(draft.sender||'').slice(0,10);let ss=29;ctx.fillStyle='#123d7a';ctx.textAlign='center';
+  const sender=[...(draft.sender||'')].slice(0,15).join('');let ss=29;ctx.fillStyle='#123d7a';ctx.textAlign='center';
+  const senderMaxWidth=310;
   ctx.font='600 '+ss+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-  while(ss>20&&ctx.measureText(sender).width>330){ss--;ctx.font='600 '+ss+'px "Hiragino Sans","Yu Gothic",sans-serif'}
+  while(ss>16&&ctx.measureText(sender).width>senderMaxWidth){
+    ss--;
+    ctx.font='600 '+ss+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
+  }
   ctx.fillText(sender,400,1265);
 
   // プレビューではQRを生成しない。実QRは完成版で差し込む。
