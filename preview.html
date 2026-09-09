@@ -114,9 +114,9 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   ctx.fillText(sender,400,1265);
 
   // プレビューではQRを生成しない。実QRは完成版で差し込む。
-  ctx.fillStyle='#9b8e7c';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',847,1086);
+  ctx.fillStyle='#9b8e7c';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',847,1086);
 
   // 期限は背景画像ではなくプログラム側で表示。
-  ctx.textBaseline='alphabetic';ctx.font='12px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',842,1224);ctx.fillText('購入日から1年間',842,1244);ctx.textAlign='left';
+  ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1254);ctx.textAlign='left';
 })();
 </script></body></html>
