@@ -49,6 +49,9 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 .photoAdjust .adjustTitle{font-size:13px;font-weight:700;color:#5d5146;margin-bottom:4px}
 .photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.5;margin-bottom:10px}
 .photoAdjust .adjustRow{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:10px;margin:7px 0}
+.photoAdjust .adjustRow.is-hidden{display:none}
+.photoAdjust .fitNote{display:none;margin:6px 0 2px;padding:9px 10px;border-radius:10px;background:#f3ede5;color:#6f6256;font-size:11px;line-height:1.5}
+.photoAdjust .fitNote.on{display:block}
 .photoAdjust label{font-size:11px;color:#6f6256}
 .photoAdjust input[type=range]{width:100%;accent-color:#9f8064}
 .photoAdjust .reset{display:block;width:auto;margin:8px auto 0;padding:7px 12px;border:1px solid #cbb79c;border-radius:999px;background:#fff;color:#655648;font-size:11px;font-weight:700}
@@ -63,7 +66,7 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
 <div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
 <section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe id="voiceFrame" src="classic-birthday-voice.html" title="Classic Birthday ボイスページ"></iframe></div></section>
-<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust"><div class="adjustTitle">写真の表示位置</div><div class="adjustNote">写真は枠に合わせて自動調整されます。見切れが気になる場合だけ位置を微調整してください。</div><div class="adjustRow"><label for="focusX">左右</label><input id="focusX" type="range" min="0" max="100" value="50"></div><div class="adjustRow"><label for="focusY">上下</label><input id="focusY" type="range" min="0" max="100" value="50"></div><button id="focusReset" class="reset" type="button">中央に戻す</button></div></section>
+<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust"><div class="adjustTitle">写真の表示位置</div><div class="adjustNote">写真は枠に合わせて自動調整されます。見切れが気になる場合だけ位置を微調整してください。</div><div id="focusXRow" class="adjustRow"><label for="focusX">左右</label><input id="focusX" type="range" min="0" max="100" value="50"></div><div id="focusYRow" class="adjustRow"><label for="focusY">上下</label><input id="focusY" type="range" min="0" max="100" value="50"></div><div id="fitNote" class="fitNote"></div><button id="focusReset" class="reset" type="button">中央に戻す</button></div></section>
 <div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
 <div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
 </main>
@@ -160,7 +163,28 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   drawCard();
 
   const fx=$('focusX'),fy=$('focusY');
+  const fxRow=$('focusXRow'),fyRow=$('focusYRow'),fitNote=$('fitNote'),resetBtn=$('focusReset');
   fx.value=Math.round(focusX*100); fy.value=Math.round(focusY*100);
+
+  // 実際に動かせる方向だけを表示する。動かないスライダーは故障と誤解されやすいため隠す。
+  const frameRatio=(Math.max(48,989,1012,70)-Math.min(48,989,1012,70))/(Math.max(334,286,854,902)-Math.min(334,286,854,902));
+  const imageRatio=img.width/img.height;
+  const canMoveX=imageRatio>frameRatio+0.001;
+  const canMoveY=imageRatio<frameRatio-0.001;
+  fxRow.classList.toggle('is-hidden',!canMoveX);
+  fyRow.classList.toggle('is-hidden',!canMoveY);
+  fx.disabled=!canMoveX; fy.disabled=!canMoveY;
+  if(canMoveX){
+    fitNote.textContent='この写真は上下がぴったり収まっています。左右の位置だけ調整できます。';
+    fitNote.classList.add('on');
+  }else if(canMoveY){
+    fitNote.textContent='この写真は左右がぴったり収まっています。上下の位置だけ調整できます。';
+    fitNote.classList.add('on');
+  }else{
+    fitNote.textContent='この写真は枠にぴったり収まっています。位置調整は不要です。';
+    fitNote.classList.add('on');
+  }
+  resetBtn.style.display=(canMoveX||canMoveY)?'block':'none';
   function saveFocus(){
     draft.photoFocusX=focusX; draft.photoFocusY=focusY;
     sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
