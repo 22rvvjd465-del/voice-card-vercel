@@ -44,17 +44,13 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 .flow .arrow{color:#b9afa4}
 
 
-.photoAdjust{display:none;margin:12px auto 0;max-width:600px;padding:12px 14px;background:#fffaf2;border:1px solid #d7c8b5;border-radius:14px}
+
+.photoAdjust{display:none;margin:12px auto 0;max-width:600px;padding:10px 14px;background:#fffaf2;border:1px solid #d7c8b5;border-radius:14px;text-align:center}
 .photoAdjust.on{display:block}
 .photoAdjust .adjustTitle{font-size:13px;font-weight:700;color:#5d5146;margin-bottom:4px}
-.photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.5;margin-bottom:10px}
-.photoAdjust .adjustRow{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:10px;margin:7px 0}
-.photoAdjust .adjustRow.is-hidden{display:none}
-.photoAdjust .fitNote{display:none;margin:6px 0 2px;padding:9px 10px;border-radius:10px;background:#f3ede5;color:#6f6256;font-size:11px;line-height:1.5}
-.photoAdjust .fitNote.on{display:block}
-.photoAdjust label{font-size:11px;color:#6f6256}
-.photoAdjust input[type=range]{width:100%;accent-color:#9f8064}
-.photoAdjust .reset{display:block;width:auto;margin:8px auto 0;padding:7px 12px;border:1px solid #cbb79c;border-radius:999px;background:#fff;color:#655648;font-size:11px;font-weight:700}
+.photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.5}
+#card.photo-draggable{cursor:grab;touch-action:none}
+#card.photo-dragging{cursor:grabbing}
 </style></head><body><main class="wrap">
 <div class="flow">
   <span class="step-future">1 入力</span>
@@ -66,7 +62,7 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
 <div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
 <section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe id="voiceFrame" src="classic-birthday-voice.html" title="Classic Birthday ボイスページ"></iframe></div></section>
-<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust"><div class="adjustTitle">写真の表示位置</div><div class="adjustNote">写真は枠に合わせて自動調整されます。見切れが気になる場合だけ位置を微調整してください。</div><div id="focusXRow" class="adjustRow"><label for="focusX">左右</label><input id="focusX" type="range" min="0" max="100" value="50"></div><div id="focusYRow" class="adjustRow"><label for="focusY">上下</label><input id="focusY" type="range" min="0" max="100" value="50"></div><div id="fitNote" class="fitNote"></div><button id="focusReset" class="reset" type="button">中央に戻す</button></div></section>
+<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust"><div class="adjustTitle">写真の表示位置</div><div id="dragNote" class="adjustNote">写真部分を指で動かして位置を調整できます。</div></div></section>
 <div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
 <div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
 </main>
@@ -112,16 +108,21 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
     (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
   ]);
   await document.fonts.load('28px "Zen Maru Gothic"');
+  const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
+  const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
+  const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
+  const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
+  let sw=img.width,sh=img.height;
+  if(ir>fr){sw=img.height*fr}else{sh=img.width/fr}
+  const canMoveX=(img.width-sw)>0.5;
+  const canMoveY=(img.height-sh)>0.5;
+
   function drawCard(){
     ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0,c.width,c.height);
 
-    // 新しい写真枠。写真位置・形は固定。
-    const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
-    const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
-    const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
-    const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
-    let sx=0,sy=0,sw=img.width,sh=img.height;
-    if(ir>fr){sw=img.height*fr;sx=Math.min(img.width-sw,Math.max(0,img.width*focusX-sw/2))}else{sh=img.width/fr;sy=Math.min(img.height-sh,Math.max(0,img.height*focusY-sh/2))}
+    // 写真枠。写真はcover表示し、focus値で表示位置を直接調整する。
+    const sx=canMoveX?(img.width-sw)*focusX:0;
+    const sy=canMoveY?(img.height-sh)*focusY:0;
     ctx.save();ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();
     ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);ctx.restore();
 
@@ -162,54 +163,76 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   }
   drawCard();
 
-  const fx=$('focusX'),fy=$('focusY');
-  const fxRow=$('focusXRow'),fyRow=$('focusYRow'),fitNote=$('fitNote'),resetBtn=$('focusReset');
-  fx.value=Math.round(focusX*100); fy.value=Math.round(focusY*100);
-
-  // 実際に“見た目で分かる程度”に動かせる方向だけを表示する。
-  // 枠と写真の比率がほぼ同じ場合は、理論上わずかに動いてもユーザーには変化が見えないため隠す。
-  const frameRatio=(Math.max(48,989,1012,70)-Math.min(48,989,1012,70))/(Math.max(334,286,854,902)-Math.min(334,286,854,902));
-  const imageRatio=img.width/img.height;
-  const MIN_OVERFLOW=0.035; // 3.5%以上の余りがある時だけ位置調整を出す
-  const overflowX=imageRatio>frameRatio ? 1-(frameRatio/imageRatio) : 0;
-  const overflowY=imageRatio<frameRatio ? 1-(imageRatio/frameRatio) : 0;
-  const canMoveX=overflowX>=MIN_OVERFLOW;
-  const canMoveY=overflowY>=MIN_OVERFLOW;
-
-  fxRow.style.display=canMoveX?'grid':'none';
-  fyRow.style.display=canMoveY?'grid':'none';
-  fx.disabled=!canMoveX; fy.disabled=!canMoveY;
-
-  if(canMoveX){
-    fitNote.textContent='上下は枠に収まっています。左右だけ位置を調整できます。';
-    fitNote.classList.add('on');
-  }else if(canMoveY){
-    fitNote.textContent='左右は枠に収まっています。上下だけ位置を調整できます。';
-    fitNote.classList.add('on');
+  const dragNote=$('dragNote');
+  const photoAdjust=$('photoAdjust');
+  const movable=canMoveX||canMoveY;
+  if(movable){
+    c.classList.add('photo-draggable');
+    dragNote.textContent=canMoveX
+      ? '写真部分を左右に指で動かして、表示位置を調整できます。'
+      : '写真部分を上下に指で動かして、表示位置を調整できます。';
   }else{
-    fitNote.textContent='この写真は枠内にきれいに収まっています。位置調整は不要です。';
-    fitNote.classList.add('on');
+    dragNote.textContent='この写真は枠内にきれいに収まっています。位置調整は不要です。';
   }
-  resetBtn.style.display=(canMoveX||canMoveY)?'block':'none';
+
   function saveFocus(){
     draft.photoFocusX=focusX; draft.photoFocusY=focusY;
     sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
     const frame=$('voiceFrame');
     if(frame && frame.contentWindow) frame.contentWindow.postMessage({type:'koefoto-photo-focus',x:focusX,y:focusY},location.origin);
   }
-  let raf=0;
-  function updateFocus(){
-    focusX=Number(fx.value)/100; focusY=Number(fy.value)/100;
-    if(!raf){
-      raf=requestAnimationFrame(()=>{
-        raf=0;
-        drawCard();
-        saveFocus();
-      });
-    }
+
+  // 写真部分を直接ドラッグ。枠外からの操作は無視する。
+  function canvasPoint(ev){
+    const r=c.getBoundingClientRect();
+    return {x:(ev.clientX-r.left)*c.width/r.width,y:(ev.clientY-r.top)*c.height/r.height};
   }
-  fx.addEventListener('input',updateFocus,{passive:true});
-  fy.addEventListener('input',updateFocus,{passive:true});
-  $('focusReset').addEventListener('click',()=>{focusX=.5;focusY=.5;fx.value=50;fy.value=50;drawCard();saveFocus()});
+  function inPhotoQuad(pt){
+    const poly=[p1,p2,p3,p4];
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const a=poly[i],b=poly[j];
+      if(((a.y>pt.y)!==(b.y>pt.y)) && (pt.x<(b.x-a.x)*(pt.y-a.y)/(b.y-a.y)+a.x)) inside=!inside;
+    }
+    return inside;
+  }
+
+  let dragging=false,last=null,raf=0;
+  c.addEventListener('pointerdown',ev=>{
+    if(!movable)return;
+    const pt=canvasPoint(ev);
+    if(!inPhotoQuad(pt))return;
+    dragging=true; last=pt;
+    c.classList.add('photo-dragging');
+    c.setPointerCapture?.(ev.pointerId);
+    ev.preventDefault();
+  });
+  c.addEventListener('pointermove',ev=>{
+    if(!dragging||!last)return;
+    const pt=canvasPoint(ev);
+    const dx=pt.x-last.x,dy=pt.y-last.y;
+    last=pt;
+    if(canMoveX){
+      const maxShift=(img.width-sw)*(fw/sw);
+      if(maxShift>0) focusX=Math.min(1,Math.max(0,focusX-dx/maxShift));
+    }
+    if(canMoveY){
+      const maxShift=(img.height-sh)*(fh/sh);
+      if(maxShift>0) focusY=Math.min(1,Math.max(0,focusY-dy/maxShift));
+    }
+    if(!raf){
+      raf=requestAnimationFrame(()=>{raf=0;drawCard()});
+    }
+    ev.preventDefault();
+  });
+  function endDrag(ev){
+    if(!dragging)return;
+    dragging=false; last=null;
+    c.classList.remove('photo-dragging');
+    try{c.releasePointerCapture?.(ev.pointerId)}catch(_){}
+    saveFocus();
+  }
+  c.addEventListener('pointerup',endDrag);
+  c.addEventListener('pointercancel',endDrag);
 })();
 </script></body></html>
