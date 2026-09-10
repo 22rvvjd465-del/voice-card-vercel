@@ -93,7 +93,20 @@ async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{con
     return best;
   }
 
-function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
+function wrap(ctx,text,maxWidth){
+  const lines=[];
+  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');
+  paragraphs.forEach((paragraph,pi)=>{
+    if(paragraph===''){lines.push('');return;}
+    let cur='';
+    for(const ch of paragraph){
+      if(!cur || ctx.measureText(cur+ch).width<=maxWidth){cur+=ch;}
+      else{lines.push(cur);cur=ch;}
+    }
+    if(cur)lines.push(cur);
+  });
+  return lines;
+}
 (async()=>{
   const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
   let focusX=Number.isFinite(Number(draft.photoFocusX))?Number(draft.photoFocusX):0.5;
