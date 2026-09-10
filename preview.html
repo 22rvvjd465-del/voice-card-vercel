@@ -166,22 +166,28 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const fxRow=$('focusXRow'),fyRow=$('focusYRow'),fitNote=$('fitNote'),resetBtn=$('focusReset');
   fx.value=Math.round(focusX*100); fy.value=Math.round(focusY*100);
 
-  // 実際に動かせる方向だけを表示する。動かないスライダーは故障と誤解されやすいため隠す。
+  // 実際に“見た目で分かる程度”に動かせる方向だけを表示する。
+  // 枠と写真の比率がほぼ同じ場合は、理論上わずかに動いてもユーザーには変化が見えないため隠す。
   const frameRatio=(Math.max(48,989,1012,70)-Math.min(48,989,1012,70))/(Math.max(334,286,854,902)-Math.min(334,286,854,902));
   const imageRatio=img.width/img.height;
-  const canMoveX=imageRatio>frameRatio+0.001;
-  const canMoveY=imageRatio<frameRatio-0.001;
-  fxRow.classList.toggle('is-hidden',!canMoveX);
-  fyRow.classList.toggle('is-hidden',!canMoveY);
+  const MIN_OVERFLOW=0.035; // 3.5%以上の余りがある時だけ位置調整を出す
+  const overflowX=imageRatio>frameRatio ? 1-(frameRatio/imageRatio) : 0;
+  const overflowY=imageRatio<frameRatio ? 1-(imageRatio/frameRatio) : 0;
+  const canMoveX=overflowX>=MIN_OVERFLOW;
+  const canMoveY=overflowY>=MIN_OVERFLOW;
+
+  fxRow.style.display=canMoveX?'grid':'none';
+  fyRow.style.display=canMoveY?'grid':'none';
   fx.disabled=!canMoveX; fy.disabled=!canMoveY;
+
   if(canMoveX){
-    fitNote.textContent='この写真は上下がぴったり収まっています。左右の位置だけ調整できます。';
+    fitNote.textContent='上下は枠に収まっています。左右だけ位置を調整できます。';
     fitNote.classList.add('on');
   }else if(canMoveY){
-    fitNote.textContent='この写真は左右がぴったり収まっています。上下の位置だけ調整できます。';
+    fitNote.textContent='左右は枠に収まっています。上下だけ位置を調整できます。';
     fitNote.classList.add('on');
   }else{
-    fitNote.textContent='この写真は枠にぴったり収まっています。位置調整は不要です。';
+    fitNote.textContent='この写真は枠内にきれいに収まっています。位置調整は不要です。';
     fitNote.classList.add('on');
   }
   resetBtn.style.display=(canMoveX||canMoveY)?'block':'none';
