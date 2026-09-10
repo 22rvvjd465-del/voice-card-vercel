@@ -209,11 +209,27 @@ function wrap(ctx,text,maxWidth){
 
   updateAdjustUI();
 
-  function saveFocus(){
-    draft.photoFocusX=focusX; draft.photoFocusY=focusY; draft.photoZoom=photoZoom;
-    sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+  function syncVoicePhoto(){
     const frame=$('voiceFrame');
-    if(frame && frame.contentWindow) frame.contentWindow.postMessage({type:'koefoto-photo-focus',x:focusX,y:focusY},location.origin);
+    if(frame && frame.contentWindow){
+      frame.contentWindow.postMessage(
+        {type:'koefoto-photo-transform',x:focusX,y:focusY,zoom:photoZoom},
+        location.origin
+      );
+    }
+  }
+
+  function saveFocus(){
+    draft.photoFocusX=focusX;
+    draft.photoFocusY=focusY;
+    draft.photoZoom=photoZoom;
+    sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+    syncVoicePhoto();
+  }
+
+  const voiceFrame=$('voiceFrame');
+  if(voiceFrame){
+    voiceFrame.addEventListener('load',()=>setTimeout(syncVoicePhoto,0));
   }
 
 
@@ -277,7 +293,7 @@ function wrap(ctx,text,maxWidth){
         photoZoom=Math.min(2.5,Math.max(1,pinchStartZoom*(d/pinchStartDistance)));
         updateAdjustUI();
         if(!raf){
-          raf=requestAnimationFrame(()=>{raf=0;drawCard()});
+          raf=requestAnimationFrame(()=>{raf=0;drawCard();syncVoicePhoto()});
         }
       }
       ev.preventDefault();
@@ -297,7 +313,7 @@ function wrap(ctx,text,maxWidth){
       if(maxShift>0) focusY=Math.min(1,Math.max(0,focusY-dy/maxShift));
     }
     if(!raf){
-      raf=requestAnimationFrame(()=>{raf=0;drawCard()});
+      raf=requestAnimationFrame(()=>{raf=0;drawCard();syncVoicePhoto()});
     }
     ev.preventDefault();
   });
@@ -334,6 +350,7 @@ function wrap(ctx,text,maxWidth){
     photoZoom=Math.min(2.5,Math.max(1,photoZoom*factor));
     updateAdjustUI();
     drawCard();
+    syncVoicePhoto();
     saveFocus();
   },{passive:false});
 })();

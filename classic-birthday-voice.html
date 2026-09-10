@@ -124,7 +124,7 @@ if(window.self !== window.top){
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=Math.floor(s%60);return `${m}:${String(sec).padStart(2,'0')}`};
-let photoFocusX=.5,photoFocusY=.5,redrawPhoto=null;
+let photoFocusX=.5,photoFocusY=.5,photoZoom=1,redrawPhoto=null;
 
 (async()=>{
   let raw='{}';
@@ -132,6 +132,7 @@ let photoFocusX=.5,photoFocusY=.5,redrawPhoto=null;
   const d=JSON.parse(raw);
   photoFocusX=Number.isFinite(Number(d.photoFocusX))?Math.min(1,Math.max(0,Number(d.photoFocusX))):.5;
   photoFocusY=Number.isFinite(Number(d.photoFocusY))?Math.min(1,Math.max(0,Number(d.photoFocusY))):.5;
+  photoZoom=Number.isFinite(Number(d.photoZoom))?Math.min(2.5,Math.max(1,Number(d.photoZoom))):1;
   $('recipient').textContent=d.recipient||'';
   $('sender').textContent=d.sender||'';
   try{
@@ -163,14 +164,19 @@ let photoFocusX=.5,photoFocusY=.5,redrawPhoto=null;
       redrawPhoto=()=>{
         ctx.clearRect(0,0,c.width,c.height);
         const ir=img.width/img.height, fr=fw/fh;
-        let sx=0,sy=0,sw=img.width,sh=img.height;
+
+        let baseSw=img.width,baseSh=img.height;
         if(ir>fr){
-          sw=img.height*fr;
-          sx=Math.min(img.width-sw,Math.max(0,img.width*photoFocusX-sw/2));
+          baseSw=img.height*fr;
         }else{
-          sh=img.width/fr;
-          sy=Math.min(img.height-sh,Math.max(0,img.height*photoFocusY-sh/2));
+          baseSh=img.width/fr;
         }
+
+        const sw=baseSw/photoZoom;
+        const sh=baseSh/photoZoom;
+        const sx=(img.width-sw)>0.5 ? (img.width-sw)*photoFocusX : 0;
+        const sy=(img.height-sh)>0.5 ? (img.height-sh)*photoFocusY : 0;
+
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(pts[0].x,pts[0].y);ctx.lineTo(pts[1].x,pts[1].y);ctx.lineTo(pts[2].x,pts[2].y);ctx.lineTo(pts[3].x,pts[3].y);
@@ -187,10 +193,13 @@ let photoFocusX=.5,photoFocusY=.5,redrawPhoto=null;
 })();
 
 window.addEventListener('message',e=>{
-  if(e.origin!==location.origin || !e.data || e.data.type!=='koefoto-photo-focus')return;
-  const x=Number(e.data.x),y=Number(e.data.y);
+  if(e.origin!==location.origin || !e.data)return;
+  if(e.data.type!=='koefoto-photo-transform' && e.data.type!=='koefoto-photo-focus')return;
+
+  const x=Number(e.data.x),y=Number(e.data.y),z=Number(e.data.zoom);
   if(Number.isFinite(x))photoFocusX=Math.min(1,Math.max(0,x));
   if(Number.isFinite(y))photoFocusY=Math.min(1,Math.max(0,y));
+  if(Number.isFinite(z))photoZoom=Math.min(2.5,Math.max(1,z));
   if(redrawPhoto)redrawPhoto();
 });
 
