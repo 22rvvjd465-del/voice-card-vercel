@@ -12,7 +12,7 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper);box-shadow:0 10px 30px rgba(30,35,45,.09)}
 .photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
 .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
-.recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:600;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* 固定アート内の実際の罫線座標に合わせて配置。
    To line:   x=338..760, y=272 / 1060x1484
    From line: x=421..747, y=1237 / 1060x1484
@@ -204,9 +204,11 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
 
 <script>
 (function(){
+  // メッセージカードと同じ名前ルールに統一。
+  // Canvas基準: 最大40px / 最小14px、15文字、幅は recipient=455px / sender=310px。
   const LIMITS = {
-    recipient: { maxChars: 15, maxPx: 20, minPx: 8 },
-    sender:    { maxChars: 15, maxPx: 19, minPx: 8 }
+    recipient: { maxChars: 15, maxCanvasPx: 40, minCanvasPx: 14, maxCanvasWidth: 455 },
+    sender:    { maxChars: 15, maxCanvasPx: 40, minCanvasPx: 14, maxCanvasWidth: 310 }
   };
 
   function fitName(el){
@@ -221,12 +223,13 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
       el.textContent = chars.slice(0, spec.maxChars).join('');
     }
 
-    // 金色の下線と同じ幅の要素から、左右3pxずつ安全余白を引いた実幅。
     const cs = getComputedStyle(el);
-    const available =
-      el.getBoundingClientRect().width
-      - (parseFloat(cs.paddingLeft) || 0)
-      - (parseFloat(cs.paddingRight) || 0);
+    const card = document.querySelector('.card');
+    if(!card) return;
+
+    // メッセージカード(Canvas 1060px幅)と同じ基準を、現在の表示幅へ比例変換する。
+    const scaleToCss = card.getBoundingClientRect().width / 1060;
+    const available = spec.maxCanvasWidth * scaleToCss;
 
     if(available <= 0) return;
 
@@ -245,9 +248,9 @@ seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(
     measure.style.letterSpacing = cs.letterSpacing;
     document.body.appendChild(measure);
 
-    // 実測幅が下線内に入る最大サイズを0.1px精度で探索。
-    let low = spec.minPx || 8;
-    let high = spec.maxPx;
+    // メッセージカードと同じ 14〜40px(Canvas基準) を表示幅へ比例変換して探索。
+    let low = spec.minCanvasPx * scaleToCss;
+    let high = spec.maxCanvasPx * scaleToCss;
     let best = low;
 
     for(let i=0; i<18; i++){
