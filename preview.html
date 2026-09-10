@@ -45,11 +45,11 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 
 
 
-.photoAdjust{display:none;margin:10px auto 0;max-width:600px;padding:0 4px;text-align:left}
+.photoAdjust{display:none;margin:12px auto 0;max-width:600px;padding:10px 12px;border-left:3px solid #b69570;background:rgba(255,250,242,.62);text-align:left}
 .photoAdjust.on{display:block}
-.photoAdjust .adjustTitle{font-size:11px;font-weight:700;color:#7d7166;margin-bottom:2px}
-.photoAdjust .adjustTitle::before{content:"↔ ";font-weight:400}
-.photoAdjust .adjustNote{font-size:11px;color:#8b8178;line-height:1.55}
+.photoAdjust .adjustTitle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#655648;margin-bottom:3px}
+.photoAdjust .adjustTitle::before{content:"✥";font-size:14px;font-weight:400;color:#9f8064}
+.photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.55}
 #card.photo-draggable{cursor:grab;touch-action:none}
 #card.photo-dragging{cursor:grabbing}
 </style></head><body><main class="wrap">
@@ -169,9 +169,13 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const movable=canMoveX||canMoveY;
   if(movable){
     c.classList.add('photo-draggable');
-    dragNote.textContent=canMoveX
-      ? '写真部分を左右に指で動かして、表示位置を調整できます。'
-      : '写真部分を上下に指で動かして、表示位置を調整できます。';
+    if(canMoveX && canMoveY){
+      dragNote.textContent='写真部分を指で上下左右に動かして、表示位置を調整できます。';
+    }else if(canMoveX){
+      dragNote.textContent='写真部分を指で左右に動かして、表示位置を調整できます。';
+    }else{
+      dragNote.textContent='写真部分を指で上下に動かして、表示位置を調整できます。';
+    }
   }else{
     dragNote.textContent='この写真は枠内にきれいに収まっています。位置調整は不要です。';
   }
