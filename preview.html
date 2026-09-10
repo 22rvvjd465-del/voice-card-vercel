@@ -43,6 +43,15 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 .flow .step-future{color:#8e8176;font-weight:400}
 .flow .arrow{color:#b9afa4}
 
+
+.photoAdjust{display:none;margin:12px auto 0;max-width:600px;padding:12px 14px;background:#fffaf2;border:1px solid #d7c8b5;border-radius:14px}
+.photoAdjust.on{display:block}
+.photoAdjust .adjustTitle{font-size:13px;font-weight:700;color:#5d5146;margin-bottom:4px}
+.photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.5;margin-bottom:10px}
+.photoAdjust .adjustRow{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:10px;margin:7px 0}
+.photoAdjust label{font-size:11px;color:#6f6256}
+.photoAdjust input[type=range]{width:100%;accent-color:#9f8064}
+.photoAdjust .reset{display:block;width:auto;margin:8px auto 0;padding:7px 12px;border:1px solid #cbb79c;border-radius:999px;background:#fff;color:#655648;font-size:11px;font-weight:700}
 </style></head><body><main class="wrap">
 <div class="flow">
   <span class="step-future">1 入力</span>
@@ -54,7 +63,7 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
 <div class="tabs"><button id="tv" class="on">ボイスページ</button><button id="tm">メッセージカード</button></div>
 <section id="pv" class="pane on"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe id="voiceFrame" src="classic-birthday-voice.html" title="Classic Birthday ボイスページ"></iframe></div></section>
-<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div></section>
+<section id="pm" class="pane"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust"><div class="adjustTitle">写真の表示位置</div><div class="adjustNote">写真は枠に合わせて自動調整されます。見切れが気になる場合だけ位置を微調整してください。</div><div class="adjustRow"><label for="focusX">左右</label><input id="focusX" type="range" min="0" max="100" value="50"></div><div class="adjustRow"><label for="focusY">上下</label><input id="focusY" type="range" min="0" max="100" value="50"></div><button id="focusReset" class="reset" type="button">中央に戻す</button></div></section>
 <div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
 <div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
 </main>
@@ -68,8 +77,8 @@ window.addEventListener('message',e=>{
     frame.style.height=Math.max(100,e.data.height)+'px';
   }
 });
-$('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');$('pv').classList.add('on');$('pm').classList.remove('on')};
-$('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on')};
+$('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');$('pv').classList.add('on');$('pm').classList.remove('on');$('photoAdjust').classList.remove('on')};
+$('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on');$('photoAdjust').classList.add('on')};
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 
@@ -87,58 +96,76 @@ async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{con
 function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;else{lines.push(cur);cur=ch}}if(cur)lines.push(cur);return lines}
 (async()=>{
   const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
+  let focusX=Number.isFinite(Number(draft.photoFocusX))?Number(draft.photoFocusX):0.5;
+  let focusY=Number.isFinite(Number(draft.photoFocusY))?Number(draft.photoFocusY):0.5;
+  focusX=Math.min(1,Math.max(0,focusX)); focusY=Math.min(1,Math.max(0,focusY));
   if(!draft.message){alert('作成データがありません。入力画面に戻ります。');location.href='index.html';return}
   const photo=await get('photo');
   const pu=URL.createObjectURL(photo);
   const c=$('card'),ctx=c.getContext('2d');
   const base=new Image();base.src='classic-birthday-message.png';await base.decode();
-  ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0,c.width,c.height);
-  const img=new Image();img.src=pu;await img.decode();
+  async function drawCard(){
+    ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0,c.width,c.height);
+    const img=new Image();img.src=pu;await img.decode();
 
-  // 新しい写真枠。写真位置・形は固定。
-  const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
-  const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
-  const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
-  const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
-  let sx=0,sy=0,sw=img.width,sh=img.height;
-  if(ir>fr){sw=img.height*fr;sx=(img.width-sw)/2}else{sh=img.width/fr;sy=(img.height-sh)/2}
-  ctx.save();ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();
-  ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);ctx.restore();
+    // 新しい写真枠。写真位置・形は固定。
+    const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
+    const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
+    const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
+    const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
+    let sx=0,sy=0,sw=img.width,sh=img.height;
+    if(ir>fr){sw=img.height*fr;sx=Math.min(img.width-sw,Math.max(0,img.width*focusX-sw/2))}else{sh=img.width/fr;sy=Math.min(img.height-sh,Math.max(0,img.height*focusY-sh/2))}
+    ctx.save();ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();
+    ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);ctx.restore();
 
-  // 花リボン・左下ハート等を写真より前面に重ねる。
-  const decor=new Image();decor.src='classic-birthday-decor-overlay.png';await decor.decode();ctx.drawImage(decor,0,0,c.width,c.height);
+    // 花リボン・左下ハート等を写真より前面に重ねる。
+    const decor=new Image();decor.src='classic-birthday-decor-overlay.png';await decor.decode();ctx.drawImage(decor,0,0,c.width,c.height);
 
-  // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
-  const recipient=[...(draft.recipient||'')].slice(0,15).join('');
-  ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  fitCanvasName(
-    ctx,recipient,
-    '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
-    '500',40,14,455
-  );
-  ctx.fillText(recipient,548,252);
+    // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
+    const recipient=[...(draft.recipient||'')].slice(0,15).join('');
+    ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    fitCanvasName(
+      ctx,recipient,
+      '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
+      '500',40,14,455
+    );
+    ctx.fillText(recipient,548,252);
 
-  // MESSAGE本文：最大5行、自動縮小。
-  ctx.textAlign='left';ctx.fillStyle='#46515c';
-  const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
-  await document.fonts.load('28px "Zen Maru Gothic"');
-  while(size>=24){ctx.font='500 '+size+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
-  lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
+    // MESSAGE本文：最大5行、自動縮小。
+    ctx.textAlign='left';ctx.fillStyle='#46515c';
+    const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
+    await document.fonts.load('28px "Zen Maru Gothic"');
+    while(size>=24){ctx.font='500 '+size+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
+    lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
-  // FROM欄：贈り主名。
-  const sender=[...(draft.sender||'')].slice(0,15).join('');
-  ctx.fillStyle='#123d7a';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  fitCanvasName(
-    ctx,sender,
-    '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
-    '500',40,14,310
-  );
-  ctx.fillText(sender,400,1265);
+    // FROM欄：贈り主名。
+    const sender=[...(draft.sender||'')].slice(0,15).join('');
+    ctx.fillStyle='#123d7a';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    fitCanvasName(
+      ctx,sender,
+      '"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif',
+      '500',40,14,310
+    );
+    ctx.fillText(sender,400,1265);
 
-  // プレビューではQRを生成しない。実QRは完成版で差し込む。
-  ctx.fillStyle='#9b8e7c';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',847,1086);
+    // プレビューではQRを生成しない。実QRは完成版で差し込む。
+    ctx.fillStyle='#9b8e7c';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='24px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('QRコード',847,1086);
 
-  // 期限は背景画像ではなくプログラム側で表示。
-  ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1248);ctx.textAlign='left';
+    // 期限は背景画像ではなくプログラム側で表示。
+    ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1248);ctx.textAlign='left';
+  }
+  await drawCard();
+
+  const fx=$('focusX'),fy=$('focusY');
+  fx.value=Math.round(focusX*100); fy.value=Math.round(focusY*100);
+  function saveFocus(){
+    draft.photoFocusX=focusX; draft.photoFocusY=focusY;
+    sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+    const frame=$('voiceFrame');
+    if(frame && frame.contentWindow) frame.contentWindow.postMessage({type:'koefoto-photo-focus',x:focusX,y:focusY},location.origin);
+  }
+  function updateFocus(){focusX=Number(fx.value)/100;focusY=Number(fy.value)/100;drawCard();saveFocus()}
+  fx.addEventListener('input',updateFocus); fy.addEventListener('input',updateFocus);
+  $('focusReset').addEventListener('click',()=>{focusX=.5;focusY=.5;fx.value=50;fy.value=50;drawCard();saveFocus()});
 })();
 </script></body></html>
