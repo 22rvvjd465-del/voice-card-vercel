@@ -103,10 +103,14 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
   const photo=await get('photo');
   const pu=URL.createObjectURL(photo);
   const c=$('card'),ctx=c.getContext('2d');
-  const base=new Image();base.src='classic-birthday-message.png';await base.decode();
-  async function drawCard(){
+  const [base,img,decor]=await Promise.all([
+    (async()=>{const x=new Image();x.src='classic-birthday-message.png';await x.decode();return x})(),
+    (async()=>{const x=new Image();x.src=pu;await x.decode();return x})(),
+    (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
+  ]);
+  await document.fonts.load('28px "Zen Maru Gothic"');
+  function drawCard(){
     ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(base,0,0,c.width,c.height);
-    const img=new Image();img.src=pu;await img.decode();
 
     // 新しい写真枠。写真位置・形は固定。
     const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
@@ -119,7 +123,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
     ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);ctx.restore();
 
     // 花リボン・左下ハート等を写真より前面に重ねる。
-    const decor=new Image();decor.src='classic-birthday-decor-overlay.png';await decor.decode();ctx.drawImage(decor,0,0,c.width,c.height);
+    ctx.drawImage(decor,0,0,c.width,c.height);
 
     // To欄：名前のみHTML/Canvas側で表示。「へ」は付けない。
     const recipient=[...(draft.recipient||'')].slice(0,15).join('');
@@ -134,7 +138,6 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
     // MESSAGE本文：最大5行、自動縮小。
     ctx.textAlign='left';ctx.fillStyle='#46515c';
     const rules=[1011,1060,1108,1157,1207],maxw=480;let size=(draft.message||'').length<=35?34:(draft.message||'').length<=65?31:28,lines=[];
-    await document.fonts.load('28px "Zen Maru Gothic"');
     while(size>=24){ctx.font='500 '+size+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';lines=wrap(ctx,draft.message||'',maxw);if(lines.length<=5)break;size--}
     lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
 
@@ -154,7 +157,7 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
     // 期限は背景画像ではなくプログラム側で表示。
     ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1248);ctx.textAlign='left';
   }
-  await drawCard();
+  drawCard();
 
   const fx=$('focusX'),fy=$('focusY');
   fx.value=Math.round(focusX*100); fy.value=Math.round(focusY*100);
@@ -164,8 +167,19 @@ function wrap(ctx,text,maxWidth){let lines=[],cur='';for(const ch of text){if(ct
     const frame=$('voiceFrame');
     if(frame && frame.contentWindow) frame.contentWindow.postMessage({type:'koefoto-photo-focus',x:focusX,y:focusY},location.origin);
   }
-  function updateFocus(){focusX=Number(fx.value)/100;focusY=Number(fy.value)/100;drawCard();saveFocus()}
-  fx.addEventListener('input',updateFocus); fy.addEventListener('input',updateFocus);
+  let raf=0;
+  function updateFocus(){
+    focusX=Number(fx.value)/100; focusY=Number(fy.value)/100;
+    if(!raf){
+      raf=requestAnimationFrame(()=>{
+        raf=0;
+        drawCard();
+        saveFocus();
+      });
+    }
+  }
+  fx.addEventListener('input',updateFocus,{passive:true});
+  fy.addEventListener('input',updateFocus,{passive:true});
   $('focusReset').addEventListener('click',()=>{focusX=.5;focusY=.5;fx.value=50;fy.value=50;drawCard();saveFocus()});
 })();
 </script></body></html>
