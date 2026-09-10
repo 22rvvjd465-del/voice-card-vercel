@@ -10,6 +10,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Bl
 input,textarea{width:100%;padding:13px 14px;border:1px solid #c7b5a4;border-radius:12px;background:#fffdf9;font:inherit;color:var(--ink)}textarea{min-height:105px;resize:vertical}.count{text-align:right;font-size:11px;color:var(--muted);margin-top:5px}
 .upload{display:block;padding:14px;text-align:center;border:1.5px solid #bda58d;background:#fffdf9;border-radius:13px}.upload input{display:none}
 #photoPreview{display:none;width:100%;margin-top:10px;border-radius:12px;max-height:320px;object-fit:cover}audio{display:none;width:100%;margin-top:10px}
+.recorder{margin-top:8px}.record-btn{width:100%;padding:14px;border:1.5px solid #bda58d;border-radius:13px;background:#fffdf9;color:var(--ink);font-size:15px;font-weight:700}.record-btn.recording{background:#f5e8e2;border-color:#c78f7d;color:#8b4e3e}.record-status{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}.record-actions{display:none;gap:8px;margin-top:8px}.record-actions button{padding:11px 8px;font-size:13px;background:#fffdf9;color:var(--ink);border:1px solid #c7b5a4}.record-actions .delete-record{color:#8b4e3e}
 .consent{display:flex;gap:9px;font-size:12px;line-height:1.65;margin:20px 0;padding:13px;background:#f3ede5;border-radius:14px}.consent input{width:auto}
 button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;color:#fff;font-size:16px;font-weight:800}button:disabled{opacity:.4}.note{text-align:center;font-size:11px;color:var(--muted);margin-top:10px}
 .flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;font-size:11px;color:var(--muted)}
@@ -27,7 +28,7 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;co
 <div class="step"><div class="n">2</div><div class="content"><b>メッセージ</b><div class="field-help">メッセージカードに表示されます</div><textarea id="message" maxlength="100" required placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
 <div class="step"><div class="n">3</div><div class="content"><b>贈り主のお名前</b><div class="field-help">メッセージカードとボイスページに表示されます</div><input id="sender" maxlength="15" required placeholder="例：さくら"><div class="count"><span id="sc">0</span> / 15文字</div></div></div>
 <div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><label class="upload">＋ 写真を選ぶ<input id="photo" type="file" accept="image/*" required></label><img id="photoPreview"></div></div>
-<div class="step"><div class="n">5</div><div class="content"><b>音声を選ぶ</b><label class="upload">♬ 音声を選ぶ<input id="audio" type="file" required></label><audio id="audioPreview" controls></audio></div></div>
+<div class="step"><div class="n">5</div><div class="content"><b>声を録音する</b><div class="field-help">この画面でそのまま録音できます</div><div class="recorder"><button id="recordBtn" class="record-btn" type="button">🎙 録音を開始</button><div id="recordStatus" class="record-status">ボタンを押すとマイクの使用許可を確認します</div><audio id="audioPreview" controls></audio><div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button><button id="deleteRecord" class="delete-record" type="button">削除</button></div></div></div></div>
 <label class="consent"><input id="consent" type="checkbox" required><span>写真・音声をカードの作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span></label>
 <button id="go" type="submit">プレビューを確認</button>
 <div class="note">プレビューまでは無料。完成版は480円（税込）です。</div>
@@ -36,28 +37,52 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;co
 const $=id=>document.getElementById(id);
 [['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
 $('photo').addEventListener('change',()=>{const f=$('photo').files[0];if(f){$('photoPreview').src=URL.createObjectURL(f);$('photoPreview').style.display='block'}});
-$('audio').addEventListener('change',()=>{
-  const f=$('audio').files[0];
-  if(!f)return;
-  const name=(f.name||'').toLowerCase();
-  const type=(f.type||'').toLowerCase();
-  const okExt=/\.(m4a|mp3|aac|mp4|mpeg|wav)$/i.test(name);
-  const okType=type.startsWith('audio/') || type==='video/mp4' || type==='application/octet-stream' || type==='';
-  if(!(okExt||okType)){
-    alert('この音声形式は選択できません。m4a / mp3 / aac / mp4 形式をお使いください。');
-    $('audio').value='';
-    return;
-  }
-  $('audioPreview').src=URL.createObjectURL(f);
-  $('audioPreview').style.display='block';
-});
+let recordedAudio=null;
+let mediaRecorder=null;
+let mediaStream=null;
+let chunks=[];
+let recordStartedAt=0;
+let timerId=null;
+const recordBtn=$('recordBtn'), recordStatus=$('recordStatus'), recordActions=$('recordActions');
+
+function stopMic(){
+  if(mediaStream){mediaStream.getTracks().forEach(track=>track.stop());mediaStream=null}
+}
+function resetRecording(){
+  if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
+  stopMic(); clearInterval(timerId); recordedAudio=null; chunks=[];
+  $('audioPreview').pause(); $('audioPreview').removeAttribute('src'); $('audioPreview').load(); $('audioPreview').style.display='none';
+  recordActions.style.display='none'; recordBtn.style.display='block'; recordBtn.classList.remove('recording'); recordBtn.textContent='🎙 録音を開始';
+  recordStatus.textContent='ボタンを押すとマイクの使用許可を確認します';
+}
+async function startRecording(){
+  if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){alert('このブラウザでは録音機能を利用できません。Safariを最新版にしてお試しください。');return}
+  try{
+    mediaStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const preferred=['audio/mp4','audio/webm;codecs=opus','audio/webm'];
+    const mime=preferred.find(x=>MediaRecorder.isTypeSupported?.(x));
+    mediaRecorder=mime?new MediaRecorder(mediaStream,{mimeType:mime}):new MediaRecorder(mediaStream);
+    chunks=[];
+    mediaRecorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+    mediaRecorder.onstop=()=>{
+      clearInterval(timerId); stopMic();
+      const type=mediaRecorder.mimeType || chunks[0]?.type || 'audio/mp4';
+      const ext=type.includes('webm')?'webm':'m4a';
+      recordedAudio=new File([new Blob(chunks,{type})],`koephoto-recording.${ext}`,{type});
+      $('audioPreview').src=URL.createObjectURL(recordedAudio); $('audioPreview').style.display='block';
+      recordBtn.style.display='none'; recordActions.style.display='flex'; recordStatus.textContent='録音できました。再生して内容を確認できます';
+    };
+    mediaRecorder.start(); recordStartedAt=Date.now();
+    recordBtn.classList.add('recording'); recordBtn.textContent='■ 録音を停止';
+    const tick=()=>{const s=Math.floor((Date.now()-recordStartedAt)/1000);recordStatus.textContent=`録音中 ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}; tick(); timerId=setInterval(tick,500);
+  }catch(err){stopMic(); recordStatus.textContent='マイクを使用できませんでした'; alert('録音にはマイクの使用許可が必要です。Safariのマイク許可を確認してください。')}
+}
+recordBtn.addEventListener('click',()=>{if(mediaRecorder?.state==='recording')mediaRecorder.stop();else startRecording()});
+$('retryRecord').addEventListener('click',resetRecording);
+$('deleteRecord').addEventListener('click',resetRecording);
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function put(k,v){const x=await db();await new Promise((ok,ng)=>{const t=x.transaction('draft','readwrite');t.objectStore('draft').put(v,k);t.oncomplete=ok;t.onerror=()=>ng(t.error)});x.close()}
-$('form').addEventListener('submit',async e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;const p=$('photo').files[0],a=$('audio').files[0];if(!p||!a)return;
-const an=(a.name||'').toLowerCase(), at=(a.type||'').toLowerCase();
-if(!(/\.(m4a|mp3|aac|mp4|mpeg|wav)$/i.test(an) || at.startsWith('audio/') || at==='video/mp4' || at==='application/octet-stream' || at==='')){
-  alert('音声は m4a / mp3 / aac / mp4 形式をお使いください。'); return;
-}
+$('form').addEventListener('submit',async e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;const p=$('photo').files[0],a=recordedAudio;if(!p){alert('写真を選んでください。');return}if(!a){alert('声を録音してください。');return;}
 sessionStorage.setItem('koephoto-draft',JSON.stringify({recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()}));
 await put('photo',p);await put('audio',a);location.href='preview.html';
 });
