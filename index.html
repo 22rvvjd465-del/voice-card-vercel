@@ -123,7 +123,10 @@ $('audioFile').addEventListener('change',()=>{
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function put(k,v){const x=await db();await new Promise((ok,ng)=>{const t=x.transaction('draft','readwrite');t.objectStore('draft').put(v,k);t.oncomplete=ok;t.onerror=()=>ng(t.error)});x.close()}
 $('form').addEventListener('submit',async e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;const p=$('photo').files[0],a=recordedAudio;if(!p){alert('写真を選んでください。');return}if(!a){alert('声を録音するか、音声ファイルを選んでください。');return;}
-sessionStorage.setItem('koephoto-draft',JSON.stringify({recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()}));
-await put('photo',p);await put('audio',a);location.href='preview.html';
+const draftData={recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()};
+sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
+// Safariの画面遷移でも作成内容を保持するため、文字データもIndexedDBへ保存。
+await Promise.all([put('form',draftData),put('photo',p),put('audio',a)]);
+location.href='preview.html';
 });
 </script></body></html>

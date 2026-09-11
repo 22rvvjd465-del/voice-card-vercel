@@ -136,7 +136,16 @@ buyBtn.addEventListener('click',async()=>{
   buyBtn.disabled=true;
   agree.disabled=true;
   try{
-    const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
+    // sessionStorageが消えていても、IndexedDBに保存した作成内容から復元。
+    let draft={};
+    try{ draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}'); }catch(e){}
+    if(!draft.message){
+      const saved=await get('form').catch(()=>null);
+      if(saved && typeof saved==='object'){
+        draft=saved;
+        sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+      }
+    }
     if(!draft.message)throw new Error('draft_missing');
 
     const [photo,audio]=await Promise.all([get('photo'),get('audio')]);
@@ -188,7 +197,8 @@ buyBtn.addEventListener('click',async()=>{
     console.error(err);
     const code=String(err?.code||err?.message||'');
     let message='購入手続きの準備に失敗しました。通信環境を確認して、もう一度お試しください。';
-    if(code==='rate_limited')message='短時間に作成回数が多いため、時間をおいてもう一度お試しください。';
+    if(code==='draft_missing')message='作成内容を読み込めませんでした。入力画面からもう一度作成してください。';
+    else if(code==='rate_limited')message='短時間に作成回数が多いため、時間をおいてもう一度お試しください。';
     else if(code==='audio_format')message='完成版へ進むには、m4a / mp3 / aac形式の音声をご利用ください。';
     else if(code==='photo_format')message='完成版へ進むには、JPEG / PNG / WebP形式の写真をご利用ください。';
     else if(code==='preview_media_missing')message='写真または音声が見つかりません。入力画面からもう一度選択してください。';

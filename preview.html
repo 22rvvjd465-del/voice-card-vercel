@@ -201,7 +201,18 @@ function wrap(ctx,text,maxWidth){
   return lines;
 }
 (async()=>{
-  const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
+  // SafariでsessionStorageが空になった場合はIndexedDBから復元。
+  let draft={};
+  try{ draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}'); }catch(e){}
+  if(!draft.message){
+    try{
+      const saved=await get('form');
+      if(saved && typeof saved==='object'){
+        draft=saved;
+        sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+      }
+    }catch(e){ console.warn('draft restore failed',e); }
+  }
   let focusX=Number.isFinite(Number(draft.photoFocusX))?Number(draft.photoFocusX):0.5;
   let focusY=Number.isFinite(Number(draft.photoFocusY))?Number(draft.photoFocusY):0.5;
   let photoZoom=Number.isFinite(Number(draft.photoZoom))?Number(draft.photoZoom):1;
@@ -344,6 +355,8 @@ function wrap(ctx,text,maxWidth){
     draft.photoFocusY=focusY;
     draft.photoZoom=photoZoom;
     sessionStorage.setItem('koephoto-draft',JSON.stringify(draft));
+    // 戻る/進むでも写真調整を失わないようIndexedDBにも同期。
+    put('form',draft).catch(()=>{});
     syncVoicePhoto();
   }
 
