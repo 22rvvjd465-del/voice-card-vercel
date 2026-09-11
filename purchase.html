@@ -132,8 +132,7 @@ async function uploadSigned(path,token,blob,contentType){
     .from('card-media')
     .uploadToSignedUrl(path,token,blob,{
       contentType,
-      cacheControl:'3600',
-      upsert:false
+      cacheControl:'3600'
     });
 
   if(error){
@@ -219,7 +218,8 @@ buyBtn.addEventListener('click',async()=>{
     else if(code==='preview_media_missing')message='写真または音声が見つかりません。入力画面からもう一度選択してください。';
     else if(code==='storage_upload_failed'){
       const status=err?.status?`（エラー ${err.status}）`:'';
-      message='写真・音声の保存に失敗しました'+status+'。もう一度お試しください。';
+      const detail=err?.detail?` ${String(err.detail).slice(0,160)}`:'';
+      message='写真・音声の保存に失敗しました'+status+'。'+detail;
     }
     else if(code==='stripe_not_configured'||code==='stripe_checkout_failed')message='Stripe決済画面を準備できませんでした。設定を確認して、もう一度お試しください。';
     else if(code==='purchase_window_expired')message='購入準備の有効時間が切れました。もう一度お試しください。';
