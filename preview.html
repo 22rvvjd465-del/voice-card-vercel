@@ -219,14 +219,32 @@ function wrap(ctx,text,maxWidth){
   focusX=Math.min(1,Math.max(0,focusX)); focusY=Math.min(1,Math.max(0,focusY));
   photoZoom=Math.min(2.5,Math.max(1,photoZoom));
   if(!draft.message){alert('作成データがありません。入力画面に戻ります。');location.href='index.html';return}
-  const photo=await get('photo');
+  // iPhone Safariでは画面遷移直後にIndexedDBのBlob取得が一瞬遅れることがあるため、
+  // 少し待って再取得する。取得できない状態でCanvas描画を続けて真っ白にしない。
+  let photo=null;
+  for(let i=0;i<4 && !photo;i++){
+    try{ photo=await get('photo'); }catch(e){}
+    if(!photo) await new Promise(r=>setTimeout(r,120));
+  }
+  if(!photo){
+    alert('写真データを読み込めませんでした。入力画面に戻ります。');
+    location.href='index.html';
+    return;
+  }
   const pu=URL.createObjectURL(photo);
   const c=$('card'),ctx=c.getContext('2d');
-  const [base,img,decor]=await Promise.all([
-    (async()=>{const x=new Image();x.src='classic-birthday-message.png';await x.decode();return x})(),
-    (async()=>{const x=new Image();x.src=pu;await x.decode();return x})(),
-    (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
-  ]);
+  let base,img,decor;
+  try{
+    [base,img,decor]=await Promise.all([
+      (async()=>{const x=new Image();x.src='classic-birthday-message.png';await x.decode();return x})(),
+      (async()=>{const x=new Image();x.src=pu;await x.decode();return x})(),
+      (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
+    ]);
+  }catch(e){
+    console.error('preview image load failed',e);
+    alert('プレビュー画像の読み込みに失敗しました。もう一度お試しください。');
+    return;
+  }
   // iPhone Safari対策:
   // Canvas はWebフォント読込前に描画すると、その後フォントが読み込まれても
   // 自動では描き直されない。使用するウェイト/サイズを明示的に待ってから描画する。
