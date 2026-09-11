@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>コエフォト｜購入内容の確認</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f1ea;color:#4e4339;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 60px}
+.flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;font-size:11px;color:#8e8176}
+.flow .step-current{position:relative;color:#4e4339;font-weight:700;padding:0 2px}
+.flow .step-current::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:999px;background:#b69570}
+.flow .step-future{color:#8e8176;font-weight:400}.flow .arrow{color:#b9afa4}
+.top{text-align:center}.top h1{font-size:21px;margin:7px}.top p{font-size:12px;color:#827568;line-height:1.7;margin:0 0 18px}
+.badge{display:inline-block;background:#eee4d6;padding:4px 8px;border-radius:999px;font-size:10px}
+.panel{max-width:600px;margin:0 auto;background:#fffaf2;border:1px solid #d9c8b2;border-radius:16px;padding:18px 16px}
+.summary{display:grid;grid-template-columns:1fr auto;gap:10px 18px;padding:14px 15px;border-radius:12px;background:#f1e8db;margin-bottom:18px;font-size:13px}
+.summary b{font-weight:700}.summary small{display:inline-block;margin-top:3px;color:#8a7867;font-size:11px}.priceValue{font-size:20px;font-weight:800;color:#655648}
+.section{border-top:1px solid #e4d8c8;padding-top:16px;margin-top:16px}.section:first-of-type{border-top:0;padding-top:0;margin-top:0}
+h2{font-size:15px;margin:0 0 10px;color:#5f5145}
+ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.8;font-size:13px}
+.notice{background:rgba(238,228,214,.55);border-left:3px solid #b69570;padding:12px 13px;color:#66594d;line-height:1.75;font-size:12px}
+.consent{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:14px;border:1px solid #cbb79c;border-radius:12px;background:#fff}
+.consent input{width:19px;height:19px;margin:1px 0 0;accent-color:#9f8064;flex:0 0 auto}.consent span{font-size:13px;line-height:1.7;color:#5c5046}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.actions .back,.actions button{padding:14px;border-radius:13px;font-size:14px;font-weight:700;text-align:center;text-decoration:none}
+.actions .back{border:1px solid #bca68d;background:#fffaf2;color:#655648}
+.actions .buy{border:0;background:#9f8064;color:#fff}.actions .buy:disabled{opacity:.45}
+.status{min-height:20px;text-align:center;margin-top:12px;color:#817466;font-size:12px;line-height:1.6}
+.small{text-align:center;font-size:11px;color:#8e8176;line-height:1.7;margin:14px 4px 0}
+
+.legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:14px 0 2px;font-size:12px}
+.legal-links a{color:#745f4d;text-decoration:underline;text-underline-offset:3px}
+.consent a{color:#745f4d;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:520px){.actions{grid-template-columns:1fr}.actions .buy{order:1}.actions .back{order:2}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="flow">
+  <span class="step-future">1 入力</span><span class="arrow">→</span>
+  <span class="step-future">2 プレビュー</span><span class="arrow">→</span>
+  <span class="step-current">3 購入確認</span><span class="arrow">→</span>
+  <span class="step-future">4 完成</span>
+</div>
+<div class="top">
+  <h1>購入内容の確認</h1>
+  <p>決済前に、料金・保存期間・データの取扱いをご確認ください。</p>
+</div>
+<section class="panel">
+  <div class="summary">
+    <b>商品</b><span>コエフォト 完成版<br><small>Classic Birthday</small></span>
+    <b>料金</b><span class="priceValue">480円（税込）</span>
+    <b>支払い</b><span>1回払い</span>
+    <b>閲覧・ダウンロード期限</b><span>購入日から1年間</span>
+  </div>
+
+  <div class="section"><h2>ご購入前の確認事項</h2>
+  <ul>
+    <li>決済完了後、受け取り用のボイスページとQRコードが有効になります。</li>
+    <li>写真・音声はサービス提供のため、購入日から1年間保存されます。</li>
+    <li>保存期限を過ぎた写真・音声は削除対象となり、再取得できない場合があります。</li>
+    <li>通信環境、端末、ブラウザ等により、表示・音声再生に差が生じる場合があります。</li>
+    <li>アップロードする写真・音声・メッセージについて、必要な権利・許諾を得たものをご利用ください。</li>
+    <li>第三者のプライバシー、著作権、肖像権その他の権利を侵害する内容はアップロードしないでください。</li>
+  </ul></div>
+
+  <div class="section"><h2>キャンセル・返金について</h2>
+  <div class="notice">
+    デジタル商品の性質上、決済完了後にサービス提供が開始された後は、原則として購入者都合によるキャンセル・返金はお受けできません。
+    ただし、二重決済やサービス側の不具合など、当社側の事情がある場合は個別に確認します。
+  </div></div>
+
+  <label class="consent">
+    <input id="agree" type="checkbox">
+    <span>上記の購入条件と、<a href="terms.html" target="_blank" rel="noopener">利用規約</a>・<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>を確認し、同意します。</span>
+  </label>
+
+  <div class="actions">
+    <a class="back" href="preview.html">プレビューに戻る</a>
+    <button id="buyBtn" class="buy" disabled>480円（税込）で購入する</button>
+  </div>
+  <p style="text-align:center;font-size:11px;color:#827568;line-height:1.6;margin:12px 0 4px">販売事業者情報は「特定商取引法に基づく表記」から確認できます。</p>
+  <nav class="legal-links" aria-label="法的情報">
+    <a href="terms.html" target="_blank" rel="noopener">利用規約</a>
+    <a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>
+    <a href="tokusho.html" target="_blank" rel="noopener">特定商取引法に基づく表記</a>
+  </nav>
+  <div id="purchaseStatus" class="status" aria-live="polite"></div>
+  <p class="small">決済はStripeの安全な決済画面で行います。カード情報はコエフォトのサーバーには保存しません。</p>
+</section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
+
+const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_hdele7SzVbKtlpCuFJLQpQ_F5lu4ABF';
+const INIT_URL=SUPABASE_URL+'/functions/v1/upload-init-v2';
+const FINALIZE_URL=SUPABASE_URL+'/functions/v1/card-finalize-v2';
+const CHECKOUT_URL=SUPABASE_URL+'/functions/v1/checkout-create-v2';
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+
+const agree=document.getElementById('agree');
+const buyBtn=document.getElementById('buyBtn');
+const purchaseStatus=document.getElementById('purchaseStatus');
+agree.addEventListener('change',()=>{buyBtn.disabled=!agree.checked});
+
+function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
+async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
+function setStatus(text,isError=false){purchaseStatus.textContent=text;purchaseStatus.style.color=isError?'#a3473d':'#786d61'}
+function normalizePhotoType(blob){
+  const t=String(blob?.type||'').toLowerCase();
+  if(t==='image/jpeg'||t==='image/png'||t==='image/webp')return t;
+  return '';
+}
+function normalizeAudioType(blob){
+  const t=String(blob?.type||'').toLowerCase();
+  if(t==='audio/mp4'||t==='audio/mpeg'||t==='audio/x-m4a'||t==='audio/aac')return t;
+  return '';
+}
+async function postJson(url,body){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error(data?.error||'request_failed');e.code=data?.error||'request_failed';throw e}
+  return data;
+}
+async function uploadSigned(path,token,blob,contentType){
+  const {error}=await sb.storage.from('card-media').uploadToSignedUrl(path,token,blob,{contentType,cacheControl:'3600'});
+  if(error)throw error;
+}
+
+buyBtn.addEventListener('click',async()=>{
+  if(buyBtn.disabled||!agree.checked)return;
+  buyBtn.disabled=true;
+  agree.disabled=true;
+  try{
+    const draft=JSON.parse(sessionStorage.getItem('koephoto-draft')||'{}');
+    if(!draft.message)throw new Error('draft_missing');
+
+    const [photo,audio]=await Promise.all([get('photo'),get('audio')]);
+    if(!(photo instanceof Blob)||!(audio instanceof Blob))throw new Error('preview_media_missing');
+
+    const photoType=normalizePhotoType(photo);
+    const audioType=normalizeAudioType(audio);
+    if(!photoType)throw new Error('photo_format');
+    if(!audioType)throw new Error('audio_format');
+
+    setStatus('購入準備中… 写真・音声を安全に保存しています');
+
+    const init=await postJson(INIT_URL,{photo_type:photoType,audio_type:audioType});
+    await Promise.all([
+      uploadSigned(init.photo.path,init.photo.token,photo,photoType),
+      uploadSigned(init.audio.path,init.audio.token,audio,audioType)
+    ]);
+
+    const finalized=await postJson(FINALIZE_URL,{
+      public_id:init.public_id,
+      finalize_token:init.finalize_token,
+      recipient:String(draft.recipient||'').trim(),
+      message:String(draft.message||'').trim(),
+      sender:String(draft.sender||'').trim(),
+      template_key:'classic_birthday',
+      consent:true,
+      photo_focus_x:Number.isFinite(Number(draft.photoFocusX))?Number(draft.photoFocusX):0.5,
+      photo_focus_y:Number.isFinite(Number(draft.photoFocusY))?Number(draft.photoFocusY):0.5,
+      photo_zoom:Number.isFinite(Number(draft.photoZoom))?Number(draft.photoZoom):1
+    });
+
+    setStatus('Stripeの480円（税込）テスト決済画面を準備しています…');
+
+    const checkout=await postJson(CHECKOUT_URL,{
+      public_id:finalized.public_id,
+      finalize_token:init.finalize_token
+    });
+
+    sessionStorage.setItem('koephoto-purchase-draft',JSON.stringify({
+      public_id:finalized.public_id,
+      status:'checkout_created',
+      session_id:checkout.session_id,
+      created_at:new Date().toISOString()
+    }));
+
+    setStatus('Stripeの決済画面へ移動します…');
+    location.href=checkout.checkout_url;
+  }catch(err){
+    console.error(err);
+    const code=String(err?.code||err?.message||'');
+    let message='購入手続きの準備に失敗しました。通信環境を確認して、もう一度お試しください。';
+    if(code==='rate_limited')message='短時間に作成回数が多いため、時間をおいてもう一度お試しください。';
+    else if(code==='audio_format')message='完成版へ進むには、m4a / mp3 / aac形式の音声をご利用ください。';
+    else if(code==='photo_format')message='完成版へ進むには、JPEG / PNG / WebP形式の写真をご利用ください。';
+    else if(code==='preview_media_missing')message='写真または音声が見つかりません。入力画面からもう一度選択してください。';
+    else if(code==='stripe_not_configured'||code==='stripe_checkout_failed')message='Stripe決済画面を準備できませんでした。設定を確認して、もう一度お試しください。';
+    else if(code==='purchase_window_expired')message='購入準備の有効時間が切れました。もう一度お試しください。';
+    setStatus(message,true);
+    buyBtn.disabled=false;
+    agree.disabled=false;
+  }
+});
+</script>
+</body>
+</html>
