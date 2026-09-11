@@ -209,7 +209,27 @@ function wrap(ctx,text,maxWidth){
     (async()=>{const x=new Image();x.src=pu;await x.decode();return x})(),
     (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
   ]);
-  await document.fonts.load('28px "Zen Maru Gothic"');
+  // iPhone Safari対策:
+  // Canvas はWebフォント読込前に描画すると、その後フォントが読み込まれても
+  // 自動では描き直されない。使用するウェイト/サイズを明示的に待ってから描画する。
+  async function waitForCardFonts(){
+    if(!document.fonts) return;
+    const sample=((draft.recipient||'')+(draft.message||'')+(draft.sender||'')+'あいうえお').slice(0,80);
+    const loads=[
+      document.fonts.load('500 40px "Zen Maru Gothic"', sample),
+      document.fonts.load('500 34px "Zen Maru Gothic"', sample),
+      document.fonts.load('500 31px "Zen Maru Gothic"', sample),
+      document.fonts.load('500 28px "Zen Maru Gothic"', sample),
+      document.fonts.load('500 24px "Zen Maru Gothic"', sample),
+      document.fonts.ready
+    ];
+    // 通信不良時に画面が永久に止まらないよう、最大5秒でフォールバック。
+    await Promise.race([
+      Promise.all(loads),
+      new Promise(resolve=>setTimeout(resolve,5000))
+    ]);
+  }
+  await waitForCardFonts();
   const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
   const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
   const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
@@ -275,6 +295,16 @@ function wrap(ctx,text,maxWidth){
     ctx.textBaseline='alphabetic';ctx.textAlign='center';ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';ctx.fillText('閲覧・ダウンロード期限',847,1224);ctx.fillText('購入日から1年間',847,1248);ctx.textAlign='left';
   }
   drawCard();
+
+  // SafariでWebフォントの完了通知が初回描画より後になった場合も、
+  // Canvasを正しいフォントで必ず再描画する。
+  if(document.fonts){
+    const redrawAfterFonts=()=>requestAnimationFrame(()=>drawCard());
+    if(typeof document.fonts.addEventListener==='function'){
+      document.fonts.addEventListener('loadingdone',redrawAfterFonts,{once:true});
+    }
+    document.fonts.ready.then(redrawAfterFonts).catch(()=>{});
+  }
 
   const dragNote=$('dragNote');
   const photoAdjust=$('photoAdjust');
