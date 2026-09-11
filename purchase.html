@@ -127,10 +127,21 @@ async function postJson(url,body){
   return data;
 }
 async function uploadSigned(path,token,blob,contentType){
-  // upload-init-v2 が返した path + token を、Supabase公式APIへそのまま渡す。
+  // iPhone Safari対策:
+  // Blob/Fileをそのまま渡すとstorage-jsがFormData化し、
+  // Safariでは空フィールド扱いになって "No content provided" が返ることがある。
+  // ArrayBufferへ変換してraw bodyとして送信する。
+  if(!blob || !blob.size){
+    const err=new Error('preview_media_empty');
+    err.code='preview_media_empty';
+    throw err;
+  }
+
+  const buffer=await blob.arrayBuffer();
+
   const {error}=await sb.storage
     .from('card-media')
-    .uploadToSignedUrl(path,token,blob,{
+    .uploadToSignedUrl(path,token,buffer,{
       contentType,
       cacheControl:'3600'
     });
@@ -212,6 +223,7 @@ buyBtn.addEventListener('click',async()=>{
     const code=String(err?.code||err?.message||'');
     let message='購入手続きの準備に失敗しました。通信環境を確認して、もう一度お試しください。';
     if(code==='draft_missing')message='作成内容を読み込めませんでした。入力画面からもう一度作成してください。';
+    else if(code==='preview_media_empty')message='写真または音声のデータが空です。入力画面からもう一度選択してください。';
     else if(code==='rate_limited')message='短時間に作成回数が多いため、時間をおいてもう一度お試しください。';
     else if(code==='audio_format')message='完成版へ進むには、m4a / mp3 / aac形式の音声をご利用ください。';
     else if(code==='photo_format')message='完成版へ進むには、JPEG / PNG / WebP形式の写真をご利用ください。';
