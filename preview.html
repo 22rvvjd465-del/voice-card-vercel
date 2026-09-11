@@ -235,14 +235,24 @@ function wrap(ctx,text,maxWidth){
   const c=$('card'),ctx=c.getContext('2d');
   let base,img,decor;
   try{
-    [base,img,decor]=await Promise.all([
+    img=new Image();
+    img.src=pu;
+    await img.decode();
+  }catch(e){
+    console.error('photo blob decode failed',e,photo?.type,photo?.size);
+    alert('写真データの読み込みに失敗しました。入力画面で写真を選び直してください。');
+    location.href='index.html';
+    return;
+  }
+
+  try{
+    [base,decor]=await Promise.all([
       (async()=>{const x=new Image();x.src='classic-birthday-message.png';await x.decode();return x})(),
-      (async()=>{const x=new Image();x.src=pu;await x.decode();return x})(),
       (async()=>{const x=new Image();x.src='classic-birthday-decor-overlay.png';await x.decode();return x})()
     ]);
   }catch(e){
-    console.error('preview image load failed',e);
-    alert('プレビュー画像の読み込みに失敗しました。もう一度お試しください。');
+    console.error('template image load failed',e);
+    alert('カードデザインの読み込みに失敗しました。ページを再読み込みしてください。');
     return;
   }
   // iPhone Safari対策:

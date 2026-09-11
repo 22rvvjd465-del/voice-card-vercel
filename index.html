@@ -56,6 +56,8 @@ const $=id=>document.getElementById(id);
 [['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
 let storedPhoto=null;
 let storedAudio=null;
+let photoChanged=false;
+let audioChanged=false;
 let photoObjectUrl=null;
 let audioObjectUrl=null;
 
@@ -76,7 +78,7 @@ function showAudio(blob){
 
 $('photo').addEventListener('change',()=>{
   const f=$('photo').files[0];
-  if(f){storedPhoto=f;showPhoto(f)}
+  if(f){storedPhoto=f;photoChanged=true;showPhoto(f)}
 });
 let recordedAudio=null;
 let mediaRecorder=null;
@@ -112,6 +114,7 @@ async function startRecording(){
       const ext=type.includes('webm')?'webm':'m4a';
       recordedAudio=new File([new Blob(chunks,{type})],`koephoto-recording.${ext}`,{type});
       storedAudio=recordedAudio;
+      audioChanged=true;
       showAudio(recordedAudio);
       recordBtn.style.display='none'; recordActions.style.display='flex'; recordStatus.textContent='録音できました。再生して内容を確認できます';
     };
@@ -137,6 +140,7 @@ $('audioFile').addEventListener('change',()=>{
   stopMic(); clearInterval(timerId);
   recordedAudio=f;
   storedAudio=f;
+  audioChanged=true;
   showAudio(f);
   recordBtn.style.display='flex';
   recordBtn.classList.remove('recording');
@@ -203,8 +207,10 @@ $('form').addEventListener('submit',async e=>{
 const draftData={recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()};
 sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
 // Safariの画面遷移でも作成内容を保持するため、文字データもIndexedDBへ保存。
-// 3つを同じIndexedDBトランザクションで確実に保存してから遷移する。
-await putDraftBundle(draftData,p,a);
+// 戻ってきただけの場合は既存のBlobを再保存しない。
+await put('form',draftData);
+if(photoChanged) await put('photo',p);
+if(audioChanged) await put('audio',a);
 location.href='preview.html';
 });
 </script></body></html>
