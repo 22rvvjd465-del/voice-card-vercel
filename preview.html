@@ -133,8 +133,6 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
   <span class="step-future">4 完成</span>
 </div>
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
-<div style="display:none" class="tabs"><button id="tm" class="on">メッセージカード</button><button id="tv">ボイスページ</button></div>
-<section id="pm" class="pane on">
 <section class="preview-mode-wrap">
   
   <div class="preview-mode-switch" role="tablist" aria-label="完成イメージ">
@@ -148,6 +146,7 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
     </button>
   </div>
 </section>
+<section id="pm" class="pane on">
 <div class="caption">写真とメッセージ、声につながるQRコードを載せて、印刷したり画像で送ったりして贈れるカードです。</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust on">
   <div class="adjustTitle">写真の表示位置</div>
   <div id="dragNote" class="adjustNote">写真を指で動かして位置を調整できます。2本指で拡大・縮小できます。</div>
@@ -166,8 +165,6 @@ window.addEventListener('message',e=>{
     frame.style.height=Math.max(100,e.data.height)+'px';
   }
 });
-$('tv').onclick=()=>{$('tv').classList.add('on');$('tm').classList.remove('on');$('pv').classList.add('on');$('pm').classList.remove('on');$('photoAdjust').classList.remove('on')};
-$('tm').onclick=()=>{$('tm').classList.add('on');$('tv').classList.remove('on');$('pm').classList.add('on');$('pv').classList.remove('on');$('photoAdjust').classList.add('on')};
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
 
@@ -518,35 +515,31 @@ buyBtn?.addEventListener('click',()=>{
 
 <script>
 (() => {
-  const card = document.getElementById('simpleCardBtn');
-  const voice = document.getElementById('simpleVoiceBtn');
-  const candidates = [...document.querySelectorAll('button, [role="tab"]')];
-
-  const oldCard = candidates.find(el =>
-    el !== card && el !== voice &&
-    (el.textContent || '').trim().includes('メッセージカード')
-  );
-  const oldVoice = candidates.find(el =>
-    el !== card && el !== voice &&
-    (el.textContent || '').trim().includes('ボイスページ')
-  );
+  const cardBtn = document.getElementById('simpleCardBtn');
+  const voiceBtn = document.getElementById('simpleVoiceBtn');
+  const cardPane = document.getElementById('pm');
+  const voicePane = document.getElementById('pv');
+  const photoAdjust = document.getElementById('photoAdjust');
 
   function activate(which){
     const isCard = which === 'card';
-    card?.classList.toggle('active', isCard);
-    voice?.classList.toggle('active', !isCard);
-    card?.setAttribute('aria-selected', String(isCard));
-    voice?.setAttribute('aria-selected', String(!isCard));
+
+    cardBtn?.classList.toggle('active', isCard);
+    voiceBtn?.classList.toggle('active', !isCard);
+    cardBtn?.setAttribute('aria-selected', String(isCard));
+    voiceBtn?.setAttribute('aria-selected', String(!isCard));
+
+    cardPane?.classList.toggle('on', isCard);
+    voicePane?.classList.toggle('on', !isCard);
+    photoAdjust?.classList.toggle('on', isCard);
+
+    if(!isCard && typeof syncVoicePhoto === 'function'){
+      requestAnimationFrame(() => syncVoicePhoto());
+    }
   }
 
-  card?.addEventListener('click', () => {
-    oldCard?.click();
-    activate('card');
-  });
-  voice?.addEventListener('click', () => {
-    oldVoice?.click();
-    activate('voice');
-  });
+  cardBtn?.addEventListener('click', () => activate('card'));
+  voiceBtn?.addEventListener('click', () => activate('voice'));
 })();
 </script>
 
