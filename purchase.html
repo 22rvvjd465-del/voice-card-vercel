@@ -92,10 +92,12 @@ ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.8;font-size:13px}
 </section>
 </main>
 
-<script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_hdele7SzVbKtlpCuFJLQpQ_F5lu4ABF';
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const INIT_URL=SUPABASE_URL+'/functions/v1/upload-init-v2';
 const FINALIZE_URL=SUPABASE_URL+'/functions/v1/card-finalize-v2';
 const CHECKOUT_URL=SUPABASE_URL+'/functions/v1/checkout-create-v2';
@@ -124,30 +126,22 @@ async function postJson(url,body){
   if(!r.ok){const e=new Error(data?.error||'request_failed');e.code=data?.error||'request_failed';throw e}
   return data;
 }
-async function uploadSigned(signedUrl,blob){
-  // Supabase storage-js の uploadToSignedUrl と同じ送信方式。
-  const form=new FormData();
-  form.append('cacheControl','3600');
-  form.append('',blob);
+async function uploadSigned(path,token,blob,contentType){
+  // upload-init-v2 が返した path + token を、Supabase公式APIへそのまま渡す。
+  const {error}=await sb.storage
+    .from('card-media')
+    .uploadToSignedUrl(path,token,blob,{
+      contentType,
+      cacheControl:'3600',
+      upsert:false
+    });
 
-  const r=await fetch(signedUrl,{
-    method:'PUT',
-    headers:{
-      'apikey':SUPABASE_PUBLISHABLE_KEY,
-      'Authorization':'Bearer '+SUPABASE_PUBLISHABLE_KEY,
-      'x-upsert':'false'
-    },
-    body:form
-  });
-
-  if(!r.ok){
-    let detail='';
-    try{ detail=await r.text(); }catch(e){}
+  if(error){
     const err=new Error('storage_upload_failed');
     err.code='storage_upload_failed';
-    err.status=r.status;
-    err.detail=detail;
-    console.error('Storage upload failed',r.status,detail);
+    err.status=error?.statusCode||error?.status||0;
+    err.detail=error?.message||String(error);
+    console.error('Storage upload failed',err.status,err.detail);
     throw err;
   }
 }
@@ -181,8 +175,8 @@ buyBtn.addEventListener('click',async()=>{
 
     const init=await postJson(INIT_URL,{photo_type:photoType,audio_type:audioType});
     await Promise.all([
-      uploadSigned(init.photo.signed_url,photo),
-      uploadSigned(init.audio.signed_url,audio)
+      uploadSigned(init.photo.path,init.photo.token,photo,photoType),
+      uploadSigned(init.audio.path,init.audio.token,audio,audioType)
     ]);
 
     const finalized=await postJson(FINALIZE_URL,{
