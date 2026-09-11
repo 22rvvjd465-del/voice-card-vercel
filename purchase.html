@@ -92,15 +92,12 @@ ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.8;font-size:13px}
 </section>
 </main>
 
-<script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
+<script>
 
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_hdele7SzVbKtlpCuFJLQpQ_F5lu4ABF';
 const INIT_URL=SUPABASE_URL+'/functions/v1/upload-init-v2';
 const FINALIZE_URL=SUPABASE_URL+'/functions/v1/card-finalize-v2';
 const CHECKOUT_URL=SUPABASE_URL+'/functions/v1/checkout-create-v2';
-const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 
 const agree=document.getElementById('agree');
 const buyBtn=document.getElementById('buyBtn');
@@ -126,9 +123,27 @@ async function postJson(url,body){
   if(!r.ok){const e=new Error(data?.error||'request_failed');e.code=data?.error||'request_failed';throw e}
   return data;
 }
-async function uploadSigned(path,token,blob,contentType){
-  const {error}=await sb.storage.from('card-media').uploadToSignedUrl(path,token,blob,{contentType,cacheControl:'3600'});
-  if(error)throw error;
+async function uploadSigned(signedUrl,blob){
+  // createSignedUploadUrl が返すURLは2時間有効で、追加認証なしでアップロードできる。
+  // iPhone SafariでのSDK経由アップロードを避け、署名済みURLへ直接PUTする。
+  const form=new FormData();
+  form.append('cacheControl','3600');
+  form.append('',blob);
+
+  const r=await fetch(signedUrl,{
+    method:'PUT',
+    body:form
+  });
+
+  if(!r.ok){
+    let detail='';
+    try{ detail=await r.text(); }catch(e){}
+    const err=new Error('storage_upload_failed');
+    err.code='storage_upload_failed';
+    err.status=r.status;
+    err.detail=detail;
+    throw err;
+  }
 }
 
 buyBtn.addEventListener('click',async()=>{
@@ -160,8 +175,8 @@ buyBtn.addEventListener('click',async()=>{
 
     const init=await postJson(INIT_URL,{photo_type:photoType,audio_type:audioType});
     await Promise.all([
-      uploadSigned(init.photo.path,init.photo.token,photo,photoType),
-      uploadSigned(init.audio.path,init.audio.token,audio,audioType)
+      uploadSigned(init.photo.signed_url,photo),
+      uploadSigned(init.audio.signed_url,audio)
     ]);
 
     const finalized=await postJson(FINALIZE_URL,{
@@ -202,6 +217,7 @@ buyBtn.addEventListener('click',async()=>{
     else if(code==='audio_format')message='完成版へ進むには、m4a / mp3 / aac形式の音声をご利用ください。';
     else if(code==='photo_format')message='完成版へ進むには、JPEG / PNG / WebP形式の写真をご利用ください。';
     else if(code==='preview_media_missing')message='写真または音声が見つかりません。入力画面からもう一度選択してください。';
+    else if(code==='storage_upload_failed')message='写真・音声の保存に失敗しました。通信環境を確認して、もう一度お試しください。';
     else if(code==='stripe_not_configured'||code==='stripe_checkout_failed')message='Stripe決済画面を準備できませんでした。設定を確認して、もう一度お試しください。';
     else if(code==='purchase_window_expired')message='購入準備の有効時間が切れました。もう一度お試しください。';
     setStatus(message,true);
