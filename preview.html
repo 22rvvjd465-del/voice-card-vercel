@@ -50,6 +50,13 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 .photoAdjust .adjustTitle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#655648;margin-bottom:6px}
 .photoAdjust .adjustTitle::before{content:"✥";font-size:14px;font-weight:400;color:#9f8064}
 .photoAdjust .adjustNote{font-size:12px !important;color:#817466;line-height:1.55}
+#card{
+  touch-action:none;
+  -ms-touch-action:none;
+  overscroll-behavior:contain;
+  -webkit-user-select:none;
+  user-select:none;
+}
 #card.photo-dragging{cursor:grabbing}
 
 /* ===== 比較試作③：シンプル＆スタイリッシュ ===== */
@@ -453,6 +460,20 @@ function wrap(ctx,text,maxWidth){
 
   c.addEventListener('pointerup',endPointer);
   c.addEventListener('pointercancel',endPointer);
+
+  // iPhone Safari対策:
+  // 2本指操作をページ全体の拡大縮小ではなく、写真ズームとして扱う。
+  c.addEventListener('touchstart',ev=>{
+    if(ev.touches.length>=2) ev.preventDefault();
+  },{passive:false});
+  c.addEventListener('touchmove',ev=>{
+    if(ev.touches.length>=2) ev.preventDefault();
+  },{passive:false});
+
+  // Safari独自のgestureイベントもカード上だけ無効化する。
+  ['gesturestart','gesturechange','gestureend'].forEach(type=>{
+    c.addEventListener(type,ev=>ev.preventDefault(),{passive:false});
+  });
 
   // PC: 写真上のマウスホイールで拡大・縮小。
   c.addEventListener('wheel',ev=>{
