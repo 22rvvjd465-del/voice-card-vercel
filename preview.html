@@ -12,7 +12,7 @@
 .voiceFrameWrap{background:#0b1f3a;border-radius:16px;overflow:hidden}
 iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 .canvasWrap{background:#e9e4db;border-radius:16px;padding:10px;overflow:auto}canvas{display:block;width:100%;height:auto;max-width:600px;margin:auto;background:white}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.actions button{padding:14px;border-radius:13px;border:1px solid #bca68d;background:#fffaf2;color:#655648;font-weight:700}.actions .buy{background:#9f8064;color:#fff;border:0}.price{text-align:center;font-size:12px;color:#817466;margin-top:10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.actions button{padding:14px;border-radius:13px;border:1px solid #bca68d;background:#fffaf2;color:#655648;font-size:14px;font-weight:700}.actions .buy{background:#9f8064;color:#fff;border:0}.price{text-align:center;font-size:12px;color:#817466;margin-top:10px}
 
 
 .flow{
@@ -47,28 +47,114 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 
 .photoAdjust{display:none;margin:12px auto 0;max-width:600px;padding:10px 12px;border-left:3px solid #b69570;background:rgba(255,250,242,.62);text-align:left}
 .photoAdjust.on{display:block}
-.photoAdjust .adjustTitle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#655648;margin-bottom:3px}
+.photoAdjust .adjustTitle{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#655648;margin-bottom:6px}
 .photoAdjust .adjustTitle::before{content:"✥";font-size:14px;font-weight:400;color:#9f8064}
-.photoAdjust .adjustNote{font-size:11px;color:#817466;line-height:1.55}
-#card.photo-draggable{cursor:grab;touch-action:none}
+.photoAdjust .adjustNote{font-size:12px !important;color:#817466;line-height:1.55}
 #card.photo-dragging{cursor:grabbing}
+
+/* ===== 比較試作③：シンプル＆スタイリッシュ ===== */
+.preview-mode-wrap{
+  margin:18px 0 14px;
+}
+.preview-mode-head{
+  margin:0 0 10px;
+  font-size:17px;
+  font-weight:700;
+  color:#4e4339;
+  letter-spacing:.01em;
+}
+.preview-mode-switch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  padding:4px;
+  border-radius:15px;
+  background:#eae3da;
+  box-shadow:inset 0 1px 2px rgba(65,50,39,.06);
+}
+.preview-mode-btn{
+  appearance:none;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  color:#76695e;
+  min-height:54px;
+  padding:8px 10px;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.preview-mode-btn .mode-main{
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.25;
+}
+.preview-mode-btn .mode-sub{
+  display:block;
+  margin-top:3px;
+  font-size:10px;
+  font-weight:500;
+  opacity:.72;
+}
+.preview-mode-btn.active{
+  background:#fff;
+  color:#4e4339;
+  box-shadow:0 2px 9px rgba(65,50,39,.10);
+}
+.mode-description{
+  margin:11px 3px 0;
+  min-height:40px;
+  font-size:12px;
+  line-height:1.65;
+  color:#75695f;
+}
+.mode-description strong{
+  color:#4e4339;
+  font-weight:700;
+}
+@media(max-width:420px){
+  .preview-mode-btn .mode-main{font-size:13px}
+  .preview-mode-btn{padding-left:6px;padding-right:6px}
+  .actions button{font-size:13px !important}
+  .photoAdjust .adjustTitle{font-size:13px !important}
+  .photoAdjust .adjustNote{font-size:12px !important}
+}
+
+/* 購入ボタン */
+#buyBtn{
+  font-size:14px !important;
+  font-weight:700 !important;
+}
 </style></head><body><main class="wrap">
 <div class="flow">
-  <span class="step-future">1 入力</span>
-  <span class="arrow">→</span>
-  <span class="step-current">2 プレビュー</span>
-  <span class="arrow">→</span>
-  <span class="step-future">3 完成</span>
+  <span class="step-future">1 入力</span><span class="arrow">→</span>
+  <span class="step-current">2 プレビュー</span><span class="arrow">→</span>
+  <span class="step-future">3 購入確認</span><span class="arrow">→</span>
+  <span class="step-future">4 完成</span>
 </div>
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
-<div class="tabs"><button id="tm" class="on">メッセージカード</button><button id="tv">ボイスページ</button></div>
-<section id="pm" class="pane on"><div class="caption">写真・メッセージ・QRを載せて贈るカード（プレビューではQR枠のみ）</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust on">
+<div style="display:none" class="tabs"><button id="tm" class="on">メッセージカード</button><button id="tv">ボイスページ</button></div>
+<section id="pm" class="pane on">
+<section class="preview-mode-wrap">
+  
+  <div class="preview-mode-switch" role="tablist" aria-label="完成イメージ">
+    <button type="button" class="preview-mode-btn active" id="simpleCardBtn" role="tab" aria-selected="true">
+      <span class="mode-main">贈るカード</span>
+      <span class="mode-sub">MESSAGE CARD</span>
+    </button>
+    <button type="button" class="preview-mode-btn" id="simpleVoiceBtn" role="tab" aria-selected="false">
+      <span class="mode-main">QRから見るページ</span>
+      <span class="mode-sub">VOICE PAGE</span>
+    </button>
+  </div>
+</section>
+<div class="caption">写真とメッセージ、声につながるQRコードを載せて、印刷したり画像で送ったりして贈れるカードです。</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust on">
   <div class="adjustTitle">写真の表示位置</div>
   <div id="dragNote" class="adjustNote">写真を指で動かして位置を調整できます。2本指で拡大・縮小できます。</div>
 </div></section>
 <section id="pv" class="pane"><div class="caption">受け取った人がスマホで見るページ</div><div class="voiceFrameWrap"><iframe id="voiceFrame" src="classic-birthday-voice.html" title="Classic Birthday ボイスページ"></iframe></div></section>
-<div class="actions"><button onclick="history.back()">入力を修正</button><button class="buy" onclick="alert('決済は次の実装段階です。完成版は480円（税込）です。')">完成版へ　480円</button></div>
-<div class="price">閲覧・ダウンロード期限：購入日から1年間</div>
+<div class="actions"><button onclick="history.back()">入力を修正</button><button id="buyBtn" class="buy">購入内容を確認する</button></div>
+<div id="purchaseStatus" class="price" aria-live="polite">購入前に料金・保存期間・データの取扱いをご確認ください</div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -354,4 +440,115 @@ function wrap(ctx,text,maxWidth){
     saveFocus();
   },{passive:false});
 })();
-</script></body></html>
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
+
+const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_hdele7SzVbKtlpCuFJLQpQ_F5lu4ABF';
+const INIT_URL=SUPABASE_URL+'/functions/v1/upload-init-v2';
+const FINALIZE_URL=SUPABASE_URL+'/functions/v1/card-finalize-v2';
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+
+const buyBtn=document.getElementById('buyBtn');
+const purchaseStatus=document.getElementById('purchaseStatus');
+
+async function openDb(){
+  return await new Promise((resolve,reject)=>{
+    const r=indexedDB.open('koephoto-preview',2);
+    r.onsuccess=()=>resolve(r.result);
+    r.onerror=()=>reject(r.error);
+  });
+}
+async function readDraftBlob(key){
+  const db=await openDb();
+  try{
+    return await new Promise((resolve,reject)=>{
+      const tx=db.transaction('draft','readonly');
+      const r=tx.objectStore('draft').get(key);
+      r.onsuccess=()=>resolve(r.result);
+      r.onerror=()=>reject(r.error);
+    });
+  }finally{db.close()}
+}
+function normalizePhotoType(file){
+  const t=(file?.type||'').toLowerCase();
+  if(['image/jpeg','image/png','image/webp'].includes(t))return t;
+  const n=(file?.name||'').toLowerCase();
+  if(/\.(jpg|jpeg)$/.test(n))return'image/jpeg';
+  if(/\.png$/.test(n))return'image/png';
+  if(/\.webp$/.test(n))return'image/webp';
+  return'';
+}
+function normalizeAudioType(file){
+  const t=(file?.type||'').toLowerCase();
+  if(['audio/mp4','audio/mpeg','audio/x-m4a','audio/aac'].includes(t))return t;
+  const n=(file?.name||'').toLowerCase();
+  if(/\.m4a$/.test(n))return'audio/mp4';
+  if(/\.(mp3|mpeg)$/.test(n))return'audio/mpeg';
+  if(/\.aac$/.test(n))return'audio/aac';
+  return'';
+}
+function setStatus(text,isError=false){
+  purchaseStatus.textContent=text;
+  purchaseStatus.style.color=isError?'#a3473d':'#817466';
+}
+async function postJson(url,body){
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||!data.ok){
+    const err=new Error(data.error||'request_failed');
+    err.code=data.error||'request_failed';
+    throw err;
+  }
+  return data;
+}
+async function uploadSigned(path,token,file,contentType){
+  const {error}=await sb.storage.from('card-media').uploadToSignedUrl(path,token,file,{
+    contentType,
+    cacheControl:'3600'
+  });
+  if(error)throw error;
+}
+
+buyBtn?.addEventListener('click',()=>{
+  location.href='purchase.html';
+});
+</script>
+
+<script>
+(() => {
+  const card = document.getElementById('simpleCardBtn');
+  const voice = document.getElementById('simpleVoiceBtn');
+  const candidates = [...document.querySelectorAll('button, [role="tab"]')];
+
+  const oldCard = candidates.find(el =>
+    el !== card && el !== voice &&
+    (el.textContent || '').trim().includes('メッセージカード')
+  );
+  const oldVoice = candidates.find(el =>
+    el !== card && el !== voice &&
+    (el.textContent || '').trim().includes('ボイスページ')
+  );
+
+  function activate(which){
+    const isCard = which === 'card';
+    card?.classList.toggle('active', isCard);
+    voice?.classList.toggle('active', !isCard);
+    card?.setAttribute('aria-selected', String(isCard));
+    voice?.setAttribute('aria-selected', String(!isCard));
+  }
+
+  card?.addEventListener('click', () => {
+    oldCard?.click();
+    activate('card');
+  });
+  voice?.addEventListener('click', () => {
+    oldVoice?.click();
+    activate('voice');
+  });
+})();
+</script>
+
+
+</body></html>
