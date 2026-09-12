@@ -4,323 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト｜完成版</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <style>
 :root{
-  --bg:#f4f0e9;
-  --paper:#fffdf9;
-  --ink:#4d4339;
-  --muted:#93877c;
-  --line:#e5dbcf;
-  --accent:#a88969;
-  --accent-deep:#8e7054;
-  --cream:#eee6db;
-  --green:#5e755f;
+  --bg:#f4f0e9;--paper:#fffdf9;--ink:#4d4339;--muted:#93877c;
+  --line:#e5dbcf;--accent:#a88969;--accent-deep:#8e7054;--green:#5e755f;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
-  background:
-    radial-gradient(circle at 50% -8%,rgba(255,255,255,.96),rgba(255,255,255,0) 35%),
-    var(--bg);
+  background:radial-gradient(circle at 50% -8%,rgba(255,255,255,.96),rgba(255,255,255,0) 35%),var(--bg);
   color:var(--ink);
 }
-.wrap{
-  width:min(100%,760px);
-  margin:0 auto;
-  padding:26px 18px 58px;
-}
-.flow{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  margin-bottom:26px;
-  font-size:10.5px;
-  color:#b1a79f;
-  white-space:nowrap;
-}
-.flow>span{
-  display:inline-flex;
-  align-items:center;
-  height:18px;
-  line-height:18px;
-}
+.wrap{width:min(100%,760px);margin:0 auto;padding:26px 18px 58px}
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:26px;font-size:10.5px;color:#b1a79f;white-space:nowrap}
+.flow>span{display:inline-flex;align-items:center;height:18px;line-height:18px}
 .flow .arrow{color:#c8bfb6}
-.flow .current{
-  position:relative;
-  color:var(--ink);
-  font-weight:700;
-}
-.flow .current::after{
-  content:"";
-  position:absolute;
-  left:0;right:0;
-  bottom:-3px;
-  height:2px;
-  border-radius:999px;
-  background:#b69570;
-}
-.product{
-  overflow:hidden;
-  border:1px solid rgba(219,208,196,.95);
-  border-radius:30px;
-  background:rgba(255,253,249,.96);
-  box-shadow:0 22px 55px rgba(83,67,52,.09);
-}
+.flow .current{position:relative;color:var(--ink);font-weight:700}
+.flow .current::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:999px;background:#b69570}
+
+.product{overflow:hidden;border:1px solid rgba(219,208,196,.95);border-radius:30px;background:rgba(255,253,249,.96);box-shadow:0 22px 55px rgba(83,67,52,.09)}
 .hero{
-  position:relative;
-  padding:30px 22px 26px;
-  text-align:center;
-  border-bottom:1px solid var(--line);
-  background:
-    radial-gradient(circle at 85% 5%,rgba(181,150,118,.13),transparent 32%),
-    linear-gradient(180deg,#fffdf9 0%,#fbf7f2 100%);
+  position:relative;padding:30px 22px 26px;text-align:center;border-bottom:1px solid var(--line);
+  background:radial-gradient(circle at 85% 5%,rgba(181,150,118,.13),transparent 32%),linear-gradient(180deg,#fffdf9 0%,#fbf7f2 100%);
 }
-.hero::before{
-  content:"";
-  position:absolute;
-  width:170px;height:170px;
-  border-radius:50%;
-  left:-105px;top:-95px;
-  background:radial-gradient(circle,rgba(186,157,126,.13),rgba(186,157,126,0) 70%);
-}
-.brand{
-  font-size:24px;
-  font-weight:800;
-  letter-spacing:.04em;
-  color:#584c42;
-}
-.eyebrow{
-  margin-top:6px;
-  font-size:10px;
-  letter-spacing:.22em;
-  color:#aa9c8f;
-  font-weight:700;
-}
-.title{
-  margin:15px 0 8px;
-  font-size:24px;
-  line-height:1.48;
-  letter-spacing:.01em;
-  font-weight:750;
-}
-.lead{
-  margin:0 auto;
-  max-width:470px;
-  color:#796e64;
-  font-size:12.5px;
-  line-height:1.75;
-}
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-  margin-top:17px;
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  min-height:28px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid #e5dbcf;
-  background:rgba(255,255,255,.72);
-  color:#776b61;
-  font-size:11px;
-  font-weight:700;
-}
-.badge.ok{
-  color:var(--green);
-  background:#f4f8f3;
-  border-color:#dce8da;
-}
-.content{
-  padding:22px 18px 24px;
-}
-.tabs{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:5px;
-  padding:5px;
-  border-radius:18px;
-  background:#ece5dc;
-}
-.tabs button{
-  position:relative;
-  min-height:52px;
-  border:0;
-  border-radius:14px;
-  background:transparent;
-  color:#766a60;
-  font:inherit;
-  cursor:pointer;
-}
-.tabs button .jp{
-  display:block;
-  font-size:14px;
-  font-weight:800;
-  line-height:1.2;
-}
-.tabs button .en{
-  display:block;
-  margin-top:4px;
-  font-size:8.5px;
-  letter-spacing:.12em;
-  color:#aa9e93;
-  font-weight:700;
-}
-.tabs button.on{
-  color:var(--ink);
-  background:#fffdf9;
-  box-shadow:0 4px 13px rgba(77,62,48,.08);
-}
+.hero::before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;left:-105px;top:-95px;background:radial-gradient(circle,rgba(186,157,126,.13),rgba(186,157,126,0) 70%)}
+.title{margin:0 0 8px;font-size:24px;line-height:1.48;letter-spacing:.01em;font-weight:750}
+.lead{margin:0 auto;max-width:470px;color:#796e64;font-size:12.5px;line-height:1.75}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:17px}
+.badge{display:inline-flex;align-items:center;min-height:28px;padding:6px 10px;border-radius:999px;border:1px solid #e5dbcf;background:rgba(255,255,255,.72);color:#776b61;font-size:11px;font-weight:700}
+.badge.ok{color:var(--green);background:#f4f8f3;border-color:#dce8da}
+
+.content{padding:22px 18px 24px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border-radius:18px;background:#ece5dc}
+.tabs button{position:relative;min-height:52px;border:0;border-radius:14px;background:transparent;color:#766a60;font:inherit;cursor:pointer}
+.tabs button .jp{display:block;font-size:14px;font-weight:800;line-height:1.2}
+.tabs button .en{display:block;margin-top:4px;font-size:8.5px;letter-spacing:.12em;color:#aa9e93;font-weight:700}
+.tabs button.on{color:var(--ink);background:#fffdf9;box-shadow:0 4px 13px rgba(77,62,48,.08)}
 .tabs button.on .en{color:#92775f}
+
 .panel{display:none}
 .panel.on{display:block}
 .preview-stage{
-  position:relative;
-  margin-top:18px;
-  padding:22px 16px 18px;
-  border:1px solid #e7ded4;
-  border-radius:24px;
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,243,236,.94)),
-    #f5f0ea;
+  position:relative;margin-top:18px;padding:22px 16px 18px;border:1px solid #e7ded4;border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,243,236,.94)),#f5f0ea;
 }
-.stage-label{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:0 2px 14px;
-  color:#8d8176;
-  font-size:10.5px;
-  letter-spacing:.04em;
+.stage-label{display:flex;justify-content:space-between;align-items:center;margin:0 2px 14px;color:#8d8176;font-size:10.5px;letter-spacing:.04em}
+.stage-label strong{color:#65594f;font-size:11px}
+.product-frame{width:min(100%,360px);margin:0 auto;padding:11px;border-radius:20px;background:#fff;box-shadow:0 18px 36px rgba(83,67,52,.13)}
+#cardCanvas{display:block;width:100%;height:auto;border-radius:10px;background:#fff}
+.voice-frame{display:block;width:100%;height:650px;border:0;border-radius:12px;background:#071a32}
+.loading{
+  min-height:390px;display:grid;place-items:center;text-align:center;padding:28px;border-radius:12px;
+  color:#948778;font-size:12px;line-height:1.75;background:#fbf8f4;
 }
-.stage-label strong{
-  color:#65594f;
-  font-size:11px;
-}
-.product-frame{
-  width:min(100%,330px);
-  margin:0 auto;
-  padding:11px;
-  border-radius:20px;
-  background:#fff;
-  box-shadow:0 18px 36px rgba(83,67,52,.13);
-}
-.card-preview{
-  aspect-ratio:127/178;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  overflow:hidden;
-  border:1px dashed #cdbdab;
-  background:
-    linear-gradient(155deg,rgba(183,151,118,.08),rgba(255,255,255,.5)),
-    #fbf7f2;
-  color:#948778;
-  text-align:center;
-  padding:24px;
-  font-size:12px;
-  line-height:1.75;
-}
-.voice-preview{
-  aspect-ratio:9/14;
-  min-height:390px;
-  display:grid;
-  place-items:center;
-  border-radius:22px;
-  overflow:hidden;
-  border:1px dashed #cdbdab;
-  background:
-    radial-gradient(circle at 50% 12%,rgba(176,144,111,.11),transparent 30%),
-    #fbf8f4;
-  color:#948778;
-  text-align:center;
-  padding:24px;
-  font-size:12px;
-  line-height:1.75;
-}
-.meta{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:16px;
-}
-.meta-card{
-  padding:13px 14px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:#fffdfb;
-}
-.meta-label{
-  font-size:10px;
-  color:#a19589;
-  margin-bottom:4px;
-}
-.meta-value{
-  font-size:12px;
-  font-weight:750;
-  color:#62564c;
-}
-.actions{
-  display:grid;
-  gap:10px;
-  margin-top:18px;
-}
-.btn{
-  width:100%;
-  min-height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:17px;
-  border:0;
-  text-decoration:none;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-}
-.primary{
-  color:#fff;
-  background:linear-gradient(135deg,var(--accent),var(--accent-deep));
-  box-shadow:0 12px 22px rgba(143,113,85,.18);
-}
-.secondary{
-  color:var(--ink);
-  background:#fff;
-  border:1px solid #d5c8ba;
-}
-.tertiary{
-  min-height:48px;
-  color:#7b6f65;
-  background:transparent;
-  font-size:13px;
-}
-.note{
-  margin:14px 6px 0;
-  text-align:center;
-  color:#9a8e82;
-  font-size:10.5px;
-  line-height:1.7;
-}
+.error{color:#9b5148}
+
+.meta{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}
+.meta-card{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fffdfb}
+.meta-label{font-size:10px;color:#a19589;margin-bottom:4px}
+.meta-value{font-size:12px;font-weight:750;color:#62564c}
+
+.actions{display:grid;gap:10px;margin-top:18px}
+.btn{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;border-radius:17px;border:0;text-decoration:none;font-size:15px;font-weight:800;cursor:pointer}
+.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-deep));box-shadow:0 12px 22px rgba(143,113,85,.18)}
+.secondary{color:var(--ink);background:#fff;border:1px solid #d5c8ba}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.note{margin:14px 6px 0;text-align:center;color:#9a8e82;font-size:10.5px;line-height:1.7}
+
 @media(max-width:420px){
   .wrap{padding-left:14px;padding-right:14px}
   .product{border-radius:27px}
   .hero{padding:28px 18px 24px}
-  .brand{font-size:24px}
   .title{font-size:23px;line-height:1.5}
   .content{padding:20px 14px 22px}
   .preview-stage{padding:18px 12px 16px}
-  .meta{grid-template-columns:1fr}
+  .voice-frame{height:610px}
 }
 </style>
 </head>
 <body>
 <main class="wrap">
-
   <div class="flow" aria-label="作成ステップ">
     <span>1 入力</span><span class="arrow">→</span>
     <span>2 プレビュー</span><span class="arrow">→</span>
@@ -332,10 +98,9 @@ body{
     <header class="hero">
       <h1 class="title">大切な人へ贈る<br>コエフォトができました</h1>
       <p class="lead">贈るカードと、QRコードから開くページを確認できます。</p>
-
       <div class="badges">
         <span class="badge ok">✓ 購入済み</span>
-        <span class="badge">Classic Birthday</span>
+        <span class="badge" id="templateBadge">Classic Birthday</span>
       </div>
     </header>
 
@@ -353,30 +118,20 @@ body{
 
       <section id="cardPanel" class="panel on">
         <div class="preview-stage">
-          <div class="stage-label">
-            <strong>完成版プレビュー</strong>
-            <span>MESSAGE CARD</span>
-          </div>
+          <div class="stage-label"><strong>完成版プレビュー</strong><span>MESSAGE CARD</span></div>
           <div class="product-frame">
-            <div class="card-preview">
-              ここに実際の完成カードを表示します。<br>
-              購入後は本番QRコード入りのカードになります。
-            </div>
+            <div id="cardLoading" class="loading">完成カードを読み込んでいます…</div>
+            <canvas id="cardCanvas" width="1060" height="1484" hidden></canvas>
           </div>
         </div>
       </section>
 
       <section id="voicePanel" class="panel">
         <div class="preview-stage">
-          <div class="stage-label">
-            <strong>完成版プレビュー</strong>
-            <span>VOICE PAGE</span>
-          </div>
-          <div class="product-frame">
-            <div class="voice-preview">
-              ここにQRコードから開く<br>
-              実際のボイスページを表示します。
-            </div>
+          <div class="stage-label"><strong>完成版プレビュー</strong><span>VOICE PAGE</span></div>
+          <div class="product-frame" style="width:min(100%,430px)">
+            <div id="voiceLoading" class="loading">ボイスページを読み込んでいます…</div>
+            <iframe id="voiceFrame" class="voice-frame" title="QRから見るページ" hidden></iframe>
           </div>
         </div>
       </section>
@@ -384,42 +139,229 @@ body{
       <div class="meta">
         <div class="meta-card">
           <div class="meta-label">VIEWING / DOWNLOAD PERIOD</div>
-          <div class="meta-value" id="period">購入日から1年間</div>
+          <div class="meta-value" id="period">確認中…</div>
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn primary" type="button" id="saveBtn">この完成版を保存する</button>
+        <button class="btn primary" type="button" id="saveBtn" disabled>贈るカードを保存する</button>
         <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
       </div>
 
-      <p class="note">保存・共有機能は完成版の実データ接続に合わせて、この画面から利用できるようにします。</p>
+      <p class="note" id="note">完成版を読み込んでいます。</p>
     </div>
   </section>
 </main>
 
 <script>
-const cardTab=document.getElementById('cardTab');
-const voiceTab=document.getElementById('voiceTab');
-const cardPanel=document.getElementById('cardPanel');
-const voicePanel=document.getElementById('voicePanel');
+const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
+const STATUS_URL=SUPABASE_URL+'/functions/v1/payment-status-v2';
+const $=id=>document.getElementById(id);
+
+const qs=new URLSearchParams(location.search);
+const sessionId=qs.get('session_id')||'';
+const publicId=qs.get('public_id')||'';
+
+let current='card';
+let cardReady=false;
+let payload=null;
 
 function show(which){
+  current=which;
   const card=which==='card';
-  cardTab.classList.toggle('on',card);
-  voiceTab.classList.toggle('on',!card);
-  cardPanel.classList.toggle('on',card);
-  voicePanel.classList.toggle('on',!card);
-  cardTab.setAttribute('aria-selected',card?'true':'false');
-  voiceTab.setAttribute('aria-selected',card?'false':'true');
+  $('cardTab').classList.toggle('on',card);
+  $('voiceTab').classList.toggle('on',!card);
+  $('cardPanel').classList.toggle('on',card);
+  $('voicePanel').classList.toggle('on',!card);
+  $('cardTab').setAttribute('aria-selected',card?'true':'false');
+  $('voiceTab').setAttribute('aria-selected',card?'false':'true');
+  $('saveBtn').style.display=card?'flex':'none';
 }
+$('cardTab').onclick=()=>show('card');
+$('voiceTab').onclick=()=>show('voice');
 
-cardTab.onclick=()=>show('card');
-voiceTab.onclick=()=>show('voice');
+function formatDate(v){
+  const d=v?new Date(v):null;
+  if(!d||isNaN(d))return '—';
+  return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d);
+}
+function fail(msg){
+  $('cardLoading').classList.add('error');
+  $('cardLoading').textContent=msg;
+  $('voiceLoading').classList.add('error');
+  $('voiceLoading').textContent=msg;
+  $('period').textContent='—';
+  $('note').textContent='完成版を表示できませんでした。';
+}
+function image(src){
+  return new Promise((resolve,reject)=>{
+    const im=new Image();
+    im.crossOrigin='anonymous';
+    im.onload=()=>resolve(im);
+    im.onerror=reject;
+    im.src=src;
+  });
+}
+function fitCanvasName(ctx,text,fontFamily,fontWeight,maxPx,minPx,maxWidth){
+  let lo=minPx,hi=maxPx,best=minPx;
+  for(let i=0;i<18;i++){
+    const px=(lo+hi)/2;
+    ctx.font=fontWeight+' '+px+'px '+fontFamily;
+    if(ctx.measureText(text).width<=maxWidth){best=px;lo=px}else{hi=px}
+  }
+  ctx.font=fontWeight+' '+best.toFixed(1)+'px '+fontFamily;
+}
+function wrap(ctx,text,maxWidth){
+  const lines=[];
+  const paragraphs=String(text||'').replace(/\r\n?/g,'\n').split('\n');
+  paragraphs.forEach(p=>{
+    if(p===''){lines.push('');return}
+    let cur='';
+    for(const ch of p){
+      if(!cur||ctx.measureText(cur+ch).width<=maxWidth)cur+=ch;
+      else{lines.push(cur);cur=ch}
+    }
+    if(cur)lines.push(cur);
+  });
+  return lines;
+}
+async function makeQR(url,size=170){
+  if(!window.QRCode) throw new Error('QR library unavailable');
+  const q=document.createElement('canvas');
+  await QRCode.toCanvas(q,url,{width:size,margin:0,errorCorrectionLevel:'M'});
+  return q;
+}
+async function renderCard(d){
+  const c=$('cardCanvas'),ctx=c.getContext('2d');
+  await document.fonts.load('28px "Zen Maru Gothic"');
 
-document.getElementById('saveBtn').onclick=()=>{
-  alert('保存機能は完成版の実データ接続時に有効化します。');
+  const [base,photo,decor,qr]=await Promise.all([
+    image('classic-birthday-message.png'),
+    image(d.photo_url),
+    image('classic-birthday-decor-overlay.png'),
+    makeQR(d.public_url,170)
+  ]);
+
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.drawImage(base,0,0,c.width,c.height);
+
+  const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
+  const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
+  const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
+  const fw=maxX-minX,fh=maxY-minY,ir=photo.width/photo.height,fr=fw/fh;
+
+  let baseSw=photo.width,baseSh=photo.height;
+  if(ir>fr)baseSw=photo.height*fr; else baseSh=photo.width/fr;
+
+  const zoom=Math.min(2.5,Math.max(1,Number(d.photo_zoom)||1));
+  const focusX=Math.min(1,Math.max(0,Number(d.photo_focus_x)||.5));
+  const focusY=Math.min(1,Math.max(0,Number(d.photo_focus_y)||.5));
+  const sw=baseSw/zoom,sh=baseSh/zoom;
+  const sx=(photo.width-sw)>0.5?(photo.width-sw)*focusX:0;
+  const sy=(photo.height-sh)>0.5?(photo.height-sh)*focusY:0;
+
+  ctx.save();
+  ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.closePath();ctx.clip();
+  ctx.drawImage(photo,sx,sy,sw,sh,minX,minY,fw,fh);
+  ctx.restore();
+
+  ctx.drawImage(decor,0,0,c.width,c.height);
+
+  const recipient=[...(d.recipient||'')].slice(0,15).join('');
+  ctx.fillStyle='#0b347f';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  fitCanvasName(ctx,recipient,'"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif','500',40,14,455);
+  ctx.fillText(recipient,548,252);
+
+  ctx.textAlign='left';ctx.fillStyle='#46515c';
+  const message=d.message||'';
+  const rules=[1011,1060,1108,1157,1207],maxw=480;
+  let size=message.length<=35?34:message.length<=65?31:28,lines=[];
+  while(size>=24){
+    ctx.font='500 '+size+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
+    lines=wrap(ctx,message,maxw);
+    if(lines.length<=5)break;
+    size--;
+  }
+  lines.slice(0,5).forEach((line,i)=>ctx.fillText(line,120,rules[i]-6));
+
+  const sender=[...(d.sender||'')].slice(0,15).join('');
+  ctx.fillStyle='#123d7a';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  fitCanvasName(ctx,sender,'"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif','500',40,14,310);
+  ctx.fillText(sender,400,1265);
+
+  // 実際の公開URLから生成した本番QRコード。生成AIは使用しない。
+  ctx.fillStyle='#fff';
+  ctx.fillRect(752,991,190,190);
+  ctx.drawImage(qr,762,1001,170,170);
+
+  const expiry=formatDate(d.expires_at);
+  ctx.fillStyle='#7e7368';
+  ctx.textAlign='center';
+  ctx.font='18px "Hiragino Sans","Yu Gothic",sans-serif';
+  ctx.fillText('閲覧・ダウンロード期限',847,1224);
+  ctx.fillText(expiry+'まで',847,1248);
+
+  $('cardLoading').hidden=true;
+  c.hidden=false;
+  cardReady=true;
+  $('saveBtn').disabled=false;
+}
+async function load(){
+  if(!sessionId.startsWith('cs_')||!/^[0-9a-f-]{36}$/i.test(publicId)){
+    fail('完成版の情報が不足しています。');
+    return;
+  }
+  try{
+    const r=await fetch(STATUS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({session_id:sessionId,public_id:publicId})
+    });
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||!d.ok||!d.paid){fail('購入済みの完成版を確認できませんでした。');return}
+    payload=d;
+    $('period').textContent=formatDate(d.expires_at)+'まで';
+    $('templateBadge').textContent=d.template_key==='classic_birthday'?'Classic Birthday':(d.template_key||'Template');
+    $('voiceFrame').src=d.public_url;
+    $('voiceFrame').onload=()=>{
+      $('voiceLoading').hidden=true;
+      $('voiceFrame').hidden=false;
+    };
+    $('voiceFrame').onerror=()=>{
+      $('voiceLoading').classList.add('error');
+      $('voiceLoading').textContent='ボイスページを表示できませんでした。';
+    };
+    await renderCard(d);
+    $('note').textContent='贈るカードは画像として保存できます。QRコードからは受け取り用ページが開きます。';
+  }catch(e){
+    console.error(e);
+    fail('通信に失敗しました。少し待ってから再読み込みしてください。');
+  }
+}
+$('saveBtn').onclick=async()=>{
+  if(!cardReady)return;
+  const c=$('cardCanvas');
+  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png',1));
+  if(!blob)return;
+  const file=new File([blob],'koephoto-card.png',{type:'image/png'});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file],title:'コエフォト'});
+      return;
+    }catch(e){
+      if(e&&e.name==='AbortError')return;
+    }
+  }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='koephoto-card.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
 };
+
+load();
 </script>
 </body>
 </html>
