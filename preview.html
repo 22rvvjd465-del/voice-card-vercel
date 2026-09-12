@@ -144,7 +144,11 @@ canvas{
   max-width:620px;
   margin:auto;
   background:white;
-  border-radius:8px
+  border-radius:8px;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
 }
 .voiceFrameWrap{
   background:#0b1f3a;
@@ -258,7 +262,6 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
 <div class="top"><span class="badge">Classic Birthday</span><h1>プレビューを確認</h1></div>
 <div class="preview-shell">
 <div style="display:none" class="tabs"><button id="tm" class="on">メッセージカード</button><button id="tv">ボイスページ</button></div>
-<section id="pm" class="pane on">
 <section class="preview-mode-wrap">
   
   <div class="preview-mode-switch" role="tablist" aria-label="完成イメージ">
@@ -272,6 +275,7 @@ iframe{display:block;width:100%;height:860px;border:0;background:#091a33}
     </button>
   </div>
 </section>
+<section id="pm" class="pane on">
 <div class="caption">写真とメッセージ、声につながるQRコードを載せて、印刷したり画像で送ったりして贈れるカードです。</div><div class="canvasWrap"><canvas id="card" width="1060" height="1484"></canvas></div><div id="photoAdjust" class="photoAdjust on">
   <div class="adjustTitle">写真の表示位置</div>
   <div id="dragNote" class="adjustNote">写真を指で動かして位置を調整できます。2本指で拡大・縮小できます。</div>
@@ -361,7 +365,15 @@ function wrap(ctx,text,maxWidth){
     location.href='index.html';
     return;
   }
-  await document.fonts.load('28px "Zen Maru Gothic"');
+  // 初回表示時のフォント差し替わりを防ぐ。
+  // 必要フォントが実際に使用可能になるまでカードを描画しない。
+  if(document.fonts){
+    await Promise.all([
+      document.fonts.load('500 28px "Zen Maru Gothic"'),
+      document.fonts.load('600 28px "Zen Maru Gothic"'),
+      document.fonts.ready
+    ]);
+  }
   const p1={x:48,y:334},p2={x:989,y:286},p3={x:1012,y:854},p4={x:70,y:902};
   const minX=Math.min(p1.x,p2.x,p3.x,p4.x),maxX=Math.max(p1.x,p2.x,p3.x,p4.x);
   const minY=Math.min(p1.y,p2.y,p3.y,p4.y),maxY=Math.max(p1.y,p2.y,p3.y,p4.y);
@@ -575,6 +587,21 @@ function wrap(ctx,text,maxWidth){
 
   c.addEventListener('pointerup',endPointer);
   c.addEventListener('pointercancel',endPointer);
+
+  // iPhone Safari対策:
+  // 2本指操作をページ全体のピンチズームに渡さず、カード写真の拡大縮小として扱う。
+  const stopNativePinch=ev=>{
+    if(ev.cancelable) ev.preventDefault();
+  };
+  c.addEventListener('gesturestart',stopNativePinch,{passive:false});
+  c.addEventListener('gesturechange',stopNativePinch,{passive:false});
+  c.addEventListener('gestureend',stopNativePinch,{passive:false});
+  c.addEventListener('touchstart',ev=>{
+    if(ev.touches && ev.touches.length>=2 && ev.cancelable) ev.preventDefault();
+  },{passive:false});
+  c.addEventListener('touchmove',ev=>{
+    if(ev.touches && ev.touches.length>=2 && ev.cancelable) ev.preventDefault();
+  },{passive:false});
 
   // PC: 写真上のマウスホイールで拡大・縮小。
   c.addEventListener('wheel',ev=>{
