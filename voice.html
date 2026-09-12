@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト | Classic Birthday</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--card-w:min(100vw,540px);--navy:#0b347f;--paper:#fbf7ee;--ink:#2d2a25}
 *{box-sizing:border-box}
@@ -30,6 +31,28 @@ html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,Bl
 .brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
 .tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 
+
+.save-area{
+  width:var(--card-w);
+  display:flex;
+  justify-content:center;
+  padding:12px 16px 2px;
+}
+.save-btn{
+  width:min(100%,360px);
+  min-height:50px;
+  border:1px solid #d7c7b4;
+  border-radius:16px;
+  background:#fffdf9;
+  color:#55493f;
+  font:700 14px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+  letter-spacing:.02em;
+  box-shadow:0 5px 14px rgba(70,55,40,.07);
+  -webkit-tap-highlight-color:transparent;
+}
+.save-btn:active{transform:translateY(1px)}
+.save-btn[disabled]{opacity:.55}
+
 .state{width:var(--card-w);min-height:70vh;display:grid;place-items:center;text-align:center;color:#8a7d70;font-size:14px;line-height:1.8}
 [hidden]{display:none!important}
 @media(max-width:390px){.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
@@ -40,6 +63,7 @@ html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,Bl
   <div id="state" class="state">コエフォトを読み込んでいます…</div>
 
   <div id="content" hidden style="width:100%;display:flex;flex-direction:column;align-items:center">
+    <div id="voiceSaveTarget" style="width:100%;display:flex;flex-direction:column;align-items:center">
     <section class="card" aria-label="Classic Birthday ボイスカード">
       <canvas id="photoCanvas" class="photo" width="1060" height="1484" aria-label="贈られた写真"></canvas>
       <img class="art" src="koefoto_classic_birthday_overlay.png" alt="">
@@ -58,6 +82,10 @@ html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,Bl
       <div class="brand-name">コエフォト</div>
       <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
     </footer>
+    </div>
+    <div class="save-area">
+      <button id="saveVoicePage" class="save-btn" type="button">このボイスページを保存する</button>
+    </div>
   </div>
 </main>
 
@@ -178,6 +206,56 @@ function loadDataScript(id){
     document.head.appendChild(sc);
   });
 }
+
+
+async function saveVoicePage(){
+  const btn=$('saveVoicePage');
+  const target=$('voiceSaveTarget');
+  if(!btn||!target||!window.html2canvas)return;
+  const original=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='保存用画像を作成しています…';
+  try{
+    await document.fonts.ready;
+    const canvas=await html2canvas(target,{
+      backgroundColor:'#f4f1ea',
+      scale:Math.min(2,window.devicePixelRatio||1),
+      useCORS:true,
+      allowTaint:false,
+      logging:false,
+      scrollX:0,
+      scrollY:-window.scrollY
+    });
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+    if(!blob)throw new Error('image export failed');
+
+    const file=new File([blob],'koephoto-voice-page.png',{type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({files:[file],title:'コエフォト'});
+        return;
+      }catch(e){
+        if(e && e.name==='AbortError')return;
+      }
+    }
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='koephoto-voice-page.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  }catch(e){
+    console.error(e);
+    alert('保存用画像を作成できませんでした。もう一度お試しください。');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=original;
+  }
+}
+$('saveVoicePage').addEventListener('click',saveVoicePage);
 
 (async()=>{
   const id=new URLSearchParams(location.search).get('id')||'';
