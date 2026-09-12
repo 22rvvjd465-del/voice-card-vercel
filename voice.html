@@ -401,55 +401,55 @@ async function buildEpubBlob(){
   zip.file('OEBPS/styles.css',`
 @page{margin:0}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:390px;height:626px;overflow:hidden;background:#fff;color:#2d2a25}
+html,body{margin:0;padding:0;width:1060px;height:1684px;overflow:hidden;background:#fff;color:#2d2a25}
 body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.unit{position:relative;width:390px;height:626px;background:#fff}
-.card{position:absolute;left:0;top:0;width:390px;height:546px;overflow:hidden;background:#fbf7ee}
-.card-image{position:absolute;inset:0;width:390px;height:546px;z-index:1}
+.unit{position:relative;width:1060px;height:1684px;background:#fff}
+.card{position:absolute;left:0;top:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee}
+.card-image{position:absolute;inset:0;width:1060px;height:1484px;z-index:1}
 .player{
   position:absolute;z-index:4;
   left:11.13%;top:70.35%;width:77.83%;height:7.41%;
-  display:grid;grid-template-columns:30px 1fr;
-  align-items:center;column-gap:10px;
-  padding:8px 20px 10px 22px;
-  transform:translateY(-3px);
+  display:grid;grid-template-columns:82px 1fr;
+  align-items:center;column-gap:27px;
+  padding:22px 54px 27px 60px;
+  transform:translateY(-8px);
 }
 .play{
-  width:30px;height:30px;border:0;border-radius:50%;
+  width:82px;height:82px;border:0;border-radius:50%;
   background:#0b347f;color:#fff;
   display:grid;place-items:center;
-  font-size:13px;line-height:1;padding:0;
-  transform:translateY(-2px);
+  font-size:35px;line-height:1;padding:0;
+  transform:translateY(-5px);
 }
 .track{min-width:0;align-self:center}
 .seek{
   --progress:0%;
   -webkit-appearance:none;appearance:none;
-  display:block;width:100%;height:16px;margin:0;
+  display:block;width:100%;height:43px;margin:0;
   background:transparent;
 }
 .seek::-webkit-slider-runnable-track{
-  height:3px;border-radius:999px;
+  height:8px;border-radius:999px;
   background:linear-gradient(to right,#0b347f 0 var(--progress),#d6c7ae var(--progress) 100%);
 }
 .seek::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
-  width:12px;height:12px;border-radius:50%;
-  margin-top:-4.5px;
-  background:#fff;border:2px solid #0b347f;
-  box-shadow:0 1px 3px rgba(0,0,0,.16);
+  width:32px;height:32px;border-radius:50%;
+  margin-top:-12px;
+  background:#fff;border:5px solid #0b347f;
+  box-shadow:0 3px 8px rgba(0,0,0,.16);
 }
 .time{
-  margin-top:-1px;font-size:10px;line-height:1;color:#756a5b;
+  margin-top:-3px;font-size:27px;line-height:1;color:#756a5b;
   display:flex;justify-content:space-between;
   font-variant-numeric:tabular-nums;
 }
 .brand{
-  position:absolute;left:0;top:546px;
-  width:390px;text-align:center;padding-top:18px;line-height:1.25;
+  position:absolute;left:0;top:1484px;
+  width:1060px;text-align:center;padding-top:48px;line-height:1.25;
 }
-.brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
-.tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
+.brand-name{font-size:49px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
+.tagline{margin-top:14px;font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.18em;color:#746c62}
 `);
 
   zip.file('OEBPS/page.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
@@ -457,7 +457,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=390,height=626"/>
+  <meta name="viewport" content="width=1060,height=1684"/>
   <title>コエフォト 保存版</title>
   <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
@@ -479,7 +479,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
       <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
     </footer>
   </div>
-  <script type="text/javascript" src="player.js"><\\/script>
+  <script type="text/javascript" src="player.js"></scr${"ipt"}>
 </body>
 </html>`);
 
