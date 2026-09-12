@@ -4,94 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト | Classic Birthday</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{--card-w:min(94vw,540px);--navy:#0b347f;--paper:#fbf7ee;--ink:#2d2a25}
+:root{--card-w:min(94vw,540px);--navy:#0b347f;--gold:#c9952f;--gold-soft:#d9b86e;--paper:#fffdf7;--ink:#2d2a25}
 *{box-sizing:border-box}
 html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
 .page{min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:24px 12px 42px}
 .card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper);box-shadow:0 10px 30px rgba(30,35,45,.09)}
 .photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
 .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
-.recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* 固定アート内の実際の罫線座標に合わせて配置。
-   To line:   x=338..760, y=272 / 1060x1484
-   From line: x=421..747, y=1237 / 1060x1484
-   名前は罫線の5px上に置き、罫線中央に正確に揃える。 */
-.recipient{
-  left:31.887%;width:39.811%;top:18.329%;
-  padding-left:3px;padding-right:3px;box-sizing:border-box;
-  transform:translateY(calc(-100% + 1.6px));
-  text-align:center;font-size:clamp(15px,3.5vw,22px)
-}
-.sender{
-  left:39.717%;width:30.755%;top:83.356%;
-  padding-left:3px;padding-right:3px;box-sizing:border-box;
-  transform:translateY(calc(-100% + 1.6px));
-  text-align:center;font-size:clamp(14px,3.2vw,21px)
-}
-.player{
-  position:absolute;z-index:4;
-  left:11.13%;top:70.35%;width:77.83%;height:7.41%;
-  display:grid;grid-template-columns:34px 1fr;
-  align-items:center;column-gap:14px;
-  padding:8px 26px 10px 28px;
-  transform:translateY(-3px);
-}
-.play{
-  width:34px;height:34px;border:0;border-radius:50%;
-  background:var(--navy);color:#fff;
-  display:grid;place-items:center;
-  font-size:15px;line-height:1;cursor:pointer;
-  flex:0 0 auto;padding:0;
-  -webkit-tap-highlight-color:transparent;
-  transform:translateY(-2px);
-}
-.track{min-width:0;align-self:center}
-.seek{
-  --progress:0%;
-  -webkit-appearance:none;appearance:none;
-  display:block;width:100%;height:16px;margin:0;
-  background:transparent;cursor:pointer;
-}
-.seek::-webkit-slider-runnable-track{
-  height:3px;border-radius:999px;
-  background:linear-gradient(to right,var(--navy) 0 var(--progress),#d6c7ae var(--progress) 100%);
-}
-.seek::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;
-  width:12px;height:12px;border-radius:50%;
-  margin-top:-4.5px;
-  background:#fff;border:2px solid var(--navy);
-  box-shadow:0 1px 3px rgba(0,0,0,.16);
-}
-.seek::-moz-range-track{height:3px;border-radius:999px;background:#d6c7ae}
-.seek::-moz-range-progress{height:3px;border-radius:999px;background:var(--navy)}
-.seek::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--navy)}
-.time{
-  margin-top:-1px;
-  font-size:11px;line-height:1;
-  color:#756a5b;
-  display:flex;justify-content:space-between;
-  font-variant-numeric:tabular-nums;
-}
+.recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:clip;text-align:center}
+.recipient{left:31%;width:43%;top:17.55%;transform:translateY(-100%)}
+.sender{left:32%;width:34%;top:83.55%;transform:translateY(-100%)}
+.player{position:absolute;z-index:4;left:13%;top:67%;width:74%;height:9.2%;display:grid;grid-template-columns:48px 1fr;column-gap:16px;align-items:center;padding:16px 28px 14px 26px}
+.play{width:46px;height:46px;border:1.5px solid rgba(201,149,47,.85);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:17px;line-height:1;box-shadow:0 5px 14px rgba(11,52,127,.20),inset 0 0 0 3px rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent}
+.play:active{transform:scale(.97)}
+.player-main{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.wave-wrap{position:relative;height:42px;display:flex;align-items:center}
+.waveform{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:2px;pointer-events:none}
+.wavebar{width:3px;min-width:2px;border-radius:999px;background:var(--gold-soft);opacity:.92;transition:background .08s linear,opacity .08s linear}
+.wavebar.played{background:var(--navy);opacity:1}
+.seek{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+.time{display:flex;justify-content:space-between;color:#756a5b;font-size:11px;line-height:1;font-variant-numeric:tabular-nums;padding:0 1px}
 .brand{width:var(--card-w);text-align:center;padding-top:18px;line-height:1.25}
-.brand-name{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
+.brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
 .tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 body.embedded .page{min-height:0;padding-bottom:18px}
-@media(max-width:390px){.page{padding-left:8px;padding-right:8px}.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
+@media(max-width:390px){.page{padding-left:8px;padding-right:8px}.player{grid-template-columns:40px 1fr;column-gap:11px;padding:12px 22px 11px 20px}.play{width:40px;height:40px;font-size:15px}.wave-wrap{height:36px}.wavebar{width:2.4px}.time{font-size:10px}}
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <main class="page">
 <section class="card" aria-label="Classic Birthday ボイスカード">
   <canvas id="photoCanvas" class="photo" width="1060" height="1484" aria-label="贈られた写真"></canvas>
-  <img class="art" src="./koefoto_classic_birthday_overlay.png" alt="">
+  <img class="art" src="./koefoto_classic_birthday_voice_overlay.png" alt="">
   <div id="recipient" class="recipient"></div>
-  <div class="player">
-    <button class="play" id="playBtn" aria-label="再生">▶</button>
-    <div class="track">
-      <input id="seek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置">
+  <div class="player" aria-label="音声メッセージプレーヤー">
+    <button class="play" id="playBtn" type="button" aria-label="再生">▶</button>
+    <div class="player-main">
+      <div class="wave-wrap">
+        <div id="waveform" class="waveform" aria-hidden="true"></div>
+        <input id="seek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置">
+      </div>
       <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
     </div>
   </div>
@@ -106,219 +60,123 @@ body.embedded .page{min-height:0;padding-bottom:18px}
 <script>
 const $=id=>document.getElementById(id);
 
-// プレビュー内（iframe）では、実コンテンツ高さを親ページへ通知して余白をなくす。
-if(window.self !== window.top){
+if(window.self!==window.top){
   document.body.classList.add('embedded');
   const reportHeight=()=>{
     const page=document.querySelector('.page');
-    if(!page)return;
-    const h=Math.ceil(page.getBoundingClientRect().height);
-    parent.postMessage({type:'koefoto-voice-height',height:h},location.origin);
+    if(page) parent.postMessage({type:'koefoto-voice-height',height:Math.ceil(page.getBoundingClientRect().height)},location.origin);
   };
   window.addEventListener('load',()=>requestAnimationFrame(reportHeight));
-  if('ResizeObserver' in window){
-    new ResizeObserver(()=>requestAnimationFrame(reportHeight)).observe(document.querySelector('.page'));
-  }
+  if('ResizeObserver' in window)new ResizeObserver(()=>requestAnimationFrame(reportHeight)).observe(document.querySelector('.page'));
 }
 
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
-const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=Math.floor(s%60);return `${m}:${String(sec).padStart(2,'0')}`};
+const fmt=s=>{if(!Number.isFinite(s))return'0:00';const m=Math.floor(s/60),sec=Math.floor(s%60);return`${m}:${String(sec).padStart(2,'0')}`};
+const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
 let photoFocusX=.5,photoFocusY=.5,photoZoom=1,redrawPhoto=null;
+
+function blobToDataURL(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('file_read_failed'));r.readAsDataURL(blob)})}
+function loadImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('image_load_failed'));img.src=src})}
 
 (async()=>{
   let raw='{}';
-  try{ raw=(parent && parent.sessionStorage ? parent.sessionStorage.getItem('koephoto-draft') : null) || sessionStorage.getItem('koephoto-draft') || '{}'; }catch(e){ raw=sessionStorage.getItem('koephoto-draft')||'{}'; }
+  try{raw=(parent&&parent.sessionStorage?parent.sessionStorage.getItem('koephoto-draft'):null)||sessionStorage.getItem('koephoto-draft')||'{}'}catch(e){raw=sessionStorage.getItem('koephoto-draft')||'{}'}
   const d=JSON.parse(raw);
-  photoFocusX=Number.isFinite(Number(d.photoFocusX))?Math.min(1,Math.max(0,Number(d.photoFocusX))):.5;
-  photoFocusY=Number.isFinite(Number(d.photoFocusY))?Math.min(1,Math.max(0,Number(d.photoFocusY))):.5;
-  photoZoom=Number.isFinite(Number(d.photoZoom))?Math.min(2.5,Math.max(1,Number(d.photoZoom))):1;
-  $('recipient').textContent=d.recipient||'';
-  $('sender').textContent=d.sender||'';
+  photoFocusX=Number.isFinite(Number(d.photoFocusX))?clamp(Number(d.photoFocusX),0,1):.5;
+  photoFocusY=Number.isFinite(Number(d.photoFocusY))?clamp(Number(d.photoFocusY),0,1):.5;
+  photoZoom=Number.isFinite(Number(d.photoZoom))?clamp(Number(d.photoZoom),1,2.5):1;
+  $('recipient').textContent=[...(d.recipient||'')].slice(0,15).join('');
+  $('sender').textContent=[...(d.sender||'')].slice(0,15).join('');
+
   try{
     const [photo,audioBlob]=await Promise.all([get('photo'),get('audio')]);
-    if(photo){
-      const pu=URL.createObjectURL(photo);
-      const img=new Image();
-      img.src=pu;
-      await img.decode();
 
+    if(photo instanceof Blob && photo.size){
+      const img=await loadImage(await blobToDataURL(photo));
       const c=$('photoCanvas'),ctx=c.getContext('2d');
 
-      // 固定デザインの写真枠4点。画像は枠を埋めるよう自動トリミングし、
-      // photoFocusX / photoFocusY（0〜1）で見せたい位置を微調整できる。
-      const frame=[
-        {x:36.3,y:322.25},
-        {x:1017.58,y:300.26},
-        {x:1029.80,y:863.73},
-        {x:48.02,y:883.88}
-      ];
-      const cx=frame.reduce((s,p)=>s+p.x,0)/4;
-      const cy=frame.reduce((s,p)=>s+p.y,0)/4;
-      const scale=0.972;
+      // メッセージカードと同じ cover → focusX/focusY → zoom ロジック。
+      // 枠座標だけ新しいVoice Pageの金枠に合わせる。
+      const frame=[{x:40,y:313},{x:997,y:260},{x:1017,y:805},{x:56,y:850}];
+      const cx=frame.reduce((s,p)=>s+p.x,0)/4,cy=frame.reduce((s,p)=>s+p.y,0)/4;
+      const scale=.973;
       const pts=frame.map(p=>({x:cx+(p.x-cx)*scale,y:cy+(p.y-cy)*scale}));
-      const minX=Math.min(...pts.map(p=>p.x)), maxX=Math.max(...pts.map(p=>p.x));
-      const minY=Math.min(...pts.map(p=>p.y)), maxY=Math.max(...pts.map(p=>p.y));
-      const fw=maxX-minX, fh=maxY-minY;
+      const minX=Math.min(...pts.map(p=>p.x)),maxX=Math.max(...pts.map(p=>p.x));
+      const minY=Math.min(...pts.map(p=>p.y)),maxY=Math.max(...pts.map(p=>p.y));
+      const fw=maxX-minX,fh=maxY-minY,ir=img.width/img.height,fr=fw/fh;
+      let baseSw=img.width,baseSh=img.height;
+      if(ir>fr)baseSw=img.height*fr;else baseSh=img.width/fr;
 
       redrawPhoto=()=>{
         ctx.clearRect(0,0,c.width,c.height);
-        const ir=img.width/img.height, fr=fw/fh;
-
-        let baseSw=img.width,baseSh=img.height;
-        if(ir>fr){
-          baseSw=img.height*fr;
-        }else{
-          baseSh=img.width/fr;
-        }
-
-        const sw=baseSw/photoZoom;
-        const sh=baseSh/photoZoom;
-        const sx=(img.width-sw)>0.5 ? (img.width-sw)*photoFocusX : 0;
-        const sy=(img.height-sh)>0.5 ? (img.height-sh)*photoFocusY : 0;
-
-        ctx.save();
-        ctx.beginPath();
+        const sw=baseSw/photoZoom,sh=baseSh/photoZoom;
+        const sx=(img.width-sw)>0.5?(img.width-sw)*photoFocusX:0;
+        const sy=(img.height-sh)>0.5?(img.height-sh)*photoFocusY:0;
+        ctx.save();ctx.beginPath();
         ctx.moveTo(pts[0].x,pts[0].y);ctx.lineTo(pts[1].x,pts[1].y);ctx.lineTo(pts[2].x,pts[2].y);ctx.lineTo(pts[3].x,pts[3].y);
-        ctx.closePath();ctx.clip();
-        ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);
-        ctx.restore();
+        ctx.closePath();ctx.clip();ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);ctx.restore();
       };
       redrawPhoto();
-
-      URL.revokeObjectURL(pu);
     }
-    if(audioBlob)$('audio').src=URL.createObjectURL(audioBlob);
+
+    if(audioBlob instanceof Blob && audioBlob.size)$('audio').src=URL.createObjectURL(audioBlob);
   }catch(e){console.error(e)}
 })();
 
 window.addEventListener('message',e=>{
-  if(e.origin!==location.origin || !e.data)return;
-  if(e.data.type!=='koefoto-photo-transform' && e.data.type!=='koefoto-photo-focus')return;
-
+  if(e.origin!==location.origin||!e.data)return;
+  if(e.data.type!=='koefoto-photo-transform'&&e.data.type!=='koefoto-photo-focus')return;
   const x=Number(e.data.x),y=Number(e.data.y),z=Number(e.data.zoom);
-  if(Number.isFinite(x))photoFocusX=Math.min(1,Math.max(0,x));
-  if(Number.isFinite(y))photoFocusY=Math.min(1,Math.max(0,y));
-  if(Number.isFinite(z))photoZoom=Math.min(2.5,Math.max(1,z));
+  if(Number.isFinite(x))photoFocusX=clamp(x,0,1);
+  if(Number.isFinite(y))photoFocusY=clamp(y,0,1);
+  if(Number.isFinite(z))photoZoom=clamp(z,1,2.5);
   if(redrawPhoto)redrawPhoto();
 });
 
-const audio=$('audio'),btn=$('playBtn'),seek=$('seek'),cur=$('cur'),dur=$('dur');
+const audio=$('audio'),btn=$('playBtn'),seek=$('seek'),cur=$('cur'),dur=$('dur'),waveform=$('waveform');
+const waveHeights=[9,13,18,12,22,30,17,26,36,21,31,39,24,18,28,34,16,22,31,19,27,36,23,17,29,21,14,10,16,12,8];
+waveHeights.forEach(h=>{const bar=document.createElement('span');bar.className='wavebar';bar.style.height=h+'px';waveform.appendChild(bar)});
+const waveBars=[...waveform.children];
+function updateWave(pct){const played=Math.round(clamp(pct,0,100)/100*waveBars.length);waveBars.forEach((bar,i)=>bar.classList.toggle('played',i<played))}
+function syncSeek(){const pct=audio.duration?(audio.currentTime/audio.duration)*100:0;seek.value=pct;updateWave(pct)}
 btn.addEventListener('click',async()=>{if(!audio.src)return;if(audio.paused){try{await audio.play()}catch(e){console.error(e)}}else audio.pause()});
-audio.addEventListener('play',()=>btn.textContent='❚❚');
-audio.addEventListener('pause',()=>btn.textContent='▶');
-function syncSeek(){
-  const pct=audio.duration?(audio.currentTime/audio.duration)*100:0;
-  seek.value=pct;
-  seek.style.setProperty('--progress',pct+'%');
-}
+audio.addEventListener('play',()=>{btn.textContent='❚❚';btn.setAttribute('aria-label','一時停止')});
+audio.addEventListener('pause',()=>{btn.textContent='▶';btn.setAttribute('aria-label','再生')});
 audio.addEventListener('loadedmetadata',()=>{dur.textContent=fmt(audio.duration);syncSeek()});
 audio.addEventListener('durationchange',()=>{dur.textContent=fmt(audio.duration);syncSeek()});
 audio.addEventListener('timeupdate',()=>{cur.textContent=fmt(audio.currentTime);syncSeek()});
-audio.addEventListener('ended',()=>{btn.textContent='▶';audio.currentTime=0;cur.textContent='0:00';syncSeek()});
+audio.addEventListener('ended',()=>{btn.textContent='▶';btn.setAttribute('aria-label','再生');audio.currentTime=0;cur.textContent='0:00';syncSeek()});
 seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(seek.value)/100)*audio.duration;syncSeek()}});
-</script>
 
-
-<script>
+// メッセージカードと同じ名前フィット:
+// 15文字、Zen Maru Gothic、Canvas基準14〜40px。
+// recipient=455px / sender=310px を現在のカード表示幅へ比例変換。
 (function(){
-  // メッセージカードと同じ名前ルールに統一。
-  // Canvas基準: 最大40px / 最小14px、15文字、幅は recipient=455px / sender=310px。
-  const LIMITS = {
-    recipient: { maxChars: 15, maxCanvasPx: 40, minCanvasPx: 14, maxCanvasWidth: 455 },
-    sender:    { maxChars: 15, maxCanvasPx: 40, minCanvasPx: 14, maxCanvasWidth: 310 }
-  };
-
+  const LIMITS={recipient:{maxChars:15,maxCanvasPx:40,minCanvasPx:14,maxCanvasWidth:455},sender:{maxChars:15,maxCanvasPx:40,minCanvasPx:14,maxCanvasWidth:310}};
   function fitName(el){
-    if(!el) return;
-
-    const spec = el.classList.contains('recipient')
-      ? LIMITS.recipient
-      : LIMITS.sender;
-
-    const chars = [...(el.textContent || '').trim()];
-    if(chars.length > spec.maxChars){
-      el.textContent = chars.slice(0, spec.maxChars).join('');
-    }
-
-    const cs = getComputedStyle(el);
-    const card = document.querySelector('.card');
-    if(!card) return;
-
-    // メッセージカード(Canvas 1060px幅)と同じ基準を、現在の表示幅へ比例変換する。
-    const scaleToCss = card.getBoundingClientRect().width / 1060;
-    const available = spec.maxCanvasWidth * scaleToCss;
-
-    if(available <= 0) return;
-
-    // Safariでも実際に描画されるWebフォントの幅をDOMで直接測定。
-    const measure = document.createElement('span');
-    measure.textContent = el.textContent;
-    measure.style.position = 'fixed';
-    measure.style.left = '-10000px';
-    measure.style.top = '-10000px';
-    measure.style.visibility = 'hidden';
-    measure.style.whiteSpace = 'nowrap';
-    measure.style.fontFamily = cs.fontFamily;
-    measure.style.fontWeight = cs.fontWeight;
-    measure.style.fontStyle = cs.fontStyle;
-    measure.style.fontVariant = cs.fontVariant;
-    measure.style.letterSpacing = cs.letterSpacing;
-    document.body.appendChild(measure);
-
-    // メッセージカードと同じ 14〜40px(Canvas基準) を表示幅へ比例変換して探索。
-    let low = spec.minCanvasPx * scaleToCss;
-    let high = spec.maxCanvasPx * scaleToCss;
-    let best = low;
-
-    for(let i=0; i<18; i++){
-      const size = (low + high) / 2;
-      measure.style.fontSize = size + 'px';
-      const width = measure.getBoundingClientRect().width;
-
-      if(width <= available){
-        best = size;
-        low = size;
-      }else{
-        high = size;
-      }
-    }
-
-    measure.remove();
-
-    el.style.fontSize = best.toFixed(1) + 'px';
-    el.style.whiteSpace = 'nowrap';
-    el.style.overflow = 'hidden';
-    el.style.textOverflow = 'clip';
-    el.style.textAlign = 'center';
+    if(!el)return;
+    const spec=el.classList.contains('recipient')?LIMITS.recipient:LIMITS.sender;
+    const chars=[...(el.textContent||'').trim()];
+    if(chars.length>spec.maxChars)el.textContent=chars.slice(0,spec.maxChars).join('');
+    const card=document.querySelector('.card'),cs=getComputedStyle(el);
+    if(!card)return;
+    const scaleToCss=card.getBoundingClientRect().width/1060;
+    const available=spec.maxCanvasWidth*scaleToCss;
+    if(available<=0)return;
+    const m=document.createElement('span');
+    m.textContent=el.textContent;
+    Object.assign(m.style,{position:'fixed',left:'-10000px',top:'-10000px',visibility:'hidden',whiteSpace:'nowrap',fontFamily:cs.fontFamily,fontWeight:cs.fontWeight,fontStyle:cs.fontStyle,fontVariant:cs.fontVariant,letterSpacing:cs.letterSpacing});
+    document.body.appendChild(m);
+    let low=spec.minCanvasPx*scaleToCss,high=spec.maxCanvasPx*scaleToCss,best=low;
+    for(let i=0;i<18;i++){const size=(low+high)/2;m.style.fontSize=size+'px';if(m.getBoundingClientRect().width<=available){best=size;low=size}else high=size}
+    m.remove();el.style.fontSize=best.toFixed(1)+'px';
   }
-
-  function fitAllNames(){
-    document.querySelectorAll('.recipient,.sender').forEach(fitName);
-  }
-
-  function runFit(){
-    requestAnimationFrame(() => requestAnimationFrame(fitAllNames));
-  }
-
-  // Zen Maru Gothicの読込完了後に必ず計測する。
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(runFit);
-  }else{
-    window.addEventListener('load', runFit, {once:true});
-  }
-
-  window.addEventListener('resize', runFit);
-
-  document.querySelectorAll('.recipient,.sender').forEach(el=>{
-    new MutationObserver(runFit).observe(el,{
-      childList:true,
-      characterData:true,
-      subtree:true
-    });
-  });
+  const runFit=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.recipient,.sender').forEach(fitName)));
+  if(document.fonts&&document.fonts.ready)Promise.all([document.fonts.load('500 40px "Zen Maru Gothic"'),document.fonts.ready]).then(runFit);else window.addEventListener('load',runFit,{once:true});
+  window.addEventListener('resize',runFit);
+  document.querySelectorAll('.recipient,.sender').forEach(el=>new MutationObserver(runFit).observe(el,{childList:true,characterData:true,subtree:true}));
 })();
 </script>
-
 </body>
 </html>
