@@ -413,9 +413,9 @@ async function buildEpubBlob(){
   zip.file('OEBPS/styles.css',`
 @page{margin:0}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:1060px;height:1570px;overflow:hidden;background:#fff;color:#2d2a25}
+html,body{margin:0;padding:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee;color:#2d2a25}
 body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.unit{position:relative;width:1060px;height:1570px;background:#fff}
+.unit{position:relative;width:1060px;height:1484px;background:#fbf7ee}
 .card{position:absolute;left:0;top:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee}
 .card-image{position:absolute;inset:0;width:1060px;height:1484px;z-index:1}
 .player{
@@ -456,12 +456,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
   display:flex;justify-content:space-between;
   font-variant-numeric:tabular-nums;
 }
-.brand{
-  position:absolute;left:0;top:1484px;
-  width:1060px;text-align:center;padding-top:20px;line-height:1.15;
-}
-.brand-name{font-size:25px;font-weight:700;letter-spacing:.07em;color:#776c62}
-.tagline{margin-top:6px;font-family:Georgia,"Times New Roman",serif;font-size:13px;letter-spacing:.14em;color:#9a9188}
+
 `);
 
   zip.file('OEBPS/page.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
@@ -469,14 +464,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=1060,height=1570"/>
-  <title>コエフォト 保存版</title>
+  <meta name="viewport" content="width=1060,height=1484"/>
+  <title>コエフォト ボイスページ</title>
+  <style>
+    @page{margin:0}
+    html,body{
+      margin:0;padding:0;
+      width:1060px;height:1484px;
+      min-width:1060px;max-width:1060px;
+      min-height:1484px;max-height:1484px;
+      overflow:hidden;background:#fbf7ee;
+    }
+    .unit,.card{
+      position:relative;
+      width:1060px;height:1484px;
+      min-width:1060px;max-width:1060px;
+      min-height:1484px;max-height:1484px;
+      overflow:hidden;background:#fbf7ee;
+    }
+    .card-image{
+      position:absolute;left:0;top:0;
+      width:1060px;height:1484px;
+      min-width:1060px;max-width:1060px;
+      min-height:1484px;max-height:1484px;
+      object-fit:fill;
+      display:block;
+      z-index:1;
+    }
+  </style>
   <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
 <body>
   <div class="unit">
     <section class="card">
-      <img class="card-image" src="card.png" alt="コエフォト"/>
+      <img class="card-image" src="card.png" width="1060" height="1484" alt="コエフォト"/>
       <div class="player">
         <button class="play" id="play" type="button" aria-label="再生">▶</button>
         <div class="track">
@@ -486,10 +507,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
       </div>
       <audio id="audio" preload="metadata" src="voice.m4a"></audio>
     </section>
-    <footer class="brand">
-      <div class="brand-name">コエフォト</div>
-      <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
-    </footer>
   </div>
   <script type="text/javascript" src="player.js"></scr${"ipt"}>
 </body>
