@@ -57,7 +57,23 @@ body{
 .stage-label strong{color:#65594f;font-size:11px}
 .product-frame{width:min(100%,360px);margin:0 auto;padding:11px;border-radius:20px;background:#fff;box-shadow:0 18px 36px rgba(83,67,52,.13)}
 #cardCanvas{display:block;width:100%;height:auto;border-radius:10px;background:#fff}
-.voice-frame{display:block;width:100%;height:650px;border:0;border-radius:12px;background:#071a32}
+.voice-wrap{width:min(100%,430px);margin:0 auto}
+.voice-card{position:relative;width:100%;aspect-ratio:1060/1484;overflow:hidden;background:#fbf7ee;box-shadow:0 10px 28px rgba(30,35,45,.08)}
+.voice-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;clip-path:polygon(3.42% 21.71%,96.00% 20.23%,97.15% 58.20%,4.53% 59.56%)}
+.voice-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
+.voice-recipient,.voice-sender{position:absolute;z-index:4;color:#0b347f;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;white-space:nowrap;overflow:hidden;text-align:center}
+.voice-recipient{left:31.887%;width:39.811%;top:18.329%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(15px,3.5vw,22px)}
+.voice-sender{left:39.717%;width:30.755%;top:83.356%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(14px,3.2vw,21px)}
+.voice-player{position:absolute;z-index:4;left:11.13%;top:70.35%;width:77.83%;height:7.41%;display:grid;grid-template-columns:34px 1fr;align-items:center;column-gap:14px;padding:8px 26px 10px 28px;transform:translateY(-3px)}
+.voice-play{width:34px;height:34px;border:0;border-radius:50%;background:#0b347f;color:#fff;display:grid;place-items:center;font-size:15px;line-height:1;padding:0}
+.voice-track{min-width:0}
+.voice-seek{-webkit-appearance:none;appearance:none;display:block;width:100%;height:16px;margin:0;background:transparent}
+.voice-seek::-webkit-slider-runnable-track{height:3px;border-radius:999px;background:linear-gradient(to right,#0b347f 0 var(--progress,0%),#d6c7ae var(--progress,0%) 100%)}
+.voice-seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;margin-top:-4.5px;background:#fff;border:2px solid #0b347f}
+.voice-time{margin-top:-1px;font-size:11px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.voice-brand{text-align:center;padding-top:14px}
+.voice-brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
+.voice-tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 .loading{
   min-height:390px;display:grid;place-items:center;text-align:center;padding:28px;border-radius:12px;
   color:#948778;font-size:12px;line-height:1.75;background:#fbf8f4;
@@ -83,8 +99,7 @@ body{
   .title{font-size:23px;line-height:1.5}
   .content{padding:20px 14px 22px}
   .preview-stage{padding:18px 12px 16px}
-  .voice-frame{height:610px}
-}
+  }
 </style>
 </head>
 <body>
@@ -131,9 +146,28 @@ body{
       <section id="voicePanel" class="panel">
         <div class="preview-stage">
           <div class="stage-label"><strong>完成版プレビュー</strong><span>VOICE PAGE</span></div>
-          <div class="product-frame" style="width:min(100%,430px)">
+          <div class="voice-wrap">
             <div id="voiceLoading" class="loading">ボイスページを読み込んでいます…</div>
-            <iframe id="voiceFrame" class="voice-frame" title="QRから見るページ" hidden></iframe>
+            <div id="voicePreview" hidden>
+              <div class="voice-card">
+                <img id="voicePhoto" class="voice-photo" alt="思い出の写真">
+                <img class="voice-art" src="koefoto_classic_birthday_overlay.png" alt="">
+                <div id="voiceRecipient" class="voice-recipient"></div>
+                <div class="voice-player">
+                  <button class="voice-play" id="voicePlay" type="button" aria-label="再生">▶</button>
+                  <div class="voice-track">
+                    <input id="voiceSeek" class="voice-seek" type="range" min="0" max="100" value="0" step="0.1">
+                    <div class="voice-time"><span id="voiceCur">0:00</span><span id="voiceDur">0:00</span></div>
+                  </div>
+                </div>
+                <div id="voiceSender" class="voice-sender"></div>
+                <audio id="voiceAudio" preload="metadata" playsinline></audio>
+              </div>
+              <div class="voice-brand">
+                <div class="voice-brand-name">コエフォト</div>
+                <div class="voice-tagline">A PHOTO, A VOICE, A MEMORY.</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -350,22 +384,30 @@ async function load(){
     payload=d;
     $('period').textContent=formatDate(d.expires_at)+'まで';
     $('templateBadge').textContent=d.template_key==='classic_birthday'?'Classic Birthday':(d.template_key||'Template');
-    // SafariでEdge FunctionのHTMLがテキスト表示される場合があるため、
-    // HTML本文を取得してsrcdocとして描画する。
-    try{
-      const vr=await fetch(d.public_url,{cache:'no-store'});
-      if(!vr.ok) throw new Error('voice page '+vr.status);
-      const voiceHtml=await vr.text();
-      $('voiceFrame').srcdoc=voiceHtml;
-      $('voiceFrame').onload=()=>{
-        $('voiceLoading').hidden=true;
-        $('voiceFrame').hidden=false;
-      };
-    }catch(e){
-      console.error('voice page',e);
-      $('voiceLoading').classList.add('error');
-      $('voiceLoading').textContent='ボイスページを表示できませんでした。';
-    }
+    // finished内ではiframeを使わず、完成ボイスページを直接描画する。
+    $('voicePhoto').src=d.photo_url;
+    $('voiceRecipient').textContent=d.recipient||'';
+    $('voiceSender').textContent=d.sender||'';
+    $('voiceAudio').src=d.audio_url;
+    const fx=Math.min(1,Math.max(0,Number(d.photo_focus_x)||.5));
+    const fy=Math.min(1,Math.max(0,Number(d.photo_focus_y)||.5));
+    const fz=Math.min(2.5,Math.max(1,Number(d.photo_zoom)||1));
+    $('voicePhoto').style.objectPosition=(fx*100)+'% '+(fy*100)+'%';
+    $('voicePhoto').style.transform='scale('+fz+')';
+    $('voicePhoto').style.transformOrigin=(fx*100)+'% '+(fy*100)+'%';
+    $('voiceLoading').hidden=true;
+    $('voicePreview').hidden=false;
+
+    const va=$('voiceAudio'),vb=$('voicePlay'),vs=$('voiceSeek'),vc=$('voiceCur'),vd=$('voiceDur');
+    const vfmt=x=>{if(!Number.isFinite(x))return'0:00';const m=Math.floor(x/60),sec=Math.floor(x%60);return m+':'+String(sec).padStart(2,'0')};
+    const vsync=()=>{const p=va.duration?(va.currentTime/va.duration)*100:0;vs.value=p;vs.style.setProperty('--progress',p+'%');vc.textContent=vfmt(va.currentTime)};
+    vb.onclick=async()=>{if(va.paused){try{await va.play()}catch(e){console.error(e)}}else va.pause()};
+    va.onplay=()=>vb.textContent='❚❚';
+    va.onpause=()=>vb.textContent='▶';
+    va.onloadedmetadata=()=>{vd.textContent=vfmt(va.duration);vsync()};
+    va.ontimeupdate=vsync;
+    va.onended=()=>{vb.textContent='▶';va.currentTime=0;vsync()};
+    vs.oninput=()=>{if(va.duration){va.currentTime=(Number(vs.value)/100)*va.duration;vsync()}};
 
     try{
       await renderCard(d);
