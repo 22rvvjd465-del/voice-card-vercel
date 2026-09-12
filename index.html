@@ -42,9 +42,9 @@ button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;co
 <div class="brand">コエフォト</div>
 <section class="hero"><small>PHOTO × VOICE</small><h1>写真に、<em>声をのせて</em><br>贈ろう。</h1></section>
 <form id="form">
-<div class="step"><div class="n">1</div><div class="content"><b>贈る相手のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="recipient" maxlength="15" required placeholder="例：おばあちゃん"><div class="count"><span id="rc">0</span> / 15文字</div></div></div>
-<div class="step"><div class="n">2</div><div class="content"><b>カードに載せるメッセージ</b><div class="field-help">この文章は「贈るカード」に表示されます</div><textarea id="message" maxlength="100" required placeholder="例：いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
-<div class="step"><div class="n">3</div><div class="content"><b>贈り主のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="sender" maxlength="15" required placeholder="例：さくら"><div class="count"><span id="sc">0</span> / 15文字</div></div></div>
+<div class="step"><div class="n">1</div><div class="content"><b>贈る相手のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="recipient" maxlength="15" required placeholder="例）おばあちゃん"><div class="count"><span id="rc">0</span> / 15文字</div></div></div>
+<div class="step"><div class="n">2</div><div class="content"><b>カードに載せるメッセージ</b><div class="field-help">この文章は「贈るカード」に表示されます</div><textarea id="message" maxlength="100" required placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
+<div class="step"><div class="n">3</div><div class="content"><b>贈り主のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="sender" maxlength="15" required placeholder="例）ゆうき・あかり"><div class="count"><span id="sc">0</span> / 15文字</div></div></div>
 <div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><label class="upload"><span class="upload-plus">＋</span> 写真を選ぶ<input id="photo" type="file" accept="image/*"></label><img id="photoPreview"></div></div>
 <div class="step"><div class="n">5</div><div class="content"><b>声を追加する</b><div class="field-help">この声は「QRから見るページ」で再生されます</div><div class="recorder"><div class="voice-options"><button id="recordBtn" class="record-btn" type="button"><span class="icon">🎙️</span><span>この場で録音</span><span class="sub">マイクを使って録音します</span></button><label class="voice-option audio-file-label"><span class="icon">＋</span><span class="title">音声ファイル</span><span class="sub">録音済みの声を選びます</span><input id="audioFile" type="file" accept=".m4a,.mp3,.aac,.wav,.mpeg,audio/mp4,audio/mpeg,audio/aac,audio/wav"></label></div><div id="recordStatus" class="record-status">どちらかを選んでください</div><audio id="audioPreview" controls></audio><div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button></div></div></div></div>
 <label class="consent"><input id="consent" type="checkbox" required><span>写真・音声を「贈るカード」と「QRから見るページ」の作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span></label>
@@ -56,8 +56,6 @@ const $=id=>document.getElementById(id);
 [['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
 let storedPhoto=null;
 let storedAudio=null;
-let photoChanged=false;
-let audioChanged=false;
 let photoObjectUrl=null;
 let audioObjectUrl=null;
 
@@ -78,7 +76,7 @@ function showAudio(blob){
 
 $('photo').addEventListener('change',()=>{
   const f=$('photo').files[0];
-  if(f){storedPhoto=f;photoChanged=true;showPhoto(f)}
+  if(f){storedPhoto=f;showPhoto(f)}
 });
 let recordedAudio=null;
 let mediaRecorder=null;
@@ -114,7 +112,6 @@ async function startRecording(){
       const ext=type.includes('webm')?'webm':'m4a';
       recordedAudio=new File([new Blob(chunks,{type})],`koephoto-recording.${ext}`,{type});
       storedAudio=recordedAudio;
-      audioChanged=true;
       showAudio(recordedAudio);
       recordBtn.style.display='none'; recordActions.style.display='flex'; recordStatus.textContent='録音できました。再生して内容を確認できます';
     };
@@ -140,7 +137,6 @@ $('audioFile').addEventListener('change',()=>{
   stopMic(); clearInterval(timerId);
   recordedAudio=f;
   storedAudio=f;
-  audioChanged=true;
   showAudio(f);
   recordBtn.style.display='flex';
   recordBtn.classList.remove('recording');
@@ -151,20 +147,6 @@ $('audioFile').addEventListener('change',()=>{
 function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
 async function put(k,v){const x=await db();await new Promise((ok,ng)=>{const t=x.transaction('draft','readwrite');t.objectStore('draft').put(v,k);t.oncomplete=ok;t.onerror=()=>ng(t.error)});x.close()}
 async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
-async function putDraftBundle(form,photo,audio){
-  const x=await db();
-  await new Promise((ok,ng)=>{
-    const t=x.transaction('draft','readwrite');
-    const store=t.objectStore('draft');
-    store.put(form,'form');
-    store.put(photo,'photo');
-    store.put(audio,'audio');
-    t.oncomplete=ok;
-    t.onerror=()=>ng(t.error);
-    t.onabort=()=>ng(t.error||new Error('draft_save_aborted'));
-  });
-  x.close();
-}
 
 // プレビュー/購入確認から入力画面へ戻ったとき、前回の入力内容を復元する。
 (async()=>{
@@ -207,10 +189,7 @@ $('form').addEventListener('submit',async e=>{
 const draftData={recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()};
 sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
 // Safariの画面遷移でも作成内容を保持するため、文字データもIndexedDBへ保存。
-// 戻ってきただけの場合は既存のBlobを再保存しない。
-await put('form',draftData);
-if(photoChanged) await put('photo',p);
-if(audioChanged) await put('audio',a);
+await Promise.all([put('form',draftData),put('photo',p),put('audio',a)]);
 location.href='preview.html';
 });
 </script></body></html>
