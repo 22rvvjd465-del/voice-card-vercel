@@ -1,70 +1,319 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>コエフォト｜作成</title>
 <style>
-*{box-sizing:border-box} :root{--bg:#faf7f2;--ink:#5b4b3f;--muted:#8e8176;--line:#d8c7b5;--accent:#9d7f63}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.wrap{max-width:720px;margin:auto;padding:22px 16px 60px}.brand{font-weight:900;letter-spacing:.08em;font-size:24px;margin:26px 0 0;}
-.hero{padding:4px 2px 22px;border-bottom:1px solid var(--line)}h1{font-size:34px;line-height:1.35;margin:10px 0}.hero em{font-style:normal;color:var(--accent)}
-.step{display:flex;gap:12px;padding:20px 0;border-bottom:1px solid #e3d7ca}.n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#b28f6e;color:#fff;font-size:12px;font-weight:800}.content{width:100%}.content b{display:block;margin-bottom:6px}.field-help{font-size:12px;color:var(--muted);margin:0 0 9px;line-height:1.5}
-input,textarea{width:100%;padding:13px 14px;border:1px solid #c7b5a4;border-radius:12px;background:#fffdf9;font:inherit;color:var(--ink)}textarea{min-height:105px;resize:vertical}.count{text-align:right;font-size:11px;color:var(--muted);margin-top:5px}
-.upload{display:block;padding:14px;text-align:center;border:1.5px solid #bda58d;background:#fffdf9;border-radius:13px;font-weight:800}.upload input{display:none}.upload-plus{font-size:18px;font-weight:500;vertical-align:-1px;margin-right:3px}
-#photoPreview{display:none;width:100%;margin-top:10px;border-radius:12px;max-height:320px;object-fit:cover}audio{display:none;width:100%;margin-top:10px}
-.recorder{margin-top:10px}
-.voice-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.voice-option{min-height:118px;border:1.5px solid #c8b39e;border-radius:16px;background:#fffdf9;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 10px;text-align:center}
-.voice-option .icon{font-size:25px;line-height:1;margin-bottom:9px}
-.voice-option .title{font-size:14px;font-weight:800;color:var(--ink)}
-.voice-option .sub{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:4px}
-.record-btn{appearance:none;width:100%;min-height:118px;padding:14px 10px;border:1.5px solid #c8b39e;border-radius:16px;background:#fffdf9;color:var(--ink);font-size:14px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.record-btn .icon{font-size:25px;line-height:1;margin-bottom:9px}
-.record-btn .sub{font-size:10.5px;color:var(--muted);font-weight:500;line-height:1.45;margin-top:4px}
-.record-btn.recording{background:#f7ece7;border-color:#c78f7d;color:#8b4e3e}
-.record-btn.recording .sub{color:#9e6758}
-.record-status{text-align:center;font-size:12px;color:var(--muted);margin-top:9px;min-height:18px}
-.record-actions{display:none;margin-top:9px}
-.record-actions button{padding:11px 8px;font-size:13px;background:#fffdf9;color:var(--ink);border:1px solid #c7b5a4}
-.file-choice{margin:0;text-align:center}
-.audio-file-label{cursor:pointer}
-.audio-file-label input{display:none}
-audio{display:none;width:100%;margin-top:10px}
-@media(max-width:390px){.voice-options{gap:8px}.voice-option,.record-btn{min-height:112px;padding:12px 8px}.voice-option .title,.record-btn{font-size:13px}}
-.consent{display:flex;gap:9px;font-size:12px;line-height:1.65;margin:20px 0;padding:13px;background:#f3ede5;border-radius:14px}.consent input{width:auto}
-button{width:100%;padding:16px;border:0;border-radius:14px;background:#9f8064;color:#fff;font-size:16px;font-weight:800}button:disabled{opacity:.4}.note{text-align:center;font-size:11px;color:var(--muted);margin-top:10px}
-.flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;font-size:11px;color:var(--muted)}
-.flow .step-current{position:relative;color:var(--text);font-weight:700;padding:0 2px}
-.flow .step-current::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:999px;background:#b69570}
-.flow .step-current .step-num{display:inline;width:auto;height:auto;background:none;color:inherit;font-size:inherit;line-height:inherit}
-.flow .step-future{color:var(--muted)}
-.flow .arrow{color:#b9afa4}
-</style></head><body><main class="wrap">
-<div class="flow"><span class="step-current"><span class="step-num">1</span>入力</span><span class="arrow">→</span><span class="step-future">2 プレビュー</span><span class="arrow">→</span><span class="step-future">3 購入確認</span><span class="arrow">→</span><span class="step-future">4 完成</span></div>
-<div class="brand">コエフォト</div>
-<section class="hero"><small>PHOTO × VOICE</small><h1>写真に、<em>声をのせて</em><br>贈ろう。</h1></section>
-<form id="form">
-<div class="step"><div class="n">1</div><div class="content"><b>贈る相手のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="recipient" maxlength="15" required placeholder="例）おばあちゃん"><div class="count"><span id="rc">0</span> / 15文字</div></div></div>
-<div class="step"><div class="n">2</div><div class="content"><b>カードに載せるメッセージ</b><div class="field-help">この文章は「贈るカード」に表示されます</div><textarea id="message" maxlength="100" required placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea><div class="count"><span id="mc">0</span> / 100文字</div></div></div>
-<div class="step"><div class="n">3</div><div class="content"><b>贈り主のお名前</b><div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div><input id="sender" maxlength="15" required placeholder="例）ゆうき・あかり"><div class="count"><span id="sc">0</span> / 15文字</div></div></div>
-<div class="step"><div class="n">4</div><div class="content"><b>写真を選ぶ</b><label class="upload"><span class="upload-plus">＋</span> 写真を選ぶ<input id="photo" type="file" accept="image/*"></label><img id="photoPreview"></div></div>
-<div class="step"><div class="n">5</div><div class="content"><b>声を追加する</b><div class="field-help">この声は「QRから見るページ」で再生されます</div><div class="recorder"><div class="voice-options"><button id="recordBtn" class="record-btn" type="button"><span class="icon">🎙️</span><span>この場で録音</span><span class="sub">マイクを使って録音します</span></button><label class="voice-option audio-file-label"><span class="icon">＋</span><span class="title">音声ファイル</span><span class="sub">録音済みの声を選びます</span><input id="audioFile" type="file" accept=".m4a,.mp3,.aac,.wav,.mpeg,audio/mp4,audio/mpeg,audio/aac,audio/wav"></label></div><div id="recordStatus" class="record-status">どちらかを選んでください</div><audio id="audioPreview" controls></audio><div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button></div></div></div></div>
-<label class="consent"><input id="consent" type="checkbox" required><span>写真・音声を「贈るカード」と「QRから見るページ」の作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span></label>
-<button id="go" type="submit">プレビューを確認</button>
-<div class="note">プレビューまでは無料。完成版は480円（税込）です。</div>
-</form></main>
+*{box-sizing:border-box}
+:root{
+  --bg:#fffdfa;
+  --panel:#fbf7f2;
+  --ink:#2f2722;
+  --brown:#9f7654;
+  --brown-dark:#7d5d44;
+  --brown-light:#b58b68;
+  --muted:#8c827a;
+  --line:#e7ddd4;
+  --field:#ffffff;
+  --danger:#a75748;
+  --danger-bg:#fff4f1;
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+button,input,textarea{font:inherit}
+button,label{ -webkit-tap-highlight-color:transparent }
+.page{max-width:1120px;margin:0 auto;padding:22px 24px 64px}
+
+/* header */
+.topbar{display:flex;align-items:flex-end;gap:10px;margin:0 0 28px}
+.brand{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);line-height:1}
+.brand-tag{font-size:13px;font-weight:700;color:var(--brown-dark);padding-bottom:3px}
+.hero-copy{display:none}
+
+/* progress */
+.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 70px 38px}
+.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;background:#eee9e5;border-radius:999px;z-index:0}
+.progress-step{position:relative;z-index:1;text-align:center;color:#6f635a}
+.progress-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;background:#f0ece8;color:#72665d;font-size:16px}
+.progress-step.current .progress-dot{background:var(--brown-light);color:#fff}
+.progress-label{font-size:15px;font-weight:800}
+.progress-step.current .progress-label{color:var(--brown-dark)}
+
+/* form panel */
+.form-panel{background:linear-gradient(135deg,#fcf9f5,#fffdfb);border:1px solid #eee5dd;border-radius:22px;padding:30px 28px 24px;box-shadow:0 10px 28px rgba(109,77,51,.035)}
+.form-row{display:grid;grid-template-columns:235px minmax(0,1fr);gap:28px;padding:18px 0;align-items:start}
+.row-label{display:flex;align-items:center;gap:10px;padding-top:8px;font-size:18px;font-weight:900;line-height:1.4}
+.num{width:31px;height:31px;flex:0 0 31px;border:2px solid var(--brown-dark);border-radius:50%;display:grid;place-items:center;color:var(--brown-dark);font-size:15px;font-weight:900}
+.field-help{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.6}
+.field-stack{min-width:0}
+.text-input,textarea{
+  width:100%;
+  border:1px solid #cfc5bd;
+  border-radius:7px;
+  background:#fff;
+  color:var(--ink);
+  padding:15px 18px;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.text-input:focus,textarea:focus{border-color:var(--brown-light);box-shadow:0 0 0 3px rgba(181,139,104,.12)}
+textarea{min-height:118px;resize:vertical;line-height:1.6}
+.count{text-align:right;font-size:11px;color:var(--muted);margin-top:5px}
+
+/* upload buttons */
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.upload-btn,.record-btn{
+  appearance:none;
+  border:0;
+  width:auto;
+  min-width:190px;
+  min-height:52px;
+  border-radius:10px;
+  padding:0 20px;
+  background:linear-gradient(180deg,#b78a65,#a47755);
+  color:#fff;
+  font-size:14px;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(120,82,52,.10)
+}
+.upload-btn input{display:none}
+.action-icon{font-size:18px;line-height:1}
+.record-btn.recording{background:#9a5b4c}
+.voice-file-title{font-weight:800}
+
+/* selected media cards */
+.media-card{
+  display:none;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  border:1px solid #e3ddd7;
+  border-radius:16px;
+  background:#fff;
+  padding:14px;
+  margin-top:2px;
+}
+.media-card.show{display:flex}
+.photo-thumb{
+  width:102px;height:72px;flex:0 0 102px;
+  object-fit:cover;border-radius:9px;background:#f1ede9
+}
+.media-main{min-width:0;flex:1}
+.media-name{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.media-delete{
+  width:auto;flex:0 0 auto;
+  border:1px solid #e5c6bf;
+  background:var(--danger-bg);
+  color:var(--danger);
+  border-radius:10px;
+  padding:10px 13px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer
+}
+.media-delete:active{transform:translateY(1px)}
+#audioPreview{width:100%;margin-top:10px;display:none}
+#photoPreview{display:none}
+.record-status{font-size:12px;color:var(--muted);min-height:18px;margin-top:8px}
+.record-actions{display:none;margin-top:8px}
+.record-actions button{
+  width:auto;border:1px solid #d6c7ba;background:#fff;color:var(--brown-dark);
+  border-radius:9px;padding:9px 13px;font-size:12px;font-weight:800
+}
+.format-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.55}
+
+/* consent and submit */
+.bottom-area{max-width:760px;margin:22px auto 0}
+.consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.65;color:#665b53;padding:12px 14px;border-radius:12px;background:#f7f1eb}
+.consent input{width:auto;margin-top:3px}
+#go{
+  display:block;width:min(440px,100%);margin:26px auto 0;
+  border:0;border-radius:999px;
+  padding:17px 24px;
+  background:linear-gradient(180deg,#a77d5a,#956c4c);
+  color:#fff;font-size:17px;font-weight:900;letter-spacing:.02em;
+  box-shadow:0 7px 18px rgba(128,87,54,.17);
+  cursor:pointer
+}
+#go:active{transform:translateY(1px)}
+.note{text-align:center;color:var(--muted);font-size:11px;margin-top:9px}
+
+@media(max-width:760px){
+  .page{padding:18px 14px 48px}
+  .topbar{margin-bottom:22px;align-items:center}
+  .brand{font-size:25px}
+  .brand-tag{font-size:11px;padding-bottom:0}
+  .progress{margin:0 6px 26px}
+  .progress::before{top:18px;height:3px}
+  .progress-dot{width:38px;height:38px;margin-bottom:7px;font-size:14px}
+  .progress-label{font-size:11px}
+  .form-panel{padding:16px 14px 18px;border-radius:18px}
+  .form-row{grid-template-columns:1fr;gap:10px;padding:16px 0;border-bottom:1px solid #eee5dd}
+  .form-row:last-of-type{border-bottom:0}
+  .row-label{padding-top:0;font-size:16px}
+  .num{width:29px;height:29px;flex-basis:29px;font-size:14px}
+  .text-input,textarea{padding:13px 14px}
+  textarea{min-height:105px}
+  .action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .action-row.photo-action{display:block}
+  .upload-btn,.record-btn{min-width:0;width:100%;min-height:50px;padding:0 10px;font-size:13px}
+  .media-card{padding:10px;gap:10px}
+  .photo-thumb{width:78px;height:60px;flex-basis:78px}
+  .media-delete{padding:9px 10px;font-size:12px}
+}
+@media(max-width:390px){
+  .brand-tag{display:none}
+  .progress-label{font-size:10px}
+  .media-name{font-size:13px}
+  .action-row{gap:7px}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="topbar">
+    <div class="brand">コエフォト</div>
+    <div class="brand-tag">写真と声で、想いを届ける</div>
+  </header>
+
+  <nav class="progress" aria-label="作成の進捗">
+    <div class="progress-step current"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
+    <div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div>
+    <div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div>
+    <div class="progress-step"><div class="progress-dot">4</div><div class="progress-label">完成</div></div>
+  </nav>
+
+  <form id="form">
+    <section class="form-panel">
+      <div class="form-row">
+        <div class="row-label"><span class="num">1</span><span>贈る相手のお名前</span></div>
+        <div class="field-stack">
+          <input class="text-input" id="recipient" maxlength="15" required placeholder="例）おばあちゃん">
+          <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
+          <div class="count"><span id="rc">0</span> / 15文字</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="row-label"><span class="num">2</span><span>カードに載せるメッセージ</span></div>
+        <div class="field-stack">
+          <textarea id="message" maxlength="100" required placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea>
+          <div class="field-help">この文章は「贈るカード」に表示されます</div>
+          <div class="count"><span id="mc">0</span> / 100文字</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="row-label"><span class="num">3</span><span>贈り主のお名前</span></div>
+        <div class="field-stack">
+          <input class="text-input" id="sender" maxlength="15" required placeholder="例）ゆうき・あかり">
+          <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
+          <div class="count"><span id="sc">0</span> / 15文字</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="row-label"><span class="num">4</span><span>写真を選ぶ</span></div>
+        <div class="field-stack">
+          <div id="photoCard" class="media-card">
+            <img id="photoThumb" class="photo-thumb" alt="">
+            <div class="media-main">
+              <div id="photoName" class="media-name">選択した写真</div>
+              <div class="media-sub">この写真をカードに使用します</div>
+            </div>
+            <button id="deletePhoto" class="media-delete" type="button">削除</button>
+          </div>
+          <img id="photoPreview" alt="">
+          <div class="action-row photo-action">
+            <label class="upload-btn">
+              <span class="action-icon">▣</span><span>写真を選ぶ</span>
+              <input id="photo" type="file" accept="image/*">
+            </label>
+          </div>
+          <div class="format-note">画像は1枚選択できます。</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="row-label"><span class="num">5</span><span>音声を追加する</span></div>
+        <div class="field-stack">
+          <div id="audioCard" class="media-card">
+            <div class="media-main">
+              <div id="audioName" class="media-name">選択した音声</div>
+              <div class="media-sub">再生して内容を確認できます</div>
+              <audio id="audioPreview" controls></audio>
+            </div>
+            <button id="deleteAudio" class="media-delete" type="button">削除</button>
+          </div>
+
+          <div class="action-row">
+            <button id="recordBtn" class="record-btn" type="button">
+              <span class="action-icon">🎙</span><span>この場で録音</span>
+            </button>
+            <label class="upload-btn">
+              <span class="action-icon">＋</span><span class="voice-file-title">音声ファイル</span>
+              <input id="audioFile" type="file" accept=".m4a,.mp3,.aac,.wav,.mpeg,audio/mp4,audio/mpeg,audio/aac,audio/wav">
+            </label>
+          </div>
+          <div id="recordStatus" class="record-status">この場で録音するか、録音済みの音声を選べます</div>
+          <div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button></div>
+          <div class="format-note">音声は1つ選択できます。m4a / mp3 / aac / wav に対応しています。</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-area">
+      <label class="consent">
+        <input id="consent" type="checkbox" required>
+        <span>写真・音声を「贈るカード」と「QRから見るページ」の作成・プレビューのために利用することに同意します。また、使用に必要な許可を得ていることを確認済みです。</span>
+      </label>
+      <button id="go" type="submit">プレビューを確認　›</button>
+      <div class="note">プレビューまでは無料。完成版は480円（税込）です。</div>
+    </div>
+  </form>
+</main>
+
 <script>
 const $=id=>document.getElementById(id);
 [['recipient','rc'],['message','mc'],['sender','sc']].forEach(([a,b])=>$(a).addEventListener('input',()=>$(b).textContent=$(a).value.length));
+
 let storedPhoto=null;
 let storedAudio=null;
 let photoObjectUrl=null;
 let audioObjectUrl=null;
+let recordedAudio=null;
+let mediaRecorder=null;
+let mediaStream=null;
+let chunks=[];
+let recordStartedAt=0;
+let timerId=null;
 
+const recordBtn=$('recordBtn');
+const recordStatus=$('recordStatus');
+const recordActions=$('recordActions');
+
+function fileLabel(file,fallback){
+  return (file && file.name) ? file.name : fallback;
+}
 function showPhoto(blob){
   if(!blob)return;
   if(photoObjectUrl)URL.revokeObjectURL(photoObjectUrl);
   photoObjectUrl=URL.createObjectURL(blob);
-  $('photoPreview').src=photoObjectUrl;
-  $('photoPreview').style.display='block';
+  $('photoThumb').src=photoObjectUrl;
+  $('photoName').textContent=fileLabel(blob,'選択した写真');
+  $('photoCard').classList.add('show');
+}
+function hidePhoto(){
+  if(photoObjectUrl){URL.revokeObjectURL(photoObjectUrl);photoObjectUrl=null}
+  $('photoThumb').removeAttribute('src');
+  $('photoCard').classList.remove('show');
+  $('photoName').textContent='選択した写真';
 }
 function showAudio(blob){
   if(!blob)return;
@@ -72,33 +321,48 @@ function showAudio(blob){
   audioObjectUrl=URL.createObjectURL(blob);
   $('audioPreview').src=audioObjectUrl;
   $('audioPreview').style.display='block';
+  $('audioName').textContent=fileLabel(blob,'録音した音声');
+  $('audioCard').classList.add('show');
+}
+function hideAudio(){
+  if(audioObjectUrl){URL.revokeObjectURL(audioObjectUrl);audioObjectUrl=null}
+  $('audioPreview').pause();
+  $('audioPreview').removeAttribute('src');
+  $('audioPreview').load();
+  $('audioPreview').style.display='none';
+  $('audioCard').classList.remove('show');
+  $('audioName').textContent='選択した音声';
+}
+function stopMic(){
+  if(mediaStream){mediaStream.getTracks().forEach(track=>track.stop());mediaStream=null}
 }
 
 $('photo').addEventListener('change',()=>{
   const f=$('photo').files[0];
   if(f){storedPhoto=f;showPhoto(f)}
 });
-let recordedAudio=null;
-let mediaRecorder=null;
-let mediaStream=null;
-let chunks=[];
-let recordStartedAt=0;
-let timerId=null;
-const recordBtn=$('recordBtn'), recordStatus=$('recordStatus'), recordActions=$('recordActions');
 
-function stopMic(){
-  if(mediaStream){mediaStream.getTracks().forEach(track=>track.stop());mediaStream=null}
-}
 function resetRecording(){
   if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
-  stopMic(); clearInterval(timerId); recordedAudio=null; storedAudio=null; chunks=[];
-  $('audioPreview').pause(); $('audioPreview').removeAttribute('src'); $('audioPreview').load(); $('audioPreview').style.display='none';
-  recordActions.style.display='none'; recordBtn.style.display='flex'; recordBtn.classList.remove('recording');
-  recordBtn.innerHTML='<span class="icon">🎙️</span><span>この場で録音</span><span class="sub">マイクを使って録音します</span>';
-  recordStatus.textContent='どちらかを選んでください';
+  stopMic();
+  clearInterval(timerId);
+  recordedAudio=null;
+  storedAudio=null;
+  chunks=[];
+  hideAudio();
+  $('audioFile').value='';
+  recordActions.style.display='none';
+  recordBtn.style.display='inline-flex';
+  recordBtn.classList.remove('recording');
+  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
+  recordStatus.textContent='この場で録音するか、録音済みの音声を選べます';
 }
+
 async function startRecording(){
-  if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){alert('このブラウザでは録音機能を利用できません。Safariを最新版にしてお試しください。');return}
+  if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){
+    alert('このブラウザでは録音機能を利用できません。Safariを最新版にしてお試しください。');
+    return;
+  }
   try{
     mediaStream=await navigator.mediaDevices.getUserMedia({audio:true});
     const preferred=['audio/mp4','audio/webm;codecs=opus','audio/webm'];
@@ -107,53 +371,133 @@ async function startRecording(){
     chunks=[];
     mediaRecorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
     mediaRecorder.onstop=()=>{
-      clearInterval(timerId); stopMic();
+      clearInterval(timerId);
+      stopMic();
       const type=mediaRecorder.mimeType || chunks[0]?.type || 'audio/mp4';
       const ext=type.includes('webm')?'webm':'m4a';
       recordedAudio=new File([new Blob(chunks,{type})],`koephoto-recording.${ext}`,{type});
       storedAudio=recordedAudio;
       showAudio(recordedAudio);
-      recordBtn.style.display='none'; recordActions.style.display='flex'; recordStatus.textContent='録音できました。再生して内容を確認できます';
+      recordBtn.style.display='none';
+      recordActions.style.display='block';
+      recordStatus.textContent='録音できました。再生して内容を確認できます';
     };
-    mediaRecorder.start(); recordStartedAt=Date.now();
+    mediaRecorder.start();
+    recordStartedAt=Date.now();
     recordBtn.classList.add('recording');
-    recordBtn.innerHTML='<span class="icon">■</span><span>録音を停止</span><span class="sub">タップして録音を終了します</span>';
-    const tick=()=>{const s=Math.floor((Date.now()-recordStartedAt)/1000);recordStatus.textContent=`録音中 ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}; tick(); timerId=setInterval(tick,500);
-  }catch(err){stopMic(); recordStatus.textContent='マイクを使用できませんでした'; alert('録音にはマイクの使用許可が必要です。Safariのマイク許可を確認してください。')}
+    recordBtn.innerHTML='<span class="action-icon">■</span><span>録音を停止</span>';
+    const tick=()=>{
+      const sec=Math.floor((Date.now()-recordStartedAt)/1000);
+      recordStatus.textContent=`録音中 ${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+    };
+    tick();
+    timerId=setInterval(tick,500);
+  }catch(err){
+    stopMic();
+    recordStatus.textContent='マイクを使用できませんでした';
+    alert('録音にはマイクの使用許可が必要です。Safariのマイク許可を確認してください。');
+  }
 }
-recordBtn.addEventListener('click',()=>{if(mediaRecorder?.state==='recording')mediaRecorder.stop();else startRecording()});
+
+recordBtn.addEventListener('click',()=>{
+  if(mediaRecorder?.state==='recording')mediaRecorder.stop();
+  else startRecording();
+});
 $('retryRecord').addEventListener('click',resetRecording);
+
 $('audioFile').addEventListener('change',()=>{
   const f=$('audioFile').files[0];
   if(!f)return;
-  const name=(f.name||'').toLowerCase(), type=(f.type||'').toLowerCase();
+  const name=(f.name||'').toLowerCase(),type=(f.type||'').toLowerCase();
   const ok=/\.(m4a|mp3|aac|wav|mpeg)$/i.test(name) || type.startsWith('audio/') || type==='application/octet-stream' || type==='';
   if(!ok){
     alert('m4a / mp3 / aac / wav 形式の音声ファイルを選んでください。');
     $('audioFile').value='';
     return;
   }
-  if(mediaRecorder?.state==='recording') mediaRecorder.stop();
-  stopMic(); clearInterval(timerId);
+  if(mediaRecorder?.state==='recording')mediaRecorder.stop();
+  stopMic();
+  clearInterval(timerId);
   recordedAudio=f;
   storedAudio=f;
   showAudio(f);
-  recordBtn.style.display='flex';
+  recordBtn.style.display='inline-flex';
   recordBtn.classList.remove('recording');
-  recordBtn.innerHTML='<span class="icon">🎙️</span><span>この場で録音</span><span class="sub">マイクを使って録音します</span>';
+  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
   recordActions.style.display='none';
   recordStatus.textContent='音声ファイルを選択しました。再生して内容を確認できます';
 });
-function db(){return new Promise((ok,ng)=>{const r=indexedDB.open('koephoto-preview',2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}
-async function put(k,v){const x=await db();await new Promise((ok,ng)=>{const t=x.transaction('draft','readwrite');t.objectStore('draft').put(v,k);t.oncomplete=ok;t.onerror=()=>ng(t.error)});x.close()}
-async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{const t=x.transaction('draft');const r=t.objectStore('draft').get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)});x.close();return v}
+
+function db(){
+  return new Promise((ok,ng)=>{
+    const r=indexedDB.open('koephoto-preview',2);
+    r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('draft'))r.result.createObjectStore('draft')};
+    r.onsuccess=()=>ok(r.result);
+    r.onerror=()=>ng(r.error);
+  });
+}
+async function put(k,v){
+  const x=await db();
+  await new Promise((ok,ng)=>{
+    const t=x.transaction('draft','readwrite');
+    t.objectStore('draft').put(v,k);
+    t.oncomplete=ok;
+    t.onerror=()=>ng(t.error);
+  });
+  x.close();
+}
+async function get(k){
+  const x=await db();
+  const v=await new Promise((ok,ng)=>{
+    const t=x.transaction('draft');
+    const r=t.objectStore('draft').get(k);
+    r.onsuccess=()=>ok(r.result);
+    r.onerror=()=>ng(r.error);
+  });
+  x.close();
+  return v;
+}
+async function del(k){
+  const x=await db();
+  await new Promise((ok,ng)=>{
+    const t=x.transaction('draft','readwrite');
+    t.objectStore('draft').delete(k);
+    t.oncomplete=ok;
+    t.onerror=()=>ng(t.error);
+  });
+  x.close();
+}
+
+$('deletePhoto').addEventListener('click',async()=>{
+  storedPhoto=null;
+  $('photo').value='';
+  hidePhoto();
+  try{await del('photo')}catch(err){console.warn('写真の保存データ削除に失敗しました',err)}
+});
+
+$('deleteAudio').addEventListener('click',async()=>{
+  if(mediaRecorder?.state==='recording')mediaRecorder.stop();
+  stopMic();
+  clearInterval(timerId);
+  recordedAudio=null;
+  storedAudio=null;
+  chunks=[];
+  $('audioFile').value='';
+  hideAudio();
+  recordActions.style.display='none';
+  recordBtn.style.display='inline-flex';
+  recordBtn.classList.remove('recording');
+  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
+  recordStatus.textContent='この場で録音するか、録音済みの音声を選べます';
+  try{await del('audio')}catch(err){console.warn('音声の保存データ削除に失敗しました',err)}
+});
 
 // プレビュー/購入確認から入力画面へ戻ったとき、前回の入力内容を復元する。
 (async()=>{
   try{
     let saved=null;
-    try{ saved=JSON.parse(sessionStorage.getItem('koephoto-draft')||'null'); }catch(e){}
-    if(!saved) saved=await get('form');
+    try{saved=JSON.parse(sessionStorage.getItem('koephoto-draft')||'null')}catch(e){}
+    if(!saved)saved=await get('form');
 
     if(saved){
       $('recipient').value=saved.recipient||'';
@@ -166,7 +510,7 @@ async function get(k){const x=await db();const v=await new Promise((ok,ng)=>{con
     }
 
     const [p,a]=await Promise.all([get('photo'),get('audio')]);
-    if(p){ storedPhoto=p; showPhoto(p); }
+    if(p){storedPhoto=p;showPhoto(p)}
     if(a){
       storedAudio=a;
       recordedAudio=a;
@@ -185,11 +529,17 @@ $('form').addEventListener('submit',async e=>{
   const p=$('photo').files[0] || storedPhoto;
   const a=recordedAudio || storedAudio;
   if(!p){alert('写真を選んでください。');return}
-  if(!a){alert('声を録音するか、音声ファイルを選んでください。');return;}
-const draftData={recipient:$('recipient').value.trim(),message:$('message').value.trim(),sender:$('sender').value.trim()};
-sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
-// Safariの画面遷移でも作成内容を保持するため、文字データもIndexedDBへ保存。
-await Promise.all([put('form',draftData),put('photo',p),put('audio',a)]);
-location.href='preview.html';
+  if(!a){alert('声を録音するか、音声ファイルを選んでください。');return}
+
+  const draftData={
+    recipient:$('recipient').value.trim(),
+    message:$('message').value.trim(),
+    sender:$('sender').value.trim()
+  };
+  sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
+  await Promise.all([put('form',draftData),put('photo',p),put('audio',a)]);
+  location.href='preview.html';
 });
-</script></body></html>
+</script>
+</body>
+</html>
