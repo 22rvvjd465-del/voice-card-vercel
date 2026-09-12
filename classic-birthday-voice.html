@@ -21,6 +21,28 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .player{position:absolute;z-index:4;left:17.6%;top:67.95%;width:64.0%;height:5.9%;display:grid;grid-template-columns:11.0% 1fr;column-gap:4.3%;align-items:center;padding:0}
 .play{width:92%;aspect-ratio:1/1;border:.18cqw solid rgba(201,149,47,.88);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:2.35cqw;line-height:1;box-shadow:0 .55cqw 1.5cqw rgba(11,52,127,.20),inset 0 0 0 .32cqw rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent;justify-self:start;align-self:start;transform:translate(-3.15cqw,-.18cqw)}
 .play:active{transform:scale(.97)}
+
+/* Restore the previously intended player scale explicitly.
+   This used to be applied accidentally by the malformed mobile CSS. */
+.player{
+  grid-template-columns:40px 1fr;
+  column-gap:11px;
+  padding:12px 22px 11px 20px;
+  box-sizing:border-box;
+}
+.play{
+  width:38px;
+  height:38px;
+  aspect-ratio:auto;
+  font-size:14px;
+}
+.wave-wrap{height:34px}
+.wavebar{
+  flex:0 0 2.4px;
+  width:2.4px;
+  max-width:2.4px;
+}
+
 .player-main{min-width:0;height:100%;display:flex;align-items:center}
 .wave-wrap{position:relative;width:100%;height:72%;display:flex;align-items:center}
 .waveform{
