@@ -25,27 +25,84 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .play::before{
   content:"";
   position:absolute;
-  inset:-.7cqw;
-  border:.18cqw solid rgba(201,149,47,0);
+  inset:-1.05cqw;
+  border:.20cqw solid rgba(201,149,47,.18);
   border-radius:50%;
   pointer-events:none;
   opacity:0;
+  box-shadow:
+    0 0 0 .32cqw rgba(201,149,47,.10),
+    0 0 1.5cqw rgba(201,149,47,.20);
 }
+.play::after{
+  content:"";
+  position:absolute;
+  width:.42cqw;
+  height:.42cqw;
+  border-radius:50%;
+  background:#f4d78c;
+  top:50%;
+  left:50%;
+  margin:-.21cqw 0 0 -.21cqw;
+  opacity:0;
+  pointer-events:none;
+  box-shadow:
+    0 -2.15cqw 0 -.03cqw rgba(244,215,140,.95),
+    1.55cqw -1.55cqw 0 -.05cqw rgba(201,149,47,.88),
+    2.15cqw 0 0 -.03cqw rgba(244,215,140,.95),
+    1.55cqw 1.55cqw 0 -.05cqw rgba(201,149,47,.88),
+    0 2.15cqw 0 -.03cqw rgba(244,215,140,.95),
+    -1.55cqw 1.55cqw 0 -.05cqw rgba(201,149,47,.88),
+    -2.15cqw 0 0 -.03cqw rgba(244,215,140,.95),
+    -1.55cqw -1.55cqw 0 -.05cqw rgba(201,149,47,.88);
+}
+
 .player.is-playing .play::before{
-  animation:koeGoldPulse 1.8s ease-out infinite;
+  animation:koeGoldHalo 1.65s ease-in-out infinite;
 }
+.player.is-playing .play::after{
+  opacity:.95;
+  animation:koeSparkOrbit 3.2s linear infinite;
+}
+
 .player.is-playing .play{
   box-shadow:
     0 .55cqw 1.5cqw rgba(11,52,127,.20),
     inset 0 0 0 .32cqw rgba(255,255,255,.08),
-    0 0 1.6cqw rgba(201,149,47,.18);
+    0 0 1.1cqw rgba(244,215,140,.40),
+    0 0 2.3cqw rgba(201,149,47,.24);
 }
-@keyframes koeGoldPulse{
+@keyframes koeGoldHalo{
   0%{
-    transform:scale(.92);
+    transform:scale(.90);
+    opacity:.20;
+    border-color:rgba(201,149,47,.30);
+    box-shadow:
+      0 0 0 .15cqw rgba(201,149,47,.08),
+      0 0 .8cqw rgba(201,149,47,.16);
+  }
+  45%{
+    transform:scale(1.14);
+    opacity:.95;
+    border-color:rgba(244,215,140,.95);
+    box-shadow:
+      0 0 0 .40cqw rgba(201,149,47,.12),
+      0 0 1.8cqw rgba(244,215,140,.42);
+  }
+  100%{
+    transform:scale(1.34);
     opacity:0;
     border-color:rgba(201,149,47,0);
+    box-shadow:
+      0 0 0 .62cqw rgba(201,149,47,0),
+      0 0 2.4cqw rgba(244,215,140,0);
   }
+}
+@keyframes koeSparkOrbit{
+  0%{transform:rotate(0deg) scale(.96);filter:brightness(1)}
+  50%{transform:rotate(180deg) scale(1.08);filter:brightness(1.22)}
+  100%{transform:rotate(360deg) scale(.96);filter:brightness(1)}
+}
   28%{
     opacity:.48;
     border-color:rgba(201,149,47,.58);
@@ -60,7 +117,16 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
   filter:drop-shadow(0 0 .18cqw rgba(201,149,47,.10));
 }
 @media(prefers-reduced-motion:reduce){
-  .player.is-playing .play::before{animation:none}
+  .player.is-playing .play::before,
+  .player.is-playing .play::after{animation:none}
+  .player.is-playing .play::after{opacity:.45}
+  .player.is-playing .play{
+    box-shadow:
+      0 .55cqw 1.5cqw rgba(11,52,127,.20),
+      inset 0 0 0 .32cqw rgba(255,255,255,.08),
+      0 0 1.2cqw rgba(201,149,47,.22);
+  }
+}
   .player.is-playing .play{box-shadow:0 .55cqw 1.5cqw rgba(11,52,127,.20),inset 0 0 0 .32cqw rgba(255,255,255,.08)}
 }
 
