@@ -5,81 +5,421 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト｜完成版</title>
 <style>
-:root{--bg:#f5f1ea;--ink:#4e4339;--muted:#8a7d70;--line:#ded4c7;--accent:#a98a6b}
+:root{
+  --bg:#f4f0e9;
+  --paper:#fffdf9;
+  --ink:#4d4339;
+  --muted:#93877c;
+  --line:#e5dbcf;
+  --accent:#a88969;
+  --accent-deep:#8e7054;
+  --cream:#eee6db;
+  --green:#5e755f;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink)}
-.wrap{max-width:760px;margin:0 auto;padding:26px 18px 54px}
-.flow{display:flex;align-items:center;justify-content:center;gap:8px;font-size:10.5px;color:#aaa098;margin-bottom:24px}
-.flow > span{display:inline-flex;align-items:center;height:18px;line-height:18px;padding:0;margin:0}
-.current{position:relative;font-weight:700;color:var(--ink)}
-.current::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:999px;background:#b69570}
-.card{background:#fffdf9;border:1px solid #e2d8cc;border-radius:24px;padding:25px 18px}
-h1{text-align:center;margin:0 0 8px;font-size:25px}
-.lead{text-align:center;color:#796d61;font-size:13px;line-height:1.7;margin:0 0 22px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;background:#e9e2d8;border-radius:17px;padding:5px;margin-bottom:18px}
-.tabs button{border:0;background:transparent;border-radius:13px;padding:12px 8px;color:#74685e;font-weight:700;font-size:14px}
-.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 4px 12px rgba(80,65,50,.08)}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+  background:
+    radial-gradient(circle at 50% -8%,rgba(255,255,255,.96),rgba(255,255,255,0) 35%),
+    var(--bg);
+  color:var(--ink);
+}
+.wrap{
+  width:min(100%,760px);
+  margin:0 auto;
+  padding:26px 18px 58px;
+}
+.flow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:26px;
+  font-size:10.5px;
+  color:#b1a79f;
+  white-space:nowrap;
+}
+.flow>span{
+  display:inline-flex;
+  align-items:center;
+  height:18px;
+  line-height:18px;
+}
+.flow .arrow{color:#c8bfb6}
+.flow .current{
+  position:relative;
+  color:var(--ink);
+  font-weight:700;
+}
+.flow .current::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  bottom:-3px;
+  height:2px;
+  border-radius:999px;
+  background:#b69570;
+}
+.product{
+  overflow:hidden;
+  border:1px solid rgba(219,208,196,.95);
+  border-radius:30px;
+  background:rgba(255,253,249,.96);
+  box-shadow:0 22px 55px rgba(83,67,52,.09);
+}
+.hero{
+  position:relative;
+  padding:30px 22px 26px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(circle at 85% 5%,rgba(181,150,118,.13),transparent 32%),
+    linear-gradient(180deg,#fffdf9 0%,#fbf7f2 100%);
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  width:170px;height:170px;
+  border-radius:50%;
+  left:-105px;top:-95px;
+  background:radial-gradient(circle,rgba(186,157,126,.13),rgba(186,157,126,0) 70%);
+}
+.brand{
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:.04em;
+  color:#584c42;
+}
+.eyebrow{
+  margin-top:6px;
+  font-size:10px;
+  letter-spacing:.22em;
+  color:#aa9c8f;
+  font-weight:700;
+}
+.title{
+  margin:15px 0 8px;
+  font-size:24px;
+  line-height:1.48;
+  letter-spacing:.01em;
+  font-weight:750;
+}
+.lead{
+  margin:0 auto;
+  max-width:470px;
+  color:#796e64;
+  font-size:12.5px;
+  line-height:1.75;
+}
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  margin-top:17px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid #e5dbcf;
+  background:rgba(255,255,255,.72);
+  color:#776b61;
+  font-size:11px;
+  font-weight:700;
+}
+.badge.ok{
+  color:var(--green);
+  background:#f4f8f3;
+  border-color:#dce8da;
+}
+.content{
+  padding:22px 18px 24px;
+}
+.tabs{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:5px;
+  padding:5px;
+  border-radius:18px;
+  background:#ece5dc;
+}
+.tabs button{
+  position:relative;
+  min-height:52px;
+  border:0;
+  border-radius:14px;
+  background:transparent;
+  color:#766a60;
+  font:inherit;
+  cursor:pointer;
+}
+.tabs button .jp{
+  display:block;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.2;
+}
+.tabs button .en{
+  display:block;
+  margin-top:4px;
+  font-size:8.5px;
+  letter-spacing:.12em;
+  color:#aa9e93;
+  font-weight:700;
+}
+.tabs button.on{
+  color:var(--ink);
+  background:#fffdf9;
+  box-shadow:0 4px 13px rgba(77,62,48,.08);
+}
+.tabs button.on .en{color:#92775f}
 .panel{display:none}
 .panel.on{display:block}
-.previewBox{background:#f0ebe4;border-radius:18px;padding:14px;text-align:center}
-.placeholder{aspect-ratio:127/178;background:#fff;border:1px dashed #cdbca9;border-radius:10px;display:grid;place-items:center;color:#998b7c;font-size:13px;padding:20px}
-.status{margin:18px 0;padding:13px;border-radius:14px;background:#f0f6ef;color:#4e6b4f;text-align:center;font-size:13px}
-.btns{display:grid;gap:10px;margin-top:18px}
-.btn{display:block;width:100%;border-radius:15px;padding:15px;text-align:center;text-decoration:none;font-weight:750;font-size:15px}
-.primary{background:var(--accent);color:#fff}
-.secondary{background:#fff;color:var(--ink);border:1px solid #cdbca9}
-.note{text-align:center;color:var(--muted);font-size:11px;line-height:1.7;margin-top:16px}
+.preview-stage{
+  position:relative;
+  margin-top:18px;
+  padding:22px 16px 18px;
+  border:1px solid #e7ded4;
+  border-radius:24px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,243,236,.94)),
+    #f5f0ea;
+}
+.stage-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:0 2px 14px;
+  color:#8d8176;
+  font-size:10.5px;
+  letter-spacing:.04em;
+}
+.stage-label strong{
+  color:#65594f;
+  font-size:11px;
+}
+.product-frame{
+  width:min(100%,330px);
+  margin:0 auto;
+  padding:11px;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 18px 36px rgba(83,67,52,.13);
+}
+.card-preview{
+  aspect-ratio:127/178;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px dashed #cdbdab;
+  background:
+    linear-gradient(155deg,rgba(183,151,118,.08),rgba(255,255,255,.5)),
+    #fbf7f2;
+  color:#948778;
+  text-align:center;
+  padding:24px;
+  font-size:12px;
+  line-height:1.75;
+}
+.voice-preview{
+  aspect-ratio:9/14;
+  min-height:390px;
+  display:grid;
+  place-items:center;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px dashed #cdbdab;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(176,144,111,.11),transparent 30%),
+    #fbf8f4;
+  color:#948778;
+  text-align:center;
+  padding:24px;
+  font-size:12px;
+  line-height:1.75;
+}
+.meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:16px;
+}
+.meta-card{
+  padding:13px 14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fffdfb;
+}
+.meta-label{
+  font-size:10px;
+  color:#a19589;
+  margin-bottom:4px;
+}
+.meta-value{
+  font-size:12px;
+  font-weight:750;
+  color:#62564c;
+}
+.actions{
+  display:grid;
+  gap:10px;
+  margin-top:18px;
+}
+.btn{
+  width:100%;
+  min-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:17px;
+  border:0;
+  text-decoration:none;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+}
+.primary{
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-deep));
+  box-shadow:0 12px 22px rgba(143,113,85,.18);
+}
+.secondary{
+  color:var(--ink);
+  background:#fff;
+  border:1px solid #d5c8ba;
+}
+.tertiary{
+  min-height:48px;
+  color:#7b6f65;
+  background:transparent;
+  font-size:13px;
+}
+.note{
+  margin:14px 6px 0;
+  text-align:center;
+  color:#9a8e82;
+  font-size:10.5px;
+  line-height:1.7;
+}
+@media(max-width:420px){
+  .wrap{padding-left:14px;padding-right:14px}
+  .product{border-radius:27px}
+  .hero{padding:28px 18px 24px}
+  .brand{font-size:24px}
+  .title{font-size:23px;line-height:1.5}
+  .content{padding:20px 14px 22px}
+  .preview-stage{padding:18px 12px 16px}
+  .meta{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <div class="flow"><span>1 入力</span><span>→</span><span>2 プレビュー</span><span>→</span><span>3 購入確認</span><span>→</span><span class="current">4 完成</span></div>
-  <section class="card">
-    <h1>完成版</h1>
-    <p class="lead">完成したコエフォトを確認して、保存や共有へ進めます。</p>
 
-    <div class="tabs">
-      <button id="cardTab" class="on" type="button">贈るカード</button>
-      <button id="voiceTab" type="button">QRから見るページ</button>
-    </div>
+  <div class="flow" aria-label="作成ステップ">
+    <span>1 入力</span><span class="arrow">→</span>
+    <span>2 プレビュー</span><span class="arrow">→</span>
+    <span>3 購入確認</span><span class="arrow">→</span>
+    <span class="current">4 完成</span>
+  </div>
 
-    <section id="cardPanel" class="panel on">
-      <div class="previewBox">
-        <div class="placeholder">ここに完成した「贈るカード」を表示します。<br>実際のQRコード入り完成版は次の実装で接続します。</div>
+  <section class="product">
+    <header class="hero">
+      <h1 class="title">大切な人へ贈る<br>コエフォトができました</h1>
+      <p class="lead">贈るカードと、QRコードから開くページを確認できます。</p>
+
+      <div class="badges">
+        <span class="badge ok">✓ 購入済み</span>
+        <span class="badge">Classic Birthday</span>
       </div>
-    </section>
+    </header>
 
-    <section id="voicePanel" class="panel">
-      <div class="previewBox">
-        <div class="placeholder">ここに受け取り用の「QRから見るページ」を表示します。</div>
+    <div class="content">
+      <div class="tabs" role="tablist" aria-label="完成版表示切り替え">
+        <button id="cardTab" class="on" type="button" role="tab" aria-selected="true">
+          <span class="jp">贈るカード</span>
+          <span class="en">MESSAGE CARD</span>
+        </button>
+        <button id="voiceTab" type="button" role="tab" aria-selected="false">
+          <span class="jp">QRから見るページ</span>
+          <span class="en">VOICE PAGE</span>
+        </button>
       </div>
-    </section>
 
-    <div id="status" class="status">決済済みの完成版です。</div>
+      <section id="cardPanel" class="panel on">
+        <div class="preview-stage">
+          <div class="stage-label">
+            <strong>完成版プレビュー</strong>
+            <span>MESSAGE CARD</span>
+          </div>
+          <div class="product-frame">
+            <div class="card-preview">
+              ここに実際の完成カードを表示します。<br>
+              購入後は本番QRコード入りのカードになります。
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <div class="btns">
-      <button class="btn primary" type="button" id="saveBtn">保存する</button>
-      <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
+      <section id="voicePanel" class="panel">
+        <div class="preview-stage">
+          <div class="stage-label">
+            <strong>受け取りページ</strong>
+            <span>VOICE PAGE</span>
+          </div>
+          <div class="product-frame">
+            <div class="voice-preview">
+              ここにQRコードから開く<br>
+              実際のボイスページを表示します。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="meta">
+        <div class="meta-card">
+          <div class="meta-label">VIEWING PERIOD</div>
+          <div class="meta-value" id="period">購入日から1年間</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" type="button" id="saveBtn">この完成版を保存する</button>
+        <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
+      </div>
+
+      <p class="note">保存・共有機能は完成版の実データ接続に合わせて、この画面から利用できるようにします。</p>
     </div>
-
-    <p class="note">保存内容は「贈るカード」「QRコード」など、完成版の実装に合わせてこの画面から選べるようにします。</p>
   </section>
 </main>
+
 <script>
 const cardTab=document.getElementById('cardTab');
 const voiceTab=document.getElementById('voiceTab');
 const cardPanel=document.getElementById('cardPanel');
 const voicePanel=document.getElementById('voicePanel');
+
 function show(which){
   const card=which==='card';
   cardTab.classList.toggle('on',card);
   voiceTab.classList.toggle('on',!card);
   cardPanel.classList.toggle('on',card);
   voicePanel.classList.toggle('on',!card);
+  cardTab.setAttribute('aria-selected',card?'true':'false');
+  voiceTab.setAttribute('aria-selected',card?'false':'true');
 }
+
 cardTab.onclick=()=>show('card');
 voiceTab.onclick=()=>show('voice');
-document.getElementById('saveBtn').onclick=()=>alert('保存機能はこの完成版ページに実装します。');
+
+document.getElementById('saveBtn').onclick=()=>{
+  alert('保存機能は完成版の実データ接続時に有効化します。');
+};
 </script>
 </body>
 </html>
