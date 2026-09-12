@@ -285,6 +285,20 @@ async function fetchBlob(url){
   if(!res.ok)throw new Error(`asset fetch failed: ${res.status}`);
   return await res.blob();
 }
+async function imageFromBlob(blob){
+  const url=URL.createObjectURL(blob);
+  try{
+    const img=new Image();
+    await new Promise((resolve,reject)=>{
+      img.onload=resolve;
+      img.onerror=()=>reject(new Error('image decode failed'));
+      img.src=url;
+    });
+    return img;
+  }finally{
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+}
 function escXml(v){
   return String(v??'').replace(/[&<>"']/g,c=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'
@@ -294,12 +308,42 @@ async function buildEpubBlob(){
   if(!window.JSZip)throw new Error('JSZip is not available');
   if(!currentCardData)throw new Error('card data is not ready');
 
-  const photoBlob=await canvasToBlob($('photoCanvas'));
+  await document.fonts.ready;
+
   const overlayBlob=await fetchBlob('koefoto_classic_birthday_overlay.png');
+  const overlayImg=await imageFromBlob(overlayBlob);
   const audioBlob=await fetchBlob(currentCardData.audio_url);
 
-  const recipient=escXml([...(currentCardData.recipient||'')].slice(0,15).join(''));
-  const sender=escXml([...(currentCardData.sender||'')].slice(0,15).join(''));
+  // Build one visual card image using the *actual rendered web-page font*.
+  // This keeps recipient/sender typography identical inside Apple Books,
+  // without depending on fonts installed in Books.
+  const composed=document.createElement('canvas');
+  composed.width=1060;
+  composed.height=1484;
+  const cx=composed.getContext('2d');
+  cx.drawImage($('photoCanvas'),0,0,1060,1484);
+  cx.drawImage(overlayImg,0,0,1060,1484);
+
+  const cardRect=document.querySelector('.card').getBoundingClientRect();
+  const scaleToCanvas=1060/cardRect.width;
+  function drawRenderedName(el){
+    const cs=getComputedStyle(el);
+    const r=el.getBoundingClientRect();
+    const x=(r.left-cardRect.left+r.width/2)*scaleToCanvas;
+    // Canvas text uses alphabetic baseline; visually align to the DOM box center.
+    const fontPx=parseFloat(cs.fontSize)*scaleToCanvas;
+    const y=(r.top-cardRect.top+r.height/2)*scaleToCanvas + fontPx*0.34;
+    cx.save();
+    cx.fillStyle=cs.color || '#0b347f';
+    cx.textAlign='center';
+    cx.textBaseline='alphabetic';
+    cx.font=`${cs.fontWeight} ${fontPx}px ${cs.fontFamily}`;
+    cx.fillText(el.textContent||'',x,y);
+    cx.restore();
+  }
+  drawRenderedName($('recipient'));
+  drawRenderedName($('sender'));
+  const cardBlob=await canvasToBlob(composed,'image/png',1);
 
   const zip=new JSZip();
 
@@ -339,8 +383,7 @@ async function buildEpubBlob(){
     <item id="page" href="page.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
     <item id="css" href="styles.css" media-type="text/css"/>
     <item id="js" href="player.js" media-type="application/javascript"/>
-    <item id="photo" href="photo.png" media-type="image/png"/>
-    <item id="overlay" href="overlay.png" media-type="image/png"/>
+    <item id="cardimage" href="card.png" media-type="image/png"/>
     <item id="audio" href="voice.m4a" media-type="audio/mp4"/>
   </manifest>
   <spine page-progression-direction="ltr">
@@ -357,23 +400,56 @@ async function buildEpubBlob(){
 
   zip.file('OEBPS/styles.css',`
 @page{margin:0}
-html,body{margin:0;padding:0;width:1060px;height:1600px;overflow:hidden;background:#fff;color:#2d2a25}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:390px;height:626px;overflow:hidden;background:#fff;color:#2d2a25}
 body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.unit{position:relative;width:1060px;height:1600px;background:#fff}
-.card{position:absolute;left:0;top:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee}
-.photo,.art{position:absolute;left:0;top:0;width:1060px;height:1484px}
-.photo{z-index:1}.art{z-index:3}
-.recipient,.sender{position:absolute;z-index:4;color:#0b347f;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-align:center}
-.recipient{left:338px;width:422px;top:272px;font-size:35px;line-height:1;transform:translateY(-100%)}
-.sender{left:421px;width:326px;top:1237px;font-size:32px;line-height:1;transform:translateY(-100%)}
-.player{position:absolute;z-index:4;left:118px;top:1041px;width:825px;height:110px;display:flex;align-items:center}
-.play{width:68px;height:68px;border:0;border-radius:50%;background:#0b347f;color:#fff;font-size:28px;line-height:68px;text-align:center;padding:0}
-.track{margin-left:28px;width:710px}
-.seek{width:100%;height:28px;margin:0;accent-color:#0b347f}
-.time{margin-top:2px;font-size:21px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
-.brand{position:absolute;left:0;top:1506px;width:1060px;text-align:center}
-.brand-name{font-size:34px;font-weight:800;letter-spacing:.08em;color:#5b4b3f}
-.tagline{margin-top:8px;font-family:Georgia,"Times New Roman",serif;font-size:18px;letter-spacing:.18em;color:#746c62}
+.unit{position:relative;width:390px;height:626px;background:#fff}
+.card{position:absolute;left:0;top:0;width:390px;height:546px;overflow:hidden;background:#fbf7ee}
+.card-image{position:absolute;inset:0;width:390px;height:546px;z-index:1}
+.player{
+  position:absolute;z-index:4;
+  left:11.13%;top:70.35%;width:77.83%;height:7.41%;
+  display:grid;grid-template-columns:30px 1fr;
+  align-items:center;column-gap:10px;
+  padding:8px 20px 10px 22px;
+  transform:translateY(-3px);
+}
+.play{
+  width:30px;height:30px;border:0;border-radius:50%;
+  background:#0b347f;color:#fff;
+  display:grid;place-items:center;
+  font-size:13px;line-height:1;padding:0;
+  transform:translateY(-2px);
+}
+.track{min-width:0;align-self:center}
+.seek{
+  --progress:0%;
+  -webkit-appearance:none;appearance:none;
+  display:block;width:100%;height:16px;margin:0;
+  background:transparent;
+}
+.seek::-webkit-slider-runnable-track{
+  height:3px;border-radius:999px;
+  background:linear-gradient(to right,#0b347f 0 var(--progress),#d6c7ae var(--progress) 100%);
+}
+.seek::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:12px;height:12px;border-radius:50%;
+  margin-top:-4.5px;
+  background:#fff;border:2px solid #0b347f;
+  box-shadow:0 1px 3px rgba(0,0,0,.16);
+}
+.time{
+  margin-top:-1px;font-size:10px;line-height:1;color:#756a5b;
+  display:flex;justify-content:space-between;
+  font-variant-numeric:tabular-nums;
+}
+.brand{
+  position:absolute;left:0;top:546px;
+  width:390px;text-align:center;padding-top:18px;line-height:1.25;
+}
+.brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
+.tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 `);
 
   zip.file('OEBPS/page.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
@@ -381,16 +457,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=1060,height=1600"/>
+  <meta name="viewport" content="width=390,height=626"/>
   <title>コエフォト 保存版</title>
   <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
 <body>
   <div class="unit">
     <section class="card">
-      <img class="photo" src="photo.png" alt="贈られた写真"/>
-      <img class="art" src="overlay.png" alt=""/>
-      <div class="recipient">${recipient}</div>
+      <img class="card-image" src="card.png" alt="コエフォト"/>
       <div class="player">
         <button class="play" id="play" type="button" aria-label="再生">▶</button>
         <div class="track">
@@ -398,7 +472,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
           <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
         </div>
       </div>
-      <div class="sender">${sender}</div>
       <audio id="audio" preload="metadata" src="voice.m4a"></audio>
     </section>
     <footer class="brand">
@@ -406,7 +479,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
       <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
     </footer>
   </div>
-  <script type="text/javascript" src="player.js"><\/script>
+  <script type="text/javascript" src="player.js"><\\/script>
 </body>
 </html>`);
 
@@ -425,6 +498,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
   function sync(){
     var p=a.duration?(a.currentTime/a.duration)*100:0;
     s.value=p;
+    s.style.setProperty('--progress',p+'%');
     c.textContent=fmt(a.currentTime);
   }
   b.addEventListener('click',function(){
@@ -441,8 +515,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
   });
 })();`);
 
-  zip.file('OEBPS/photo.png',photoBlob);
-  zip.file('OEBPS/overlay.png',overlayBlob);
+  zip.file('OEBPS/card.png',cardBlob);
   zip.file('OEBPS/voice.m4a',audioBlob);
 
   return await zip.generateAsync({
