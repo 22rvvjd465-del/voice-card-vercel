@@ -7,81 +7,205 @@
 <style>
 :root{
   --bg:#f5f1ea;
-  --ink:#4e4339;
-  --muted:#8a7d70;
-  --line:#ded4c7;
-  --accent:#a98a6b;
-  --panel:#fffdf9;
-  --okbg:#f0f6ef;
-  --ok:#4e6b4f;
+  --paper:#fffdf9;
+  --ink:#4d433a;
+  --muted:#968a7e;
+  --line:#e6ddd3;
+  --accent:#a88969;
+  --accent-deep:#8f7155;
+  --success:#5e755f;
+  --success-bg:#f1f6f0;
 }
 *{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
 body{
-  margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 50% -10%,rgba(255,255,255,.95) 0,rgba(255,255,255,0) 38%),
+    var(--bg);
   color:var(--ink);
 }
-.wrap{max-width:760px;margin:0 auto;padding:26px 20px 54px}
+.wrap{
+  width:min(100%,760px);
+  margin:0 auto;
+  padding:26px 18px 48px;
+}
 .flow{
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  margin-bottom:22px;font-size:11px;color:#a49a90;white-space:nowrap
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:0 0 30px;
+  font-size:10.5px;
+  color:#b3aaa1;
+  white-space:nowrap;
+  line-height:18px;
 }
-.flow .current{position:relative;color:var(--ink);font-weight:700}
+.flow>span{display:inline-flex;align-items:center;height:18px;line-height:18px}
+.flow .arrow{color:#c8c0b8}
+.flow .current{
+  position:relative;
+  color:var(--ink);
+  font-weight:700;
+}
 .flow .current::after{
-  content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;
-  border-radius:999px;background:#b69570
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-3px;
+  height:2px;
+  border-radius:999px;
+  background:#b49270;
 }
-.arrow{color:#c3b9ae}
 .card{
-  background:rgba(255,253,249,.9);
-  border:1px solid #e2d8cc;
-  border-radius:24px;
-  padding:28px 22px 24px;
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,253,249,.96);
+  border:1px solid rgba(218,207,194,.95);
+  border-radius:28px;
+  padding:34px 22px 26px;
+  box-shadow:
+    0 18px 45px rgba(96,77,58,.08),
+    inset 0 1px 0 rgba(255,255,255,.85);
 }
-.brand{text-align:center;font-size:14px;font-weight:700;letter-spacing:.08em;color:#76695d}
+.card::before{
+  content:"";
+  position:absolute;
+  width:180px;height:180px;
+  border-radius:50%;
+  top:-105px;right:-75px;
+  background:radial-gradient(circle,rgba(190,162,131,.20),rgba(190,162,131,0) 70%);
+  pointer-events:none;
+}
+.brand{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:.16em;
+  font-weight:700;
+  color:#7b6e61;
+}
 .icon{
-  width:58px;height:58px;border-radius:50%;margin:18px auto 12px;
-  display:grid;place-items:center;background:#eee7de;font-size:30px;font-weight:700
+  width:68px;height:68px;
+  margin:20px auto 14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(145deg,#b49677,#967657);
+  box-shadow:0 10px 22px rgba(151,117,84,.20);
 }
-.title{text-align:center;font-size:25px;margin:0 0 8px}
-.lead{text-align:center;font-size:14px;line-height:1.75;color:#75695e;margin:0 auto;max-width:480px}
+.title{
+  margin:0;
+  text-align:center;
+  font-size:30px;
+  letter-spacing:.01em;
+  font-weight:750;
+}
+.lead{
+  max-width:470px;
+  margin:12px auto 0;
+  text-align:center;
+  color:#796e64;
+  font-size:14px;
+  line-height:1.8;
+}
 .status{
-  margin:22px auto 0;padding:15px 16px;border-radius:16px;background:#f0ebe4;
-  text-align:center;font-size:14px;line-height:1.7;max-width:520px
+  max-width:500px;
+  margin:24px auto 0;
+  padding:14px 16px;
+  border-radius:16px;
+  text-align:center;
+  font-size:13px;
+  line-height:1.65;
+  background:#f0ebe5;
 }
-.status.ok{background:var(--okbg);color:var(--ok)}
-.status.err{background:#fff0ee;color:#95493f}
+.status.ok{
+  color:var(--success);
+  background:var(--success-bg);
+}
+.status.err{
+  color:#984d43;
+  background:#fff0ed;
+}
 .summary{
-  display:grid;gap:0;margin:22px auto 0;max-width:520px;
-  border:1px solid var(--line);border-radius:17px;overflow:hidden;background:#fff
+  max-width:500px;
+  margin:24px auto 0;
+  padding:3px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
 }
 .row{
-  display:grid;grid-template-columns:120px 1fr;gap:12px;
-  padding:13px 15px;border-bottom:1px solid #eee6dd;font-size:13px;line-height:1.55
+  display:grid;
+  grid-template-columns:104px 1fr;
+  align-items:center;
+  gap:14px;
+  min-height:62px;
+  padding:11px 4px;
+  border-bottom:1px solid #eee7df;
 }
 .row:last-child{border-bottom:0}
-.label{color:#918579}
-.value{font-weight:650;word-break:break-all}
-.btns{display:grid;gap:10px;margin:22px auto 0;max-width:520px}
-.btn{
-  display:block;width:100%;text-align:center;text-decoration:none;border:0;
-  border-radius:15px;padding:15px 16px;font-weight:750;font-size:15px;cursor:pointer
+.label{
+  color:#9a8f84;
+  font-size:12px;
+  letter-spacing:.04em;
 }
-.primary{background:var(--accent);color:#fff}
-.secondary{background:#fff;color:var(--ink);border:1px solid #cdbca9}
-.note{text-align:center;color:#8a7d70;font-size:11px;line-height:1.75;margin:17px auto 0;max-width:520px}
+.value{
+  color:var(--ink);
+  font-size:15px;
+  font-weight:700;
+  text-align:right;
+  word-break:break-word;
+}
+.purchase-id{
+  font-size:14px;
+  letter-spacing:.04em;
+}
+.btns{
+  max-width:500px;
+  margin:28px auto 0;
+}
+.btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:58px;
+  padding:15px 18px;
+  border:0;
+  border-radius:18px;
+  text-decoration:none;
+  font-size:16px;
+  font-weight:750;
+  letter-spacing:.01em;
+  cursor:pointer;
+}
+.primary{
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-deep));
+  box-shadow:0 12px 24px rgba(143,113,85,.18);
+}
+.primary::after{
+  content:"›";
+  margin-left:10px;
+  font-size:22px;
+  line-height:1;
+  transform:translateY(-1px);
+}
 [hidden]{display:none!important}
 @media(max-width:420px){
-  .wrap{padding-left:16px;padding-right:16px}
-  .flow{gap:7px;font-size:10.5px}
-  .row{grid-template-columns:100px 1fr}
+  .wrap{padding-left:14px;padding-right:14px}
+  .card{padding:30px 20px 24px;border-radius:26px}
+  .title{font-size:28px}
+  .row{grid-template-columns:92px 1fr}
 }
 </style>
 </head>
 <body>
 <main class="wrap">
-  <div class="flow">
+  <div class="flow" aria-label="作成ステップ">
     <span>1 入力</span><span class="arrow">→</span>
     <span>2 プレビュー</span><span class="arrow">→</span>
     <span>3 購入確認</span><span class="arrow">→</span>
@@ -92,29 +216,31 @@ body{
     <div class="brand">コエフォト</div>
     <div class="icon" id="icon">…</div>
     <h1 class="title" id="title">決済を確認しています</h1>
-    <p class="lead" id="lead">Stripeからの決済完了通知を確認しています。数秒かかることがあります。</p>
+    <p class="lead" id="lead">Stripeからの決済完了通知を確認しています。</p>
 
     <div class="status" id="status">確認中…</div>
 
     <div class="summary" id="summary" hidden>
-      <div class="row"><div class="label">購入ID</div><div class="value" id="purchaseId">—</div></div>
-      <div class="row"><div class="label">購入金額</div><div class="value">480円（税込）</div></div>
-      <div class="row"><div class="label">閲覧期限</div><div class="value" id="expiresAt">—</div></div>
-    </div>
-
-      <div class="qr-note">このQRコードをメッセージカードに使用します。生成AIではなく、実際のボイスページURLからプログラムで生成しています。</div>
-      <canvas id="qrCanvas" width="188" height="188" aria-label="受け取り用QRコード"></canvas>
+      <div class="row">
+        <div class="label">購入ID</div>
+        <div class="value purchase-id" id="purchaseId">—</div>
+      </div>
+      <div class="row">
+        <div class="label">購入金額</div>
+        <div class="value">480円（税込）</div>
+      </div>
+      <div class="row">
+        <div class="label">閲覧期限</div>
+        <div class="value" id="expiresAt">—</div>
+      </div>
     </div>
 
     <div class="btns" id="actions" hidden>
       <a class="btn primary" id="openCard" href="#">完成版を開く</a>
     </div>
-
-    <p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。完成版を開いた次の画面で、贈るカードやQRコードの保存、新しいコエフォトの作成へ進めます。</p>
   </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script>
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
 const STATUS_URL=SUPABASE_URL+'/functions/v1/payment-status-v2';
@@ -146,10 +272,10 @@ function fail(msg){
 function formatDate(v){
   const d=v?new Date(v):null;
   if(!d || isNaN(d))return '—';
-  return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d);
+  return new Intl.DateTimeFormat('ja-JP',{
+    year:'numeric',month:'long',day:'numeric'
+  }).format(d);
 }
-
-
 
 async function check(){
   if(!sessionId.startsWith('cs_')||!/^[0-9a-f-]{36}$/i.test(publicId)){
@@ -162,18 +288,23 @@ async function check(){
       const r=await fetch(STATUS_URL,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({session_id:sessionId,public_id:publicId})
+        body:JSON.stringify({
+          session_id:sessionId,
+          public_id:publicId
+        })
       });
+
       const d=await r.json().catch(()=>({}));
 
       if(r.ok&&d.ok&&d.paid){
-        const finalUrl='finished.html?session_id='+encodeURIComponent(sessionId)+'&public_id='+encodeURIComponent(publicId);
+        const finalUrl='finished.html?session_id='+encodeURIComponent(sessionId)
+          +'&public_id='+encodeURIComponent(publicId);
 
         icon.textContent='✓';
         title.textContent='完成しました';
-        lead.textContent='480円（税込）の決済を確認しました。コエフォトが有効になりました。';
+        lead.textContent='決済を確認しました。コエフォトが有効になりました。';
         status.className='status ok';
-        status.textContent='ご購入ありがとうございます。';
+        status.textContent='ご購入ありがとうございます';
 
         purchaseIdEl.textContent=d.purchase_id||'—';
         expiresAtEl.textContent=formatDate(d.expires_at);
@@ -201,10 +332,11 @@ async function check(){
     }catch(e){
       status.textContent='通信を再確認しています… ('+(i+1)+'/15)';
     }
+
     await new Promise(r=>setTimeout(r,1000));
   }
 
-  fail('決済は完了していても反映に時間がかかっている可能性があります。少し待ってから再読み込みしてください。');
+  fail('決済の反映に時間がかかっています。少し待ってから再読み込みしてください。');
 }
 
 check();
