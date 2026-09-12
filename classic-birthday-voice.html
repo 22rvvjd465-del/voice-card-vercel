@@ -19,8 +19,51 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 
 
 .player{position:absolute;z-index:4;left:17.6%;top:67.95%;width:64.0%;height:5.9%;display:grid;grid-template-columns:11.0% 1fr;column-gap:4.3%;align-items:center;padding:0}
-.play{width:92%;aspect-ratio:1/1;border:.18cqw solid rgba(201,149,47,.88);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:2.35cqw;line-height:1;box-shadow:0 .55cqw 1.5cqw rgba(11,52,127,.20),inset 0 0 0 .32cqw rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent;justify-self:start;align-self:start;transform:translate(-3.15cqw,-.18cqw)}
-.play:active{transform:scale(.97)}
+.play{position:relative;width:92%;aspect-ratio:1/1;border:.18cqw solid rgba(201,149,47,.88);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:2.35cqw;line-height:1;box-shadow:0 .55cqw 1.5cqw rgba(11,52,127,.20),inset 0 0 0 .32cqw rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent;justify-self:start;align-self:start;transform:translate(-3.15cqw,-.18cqw)}
+
+.play:active{transform:translate(-3.15cqw,-.18cqw) scale(.97)}
+.play::before{
+  content:"";
+  position:absolute;
+  inset:-.7cqw;
+  border:.18cqw solid rgba(201,149,47,0);
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+}
+.player.is-playing .play::before{
+  animation:koeGoldPulse 1.8s ease-out infinite;
+}
+.player.is-playing .play{
+  box-shadow:
+    0 .55cqw 1.5cqw rgba(11,52,127,.20),
+    inset 0 0 0 .32cqw rgba(255,255,255,.08),
+    0 0 1.6cqw rgba(201,149,47,.18);
+}
+@keyframes koeGoldPulse{
+  0%{
+    transform:scale(.92);
+    opacity:0;
+    border-color:rgba(201,149,47,0);
+  }
+  28%{
+    opacity:.48;
+    border-color:rgba(201,149,47,.58);
+  }
+  100%{
+    transform:scale(1.38);
+    opacity:0;
+    border-color:rgba(201,149,47,0);
+  }
+}
+.player.is-playing .wavebar{
+  filter:drop-shadow(0 0 .18cqw rgba(201,149,47,.10));
+}
+@media(prefers-reduced-motion:reduce){
+  .player.is-playing .play::before{animation:none}
+  .player.is-playing .play{box-shadow:0 .55cqw 1.5cqw rgba(11,52,127,.20),inset 0 0 0 .32cqw rgba(255,255,255,.08)}
+}
+
 .player-main{min-width:0;height:100%;display:flex;align-items:center}
 .wave-wrap{position:relative;width:100%;height:72%;display:flex;align-items:center}
 .waveform{
@@ -165,20 +208,94 @@ window.addEventListener('message',e=>{
   if(redrawPhoto)redrawPhoto();
 });
 
-const audio=$('audio'),btn=$('playBtn'),seek=$('seek'),waveform=$('waveform');
+const audio=$('audio'),btn=$('playBtn'),seek=$('seek'),waveform=$('waveform'),player=document.querySelector('.player');
 const waveHeights=[9,13,18,12,22,30,17,26,36,21,31,39,24,18,28,34,16,22,31,19,27,36,23,17,29,21,14,10,16,12,8];
-waveHeights.forEach(h=>{const bar=document.createElement('span');bar.className='wavebar';bar.style.height=(18+(h/39)*64).toFixed(1)+'%';waveform.appendChild(bar)});
+waveHeights.forEach(h=>{
+  const bar=document.createElement('span');
+  bar.className='wavebar';
+  bar.dataset.base=String(18+(h/39)*64);
+  bar.style.height=Number(bar.dataset.base).toFixed(1)+'%';
+  waveform.appendChild(bar);
+});
 const waveBars=[...waveform.children];
-function updateWave(pct){const played=Math.round(clamp(pct,0,100)/100*waveBars.length);waveBars.forEach((bar,i)=>bar.classList.toggle('played',i<played))}
-function syncSeek(){const pct=audio.duration?(audio.currentTime/audio.duration)*100:0;seek.value=pct;updateWave(pct)}
-btn.addEventListener('click',async()=>{if(!audio.src)return;if(audio.paused){try{await audio.play()}catch(e){console.error(e)}}else audio.pause()});
-audio.addEventListener('play',()=>{btn.textContent='❚❚';btn.setAttribute('aria-label','一時停止')});
-audio.addEventListener('pause',()=>{btn.textContent='▶';btn.setAttribute('aria-label','再生')});
+
+function updateWave(pct){
+  const played=Math.round(clamp(pct,0,100)/100*waveBars.length);
+  waveBars.forEach((bar,i)=>bar.classList.toggle('played',i<played));
+}
+function syncSeek(){
+  const pct=audio.duration?(audio.currentTime/audio.duration)*100:0;
+  seek.value=pct;
+  updateWave(pct);
+}
+
+let waveRaf=0;
+function animateWave(){
+  if(audio.paused || audio.ended){
+    waveRaf=0;
+    return;
+  }
+  const t=audio.currentTime||0;
+  waveBars.forEach((bar,i)=>{
+    const base=Number(bar.dataset.base)||40;
+    // 声らしい穏やかな揺れ。再生時間に同期し、常時は動かさない。
+    const a=Math.sin(t*7.2+i*.74);
+    const b=Math.sin(t*3.8+i*1.31);
+    const motion=.88 + .15*((a+b+2)/4);
+    bar.style.height=Math.max(16,Math.min(92,base*motion)).toFixed(1)+'%';
+  });
+  waveRaf=requestAnimationFrame(animateWave);
+}
+function resetWaveMotion(){
+  waveBars.forEach(bar=>{
+    bar.style.height=Number(bar.dataset.base).toFixed(1)+'%';
+  });
+}
+function startWaveMotion(){
+  if(!waveRaf) waveRaf=requestAnimationFrame(animateWave);
+}
+
+btn.addEventListener('click',async()=>{
+  if(!audio.src)return;
+  if(audio.paused){
+    try{await audio.play()}catch(e){console.error(e)}
+  }else{
+    audio.pause();
+  }
+});
+audio.addEventListener('play',()=>{
+  btn.textContent='❚❚';
+  btn.setAttribute('aria-label','一時停止');
+  player?.classList.add('is-playing');
+  startWaveMotion();
+});
+audio.addEventListener('pause',()=>{
+  btn.textContent='▶';
+  btn.setAttribute('aria-label','再生');
+  player?.classList.remove('is-playing');
+  if(waveRaf){cancelAnimationFrame(waveRaf);waveRaf=0}
+  resetWaveMotion();
+});
 audio.addEventListener('loadedmetadata',()=>{syncSeek()});
 audio.addEventListener('durationchange',()=>{syncSeek()});
 audio.addEventListener('timeupdate',()=>{syncSeek()});
-audio.addEventListener('ended',()=>{btn.textContent='▶';btn.setAttribute('aria-label','再生');audio.currentTime=0;syncSeek()});
-seek.addEventListener('input',()=>{if(audio.duration){audio.currentTime=(Number(seek.value)/100)*audio.duration;syncSeek()}});
+audio.addEventListener('ended',()=>{
+  btn.textContent='▶';
+  btn.setAttribute('aria-label','再生');
+  player?.classList.remove('is-playing');
+  if(waveRaf){cancelAnimationFrame(waveRaf);waveRaf=0}
+  audio.currentTime=0;
+  syncSeek();
+  resetWaveMotion();
+});
+seek.addEventListener('input',()=>{
+  if(audio.duration){
+    audio.currentTime=(Number(seek.value)/100)*audio.duration;
+    syncSeek();
+  }
+});
+audio.addEventListener('seeking',syncSeek);
+audio.addEventListener('seeked',syncSeek);
 audio.addEventListener('seeking',syncSeek);
 audio.addEventListener('seeked',syncSeek);
 
