@@ -63,13 +63,6 @@ body{
 .row:last-child{border-bottom:0}
 .label{color:#918579}
 .value{font-weight:650;word-break:break-all}
-.qrbox{
-  margin:22px auto 0;max-width:520px;padding:18px;
-  border:1px solid var(--line);border-radius:18px;background:#fff;text-align:center
-}
-.qr-title{font-size:15px;font-weight:700;margin-bottom:5px}
-.qr-note{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:13px}
-#qrCanvas{width:188px;height:188px;max-width:65vw;max-height:65vw}
 .btns{display:grid;gap:10px;margin:22px auto 0;max-width:520px}
 .btn{
   display:block;width:100%;text-align:center;text-decoration:none;border:0;
@@ -109,19 +102,15 @@ body{
       <div class="row"><div class="label">閲覧期限</div><div class="value" id="expiresAt">—</div></div>
     </div>
 
-    <div class="qrbox" id="qrBox" hidden>
-      <div class="qr-title">受け取り用QRコード</div>
       <div class="qr-note">このQRコードをメッセージカードに使用します。生成AIではなく、実際のボイスページURLからプログラムで生成しています。</div>
       <canvas id="qrCanvas" width="188" height="188" aria-label="受け取り用QRコード"></canvas>
     </div>
 
     <div class="btns" id="actions" hidden>
-      <a class="btn primary" id="openCard" href="#" target="_blank" rel="noopener">QRから見るページを開く</a>
-      <button class="btn secondary" id="downloadQr" type="button">QRコードを保存</button>
-      <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
+      <a class="btn primary" id="openCard" href="#">完成版を開く</a>
     </div>
 
-    <p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。決済完了はStripeのWebhookで確認しているため、画面を閉じても支払いが完了していればデータは有効化されます。</p>
+    <p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。完成版を開いた次の画面で、贈るカードやQRコードの保存、新しいコエフォトの作成へ進めます。</p>
   </section>
 </main>
 
@@ -129,7 +118,6 @@ body{
 <script>
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
 const STATUS_URL=SUPABASE_URL+'/functions/v1/payment-status-v2';
-const PUBLIC_URL=SUPABASE_URL+'/functions/v1/voice-card-public';
 
 const qs=new URLSearchParams(location.search);
 const sessionId=qs.get('session_id')||'';
@@ -144,9 +132,6 @@ const summary=document.getElementById('summary');
 const purchaseIdEl=document.getElementById('purchaseId');
 const expiresAtEl=document.getElementById('expiresAt');
 const openCard=document.getElementById('openCard');
-const qrBox=document.getElementById('qrBox');
-const qrCanvas=document.getElementById('qrCanvas');
-const downloadQr=document.getElementById('downloadQr');
 
 function fail(msg){
   icon.textContent='!';
@@ -156,7 +141,6 @@ function fail(msg){
   status.textContent=msg;
   actions.hidden=true;
   summary.hidden=true;
-  qrBox.hidden=true;
 }
 
 function formatDate(v){
@@ -165,30 +149,7 @@ function formatDate(v){
   return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric'}).format(d);
 }
 
-async function renderQr(url){
-  if(!window.QRCode || typeof QRCode.toCanvas!=='function'){
-    qrBox.hidden=true;
-    return;
-  }
-  try{
-    await QRCode.toCanvas(qrCanvas,url,{
-      width:188,
-      margin:1,
-      errorCorrectionLevel:'M'
-    });
-    qrBox.hidden=false;
-  }catch(e){
-    console.error('QR generation failed',e);
-    qrBox.hidden=true;
-  }
-}
 
-downloadQr.addEventListener('click',()=>{
-  const a=document.createElement('a');
-  a.download=(purchaseIdEl.textContent||'koephoto')+'-qr.png';
-  a.href=qrCanvas.toDataURL('image/png');
-  a.click();
-});
 
 async function check(){
   if(!sessionId.startsWith('cs_')||!/^[0-9a-f-]{36}$/i.test(publicId)){
@@ -206,7 +167,7 @@ async function check(){
       const d=await r.json().catch(()=>({}));
 
       if(r.ok&&d.ok&&d.paid){
-        const publicUrl=PUBLIC_URL+'?id='+encodeURIComponent(publicId);
+        const finalUrl='finished.html?session_id='+encodeURIComponent(sessionId)+'&public_id='+encodeURIComponent(publicId);
 
         icon.textContent='✓';
         title.textContent='完成しました';
@@ -216,11 +177,10 @@ async function check(){
 
         purchaseIdEl.textContent=d.purchase_id||'—';
         expiresAtEl.textContent=formatDate(d.expires_at);
-        openCard.href=publicUrl;
+        openCard.href=finalUrl;
 
         summary.hidden=false;
         actions.hidden=false;
-        await renderQr(publicUrl);
 
         sessionStorage.setItem('koephoto-purchase-draft',JSON.stringify({
           public_id:publicId,

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>コエフォト｜完成版</title>
+<style>
+:root{--bg:#f5f1ea;--ink:#4e4339;--muted:#8a7d70;--line:#ded4c7;--accent:#a98a6b}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:760px;margin:0 auto;padding:26px 18px 54px}
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;font-size:10.5px;color:#aaa098;margin-bottom:24px}
+.flow > span{display:inline-flex;align-items:center;height:18px;line-height:18px;padding:0;margin:0}
+.current{position:relative;font-weight:700;color:var(--ink)}
+.current::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:999px;background:#b69570}
+.card{background:#fffdf9;border:1px solid #e2d8cc;border-radius:24px;padding:25px 18px}
+h1{text-align:center;margin:0 0 8px;font-size:25px}
+.lead{text-align:center;color:#796d61;font-size:13px;line-height:1.7;margin:0 0 22px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:#e9e2d8;border-radius:17px;padding:5px;margin-bottom:18px}
+.tabs button{border:0;background:transparent;border-radius:13px;padding:12px 8px;color:#74685e;font-weight:700;font-size:14px}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 4px 12px rgba(80,65,50,.08)}
+.panel{display:none}
+.panel.on{display:block}
+.previewBox{background:#f0ebe4;border-radius:18px;padding:14px;text-align:center}
+.placeholder{aspect-ratio:127/178;background:#fff;border:1px dashed #cdbca9;border-radius:10px;display:grid;place-items:center;color:#998b7c;font-size:13px;padding:20px}
+.status{margin:18px 0;padding:13px;border-radius:14px;background:#f0f6ef;color:#4e6b4f;text-align:center;font-size:13px}
+.btns{display:grid;gap:10px;margin-top:18px}
+.btn{display:block;width:100%;border-radius:15px;padding:15px;text-align:center;text-decoration:none;font-weight:750;font-size:15px}
+.primary{background:var(--accent);color:#fff}
+.secondary{background:#fff;color:var(--ink);border:1px solid #cdbca9}
+.note{text-align:center;color:var(--muted);font-size:11px;line-height:1.7;margin-top:16px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="flow"><span>1 入力</span><span>→</span><span>2 プレビュー</span><span>→</span><span>3 購入確認</span><span>→</span><span class="current">4 完成</span></div>
+  <section class="card">
+    <h1>完成版</h1>
+    <p class="lead">完成したコエフォトを確認して、保存や共有へ進めます。</p>
+
+    <div class="tabs">
+      <button id="cardTab" class="on" type="button">贈るカード</button>
+      <button id="voiceTab" type="button">QRから見るページ</button>
+    </div>
+
+    <section id="cardPanel" class="panel on">
+      <div class="previewBox">
+        <div class="placeholder">ここに完成した「贈るカード」を表示します。<br>実際のQRコード入り完成版は次の実装で接続します。</div>
+      </div>
+    </section>
+
+    <section id="voicePanel" class="panel">
+      <div class="previewBox">
+        <div class="placeholder">ここに受け取り用の「QRから見るページ」を表示します。</div>
+      </div>
+    </section>
+
+    <div id="status" class="status">決済済みの完成版です。</div>
+
+    <div class="btns">
+      <button class="btn primary" type="button" id="saveBtn">保存する</button>
+      <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
+    </div>
+
+    <p class="note">保存内容は「贈るカード」「QRコード」など、完成版の実装に合わせてこの画面から選べるようにします。</p>
+  </section>
+</main>
+<script>
+const cardTab=document.getElementById('cardTab');
+const voiceTab=document.getElementById('voiceTab');
+const cardPanel=document.getElementById('cardPanel');
+const voicePanel=document.getElementById('voicePanel');
+function show(which){
+  const card=which==='card';
+  cardTab.classList.toggle('on',card);
+  voiceTab.classList.toggle('on',!card);
+  cardPanel.classList.toggle('on',card);
+  voicePanel.classList.toggle('on',!card);
+}
+cardTab.onclick=()=>show('card');
+voiceTab.onclick=()=>show('voice');
+document.getElementById('saveBtn').onclick=()=>alert('保存機能はこの完成版ページに実装します。');
+</script>
+</body>
+</html>
