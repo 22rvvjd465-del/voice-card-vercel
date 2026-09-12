@@ -5,241 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト｜完成</title>
 <style>
-:root{
-  --bg:#f5f1ea;
-  --paper:#fffdf9;
-  --ink:#4d433a;
-  --muted:#968a7e;
-  --line:#e6ddd3;
-  --accent:#a88969;
-  --accent-deep:#8f7155;
-  --success:#5e755f;
-  --success-bg:#f1f6f0;
-}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
-  background:
-    radial-gradient(circle at 50% -10%,rgba(255,255,255,.95) 0,rgba(255,255,255,0) 38%),
-    var(--bg);
-  color:var(--ink);
-}
-.wrap{
-  width:min(100%,760px);
-  margin:0 auto;
-  padding:26px 18px 48px;
-}
-.flow{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  margin:0 0 30px;
-  font-size:10.5px;
-  color:#b3aaa1;
-  white-space:nowrap;
-  line-height:18px;
-}
-.flow>span{display:inline-flex;align-items:center;height:18px;line-height:18px}
-.flow .arrow{color:#c8c0b8}
-.flow .current{
-  position:relative;
-  color:var(--ink);
-  font-weight:700;
-}
-.flow .current::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:-3px;
-  height:2px;
-  border-radius:999px;
-  background:#b49270;
-}
-.card{
-  position:relative;
-  overflow:hidden;
-  background:rgba(255,253,249,.96);
-  border:1px solid rgba(218,207,194,.95);
-  border-radius:28px;
-  padding:34px 22px 26px;
-  box-shadow:
-    0 18px 45px rgba(96,77,58,.08),
-    inset 0 1px 0 rgba(255,255,255,.85);
-}
-.card::before{
-  content:"";
-  position:absolute;
-  width:180px;height:180px;
-  border-radius:50%;
-  top:-105px;right:-75px;
-  background:radial-gradient(circle,rgba(190,162,131,.20),rgba(190,162,131,0) 70%);
-  pointer-events:none;
-}
-.brand{
-  text-align:center;
-  font-size:24px;
-  letter-spacing:.04em;
-  font-weight:800;
-  color:#5b4e43;
-}
-.icon{
-  width:68px;height:68px;
-  margin:20px auto 14px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:32px;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(145deg,#b49677,#967657);
-  box-shadow:0 10px 22px rgba(151,117,84,.20);
-}
-.title{
-  margin:0;
-  text-align:center;
-  font-size:30px;
-  letter-spacing:.01em;
-  font-weight:750;
-}
-.lead{
-  max-width:470px;
-  margin:12px auto 0;
-  text-align:center;
-  color:#796e64;
-  font-size:14px;
-  line-height:1.8;
-}
-.status{
-  max-width:500px;
-  margin:24px auto 0;
-  padding:14px 16px;
-  border-radius:16px;
-  text-align:center;
-  font-size:16px;
-  font-weight:700;
-  line-height:1.65;
-  background:#f0ebe5;
-}
-.status.ok{
-  color:var(--success);
-  background:var(--success-bg);
-}
-.status.err{
-  color:#984d43;
-  background:#fff0ed;
-}
-.summary{
-  max-width:500px;
-  margin:24px auto 0;
-  padding:3px 0;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-}
-.row{
-  display:grid;
-  grid-template-columns:104px 1fr;
-  align-items:center;
-  gap:14px;
-  min-height:62px;
-  padding:11px 4px;
-  border-bottom:1px solid #eee7df;
-}
-.row:last-child{border-bottom:0}
-.label{
-  color:#9a8f84;
-  font-size:12px;
-  letter-spacing:.04em;
-}
-.value{
-  color:var(--ink);
-  font-size:15px;
-  font-weight:700;
-  text-align:right;
-  word-break:break-word;
-}
-.purchase-id{
-  font-size:14px;
-  letter-spacing:.04em;
-}
-.btns{
-  max-width:500px;
-  margin:28px auto 0;
-}
-.btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  min-height:58px;
-  padding:15px 18px;
-  border:0;
-  border-radius:18px;
-  text-decoration:none;
-  font-size:16px;
-  font-weight:750;
-  letter-spacing:.01em;
-  cursor:pointer;
-}
-.primary{
-  color:#fff;
-  background:linear-gradient(135deg,var(--accent),var(--accent-deep));
-  box-shadow:0 12px 24px rgba(143,113,85,.18);
-}
-.primary::after{
-  content:"›";
-  margin-left:10px;
-  font-size:22px;
-  line-height:1;
-  transform:translateY(-1px);
-}
-[hidden]{display:none!important}
-@media(max-width:420px){
-  .wrap{padding-left:14px;padding-right:14px}
-  .card{padding:30px 20px 24px;border-radius:26px}
-  .title{font-size:28px}
-  .row{grid-template-columns:92px 1fr}
-}
+:root{--bg:#fffdfa;--panel:#fbf7f2;--ink:#2f2722;--brown:#9f7654;--brown-dark:#7d5d44;--brown-light:#b58b68;--muted:#8c827a;--line:#e7ddd4;--success:#eaf3eb;--success-ink:#59745e}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 24px 64px}
+.complete-header{display:flex;align-items:flex-end;gap:10px;margin-bottom:28px}.complete-brand{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);line-height:1}.complete-tag{font-size:13px;font-weight:700;color:var(--brown-dark);padding-bottom:3px}
+.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:0 70px 38px}.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;background:#eee9e5;border-radius:999px;z-index:0}.progress-step{position:relative;z-index:1;text-align:center;color:#6f635a}.progress-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;background:#f0ece8;color:#72665d;font-size:16px}.progress-step.current .progress-dot{background:var(--brown-light);color:#fff}.progress-label{font-size:15px;font-weight:800}.progress-step.current .progress-label{color:var(--brown-dark)}
+.card{max-width:760px;margin:0 auto;background:linear-gradient(135deg,#fcf9f5,#fffdfb);border:1px solid #eee5dd;border-radius:22px;padding:30px 28px;box-shadow:0 10px 28px rgba(109,77,51,.04)}.hero{text-align:center}.hero .brand{font-size:20px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);margin-bottom:18px}.icon{width:92px;height:92px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#b58b68,#9f7654);color:#fff;font-size:46px;font-weight:800;box-shadow:0 10px 26px rgba(132,92,59,.14)}.title{font-size:34px;line-height:1.3;margin:0;color:var(--ink)}.lead{font-size:15px;line-height:1.8;color:#75695f;margin:14px auto 0;max-width:560px}.status{max-width:560px;margin:22px auto 0;padding:14px 16px;border-radius:14px;background:var(--success);color:var(--success-ink);font-weight:800;font-size:15px;text-align:center}.status.err{background:#f8e8e6;color:#9c4c45}
+.summary{max-width:620px;margin:28px auto 0;border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;padding:20px 8px;border-bottom:1px solid var(--line)}.label{font-size:13px;color:#8b7d70}.value{font-size:18px;font-weight:800;color:#4d443d;text-align:right}.purchase-id{font-size:16px;letter-spacing:.03em}.btns{max-width:620px;margin:28px auto 0}.btn{min-height:58px;padding:15px 18px;border-radius:14px;text-decoration:none;font-size:16px;font-weight:900;text-align:center;display:grid;place-items:center}.btn.primary{color:#fff;background:linear-gradient(180deg,#a77d5a,#956c4c);box-shadow:0 7px 18px rgba(128,87,54,.15)}.note{max-width:620px;margin:18px auto 0;text-align:center;color:#8a7d72;font-size:12px;line-height:1.7}
+@media(max-width:760px){.wrap{padding:18px 14px 48px}.complete-header{margin-bottom:22px;align-items:center}.complete-brand{font-size:25px}.complete-tag{font-size:11px;padding-bottom:0}.progress{margin:0 6px 28px}.progress::before{top:18px;height:3px}.progress-dot{width:38px;height:38px;margin-bottom:7px;font-size:14px}.progress-label{font-size:11px}.card{padding:24px 18px;border-radius:18px}.hero .brand{font-size:18px}.icon{width:78px;height:78px;font-size:38px}.title{font-size:28px}.lead{font-size:14px}.status{font-size:14px}.row{grid-template-columns:110px 1fr;padding:18px 4px}.value{font-size:16px}.purchase-id{font-size:14px}}
+@media(max-width:390px){.complete-tag{display:none}.progress-label{font-size:10px}.row{grid-template-columns:100px 1fr}}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <div class="flow" aria-label="作成ステップ">
-    <span>1 入力</span><span class="arrow">→</span>
-    <span>2 プレビュー</span><span class="arrow">→</span>
-    <span>3 購入確認</span><span class="arrow">→</span>
-    <span class="current">4 完成</span>
-  </div>
-
-  <section class="card">
-    <div class="brand">コエフォト</div>
-    <div class="icon" id="icon">…</div>
-    <h1 class="title" id="title">決済を確認しています</h1>
-    <p class="lead" id="lead">Stripeからの決済完了通知を確認しています。</p>
-
-    <div class="status" id="status">確認中…</div>
-
-    <div class="summary" id="summary" hidden>
-      <div class="row">
-        <div class="label">購入ID</div>
-        <div class="value purchase-id" id="purchaseId">—</div>
-      </div>
-      <div class="row">
-        <div class="label">購入金額</div>
-        <div class="value">480円（税込）</div>
-      </div>
-      <div class="row">
-        <div class="label">閲覧期限</div>
-        <div class="value" id="expiresAt">—</div>
-      </div>
-    </div>
-
-    <div class="btns" id="actions" hidden>
-      <a class="btn primary" id="openCard" href="#">完成版を開く</a>
-    </div>
-  </section>
+<header class="complete-header"><div class="complete-brand">コエフォト</div><div class="complete-tag">写真と声で、想いを届ける</div></header>
+<nav class="progress" aria-label="作成の進捗"><div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div><div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div><div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div><div class="progress-step current"><div class="progress-dot">4</div><div class="progress-label">完成</div></div></nav>
+<section class="card"><div class="hero"><div class="brand">コエフォト</div><div class="icon" id="icon">…</div><h1 class="title" id="title">決済を確認しています</h1><p class="lead" id="lead">Stripeからの決済完了通知を確認しています。</p><div class="status" id="status">確認中…</div></div>
+<div class="summary" id="summary" hidden><div class="row"><div class="label">購入ID</div><div class="value purchase-id" id="purchaseId">—</div></div><div class="row"><div class="label">購入金額</div><div class="value">480円（税込）</div></div><div class="row"><div class="label">閲覧・ダウンロード期限</div><div class="value" id="expiresAt">—</div></div></div>
+<div class="btns" id="actions" hidden><a class="btn primary" id="openCard" href="#">完成版を開く →</a></div><p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。完成版では、贈るカードとQRから見るページをご確認いただけます。</p></section>
 </main>
 
 <script>
@@ -303,7 +87,7 @@ async function check(){
 
         icon.textContent='✓';
         title.textContent='完成しました';
-        lead.textContent='決済を確認しました。コエフォトが有効になりました。';
+        lead.textContent='決済が完了しました。贈るカードとQRから見るページをご利用いただけます。';
         status.className='status ok';
         status.textContent='ご購入ありがとうございます';
 
