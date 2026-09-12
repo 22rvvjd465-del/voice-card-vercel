@@ -438,9 +438,9 @@ async function load(){
     $('voiceLoading').hidden=true;
     $('voicePreview').hidden=false;
 
-    const va=$('voiceAudio'),vb=$('voicePlay'),vs=$('voiceSeek'),vc=$('voiceCur'),vd=$('voiceDur');
+    const va=$('voiceAudio'),vb=$('voicePlay'),vs=$('voiceSeek'),vcur=$('voiceCur'),vd=$('voiceDur');
     const vfmt=x=>{if(!Number.isFinite(x))return'0:00';const m=Math.floor(x/60),sec=Math.floor(x%60);return m+':'+String(sec).padStart(2,'0')};
-    const vsync=()=>{const p=va.duration?(va.currentTime/va.duration)*100:0;vs.value=p;vs.style.setProperty('--progress',p+'%');vc.textContent=vfmt(va.currentTime)};
+    const vsync=()=>{const p=va.duration?(va.currentTime/va.duration)*100:0;vs.value=p;vs.style.setProperty('--progress',p+'%');vcur.textContent=vfmt(va.currentTime)};
     vb.onclick=async()=>{if(va.paused){try{await va.play()}catch(e){console.error(e)}}else va.pause()};
     va.onplay=()=>vb.textContent='❚❚';
     va.onpause=()=>vb.textContent='▶';
