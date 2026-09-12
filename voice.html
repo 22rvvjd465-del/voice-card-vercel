@@ -93,8 +93,11 @@ function fitName(el,maxCanvasWidth,maxCanvasPx=40,minCanvasPx=14){
 async function renderPhoto(d){
   const img=new Image();
   img.crossOrigin='anonymous';
-  img.src=d.photo_url;
-  await img.decode();
+  await new Promise((resolve,reject)=>{
+    img.onload=()=>resolve();
+    img.onerror=()=>reject(new Error('photo load error'));
+    img.src=d.photo_url + (d.photo_url.includes('?') ? '&' : '?') + 't=' + Date.now();
+  });
 
   const c=$('photoCanvas'),ctx=c.getContext('2d');
   const frame=[
@@ -187,8 +190,19 @@ function loadDataScript(id){
       await renderPhoto(d);
     }catch(e){
       console.error('photo',e);
-      fail('写真の読み込みに失敗しました。');
-      return;
+      // SafariでCanvas描画だけ失敗した場合は、まず画像自体を表示して受け取りを止めない。
+      const c=$('photoCanvas');
+      c.style.display='none';
+      const fallback=document.createElement('img');
+      fallback.src=d.photo_url + (d.photo_url.includes('?') ? '&' : '?') + 't=' + Date.now();
+      fallback.alt='贈られた写真';
+      fallback.style.position='absolute';
+      fallback.style.inset='0';
+      fallback.style.width='100%';
+      fallback.style.height='100%';
+      fallback.style.objectFit='cover';
+      fallback.style.zIndex='1';
+      document.querySelector('.card').prepend(fallback);
     }
 
     setupAudio(d.audio_url);
