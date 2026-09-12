@@ -89,18 +89,34 @@ button{font:inherit;-webkit-tap-highlight-color:transparent}
   position:relative;width:100%;aspect-ratio:1060/1484;
   overflow:hidden;border-radius:9px;background:#f4efe9;border:1px solid #eee5dd
 }
+.preview-item{min-width:0}
+.preview-item .preview-art{width:100%;}
 .preview-art img{display:block;width:100%;height:100%;object-fit:cover}
 .preview-art.voice{background:#faf7f2}
 .voice-stage{
   position:absolute;inset:0;overflow:hidden;background:#faf7f2
 }
 .voice-stage iframe{
-  position:absolute;left:50%;top:0;
-  width:330%;height:330%;
-  border:0;background:#fffdfa;
-  transform:translateX(-50%) scale(.303);
+  position:absolute;
+  left:50%;
+  top:0;
+  width:318%;
+  height:318%;
+  border:0;
+  background:#fffdfa;
+  transform:translateX(-50%) scale(.3145);
   transform-origin:top center;
-  pointer-events:none
+  pointer-events:none;
+}
+.voice-blocker{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  background:transparent;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
 }
 .preview-fallback{
   position:absolute;inset:0;display:none;place-items:center;padding:12px;text-align:center;
@@ -200,14 +216,23 @@ ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.85;font-size:13px}
 </nav>
 
 <div class="top">
-  <span class="badge">Classic Birthday</span>
   <h1>購入内容を確認</h1>
-  <p>プレビューで調整した内容と、料金・保存期間をご確認ください。</p>
+  <p>商品内容・料金と、プレビューで調整した完成イメージをご確認ください。</p>
 </div>
 
 <section class="purchase-shell">
-  <h2 class="section-title">購入するデザイン</h2>
-  <p class="section-lead">決済後、この2つの完成版をご利用いただけます。</p>
+
+  <div class="summary">
+    <b>商品</b><span>コエフォト 完成版<br><small>Classic Birthday</small></span>
+    <b>料金</b><span class="priceValue">480円（税込）</span>
+    <b>支払い</b><span>1回払い</span>
+    <b>閲覧・ダウンロード期限</b><span>購入日から1年間</span>
+  </div>
+
+  
+
+  <h2 class="section-title">完成イメージ</h2>
+  <p class="section-lead">プレビューで調整した写真の位置・拡大率が反映された完成イメージです。QRコードは決済完了後に贈るカードへ付与されます。</p>
 
   <div class="purchase-previews">
     <article class="preview-item">
@@ -228,25 +253,18 @@ ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.85;font-size:13px}
       </div>
       <div class="preview-art voice">
         <div class="voice-stage">
-          <iframe id="voicePurchasePreview" src="classic-birthday-voice.html" title="ボイスページ購入確認プレビュー" tabindex="-1"></iframe>
+          <iframe id="voicePurchasePreview" src="classic-birthday-voice.html" title="ボイスページ購入確認プレビュー" tabindex="-1" aria-hidden="true"></iframe>
+          <div class="voice-blocker" aria-hidden="true"></div>
         </div>
       </div>
     </article>
-  </div>
-  <div class="purchase-preview-note">プレビュー画面で調整した写真の位置・拡大率が、そのまま完成版に反映されます。</div>
-
-  <div class="summary">
-    <b>商品</b><span>コエフォト 完成版<br><small>Classic Birthday</small></span>
-    <b>料金</b><span class="priceValue">480円（税込）</span>
-    <b>支払い</b><span>1回払い</span>
-    <b>閲覧・ダウンロード期限</b><span>購入日から1年間</span>
   </div>
 
   <div class="details">
     <div class="section">
       <h2>ご購入前の確認事項</h2>
       <ul>
-        <li>決済完了後、受け取り用のボイスページとQRコードが有効になります。</li>
+        <li>決済完了後、「QRから見るページ」が利用できるようになり、そのページを開くQRコードが「贈るカード」に付与されます。</li>
         <li>写真・音声はサービス提供のため、購入日から1年間保存されます。</li>
         <li>保存期限を過ぎた写真・音声は削除対象となり、再取得できない場合があります。</li>
         <li>通信環境、端末、ブラウザ等により、表示・音声再生に差が生じる場合があります。</li>
