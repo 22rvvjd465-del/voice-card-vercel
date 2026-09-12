@@ -6,49 +6,235 @@
 <title>コエフォト｜購入内容の確認</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f5f1ea;color:#4e4339;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.wrap{max-width:760px;margin:auto;padding:18px 14px 60px}
-.flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;font-size:11px;color:#8e8176}
-.flow .step-current{position:relative;color:#4e4339;font-weight:700;padding:0 2px}
-.flow .step-current::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:999px;background:#b69570}
-.flow .step-future{color:#8e8176;font-weight:400}.flow .arrow{color:#b9afa4}
-.top{text-align:center}.top h1{font-size:21px;margin:7px}.top p{font-size:12px;color:#827568;line-height:1.7;margin:0 0 18px}
-.badge{display:inline-block;background:#eee4d6;padding:4px 8px;border-radius:999px;font-size:10px}
-.panel{max-width:600px;margin:0 auto;background:#fffaf2;border:1px solid #d9c8b2;border-radius:16px;padding:18px 16px}
-.summary{display:grid;grid-template-columns:1fr auto;gap:10px 18px;padding:14px 15px;border-radius:12px;background:#f1e8db;margin-bottom:18px;font-size:13px}
-.summary b{font-weight:700}.summary small{display:inline-block;margin-top:3px;color:#8a7867;font-size:11px}.priceValue{font-size:20px;font-weight:800;color:#655648}
-.section{border-top:1px solid #e4d8c8;padding-top:16px;margin-top:16px}.section:first-of-type{border-top:0;padding-top:0;margin-top:0}
-h2{font-size:15px;margin:0 0 10px;color:#5f5145}
-ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.8;font-size:13px}
-.notice{background:rgba(238,228,214,.55);border-left:3px solid #b69570;padding:12px 13px;color:#66594d;line-height:1.75;font-size:12px}
-.consent{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:14px;border:1px solid #cbb79c;border-radius:12px;background:#fff}
-.consent input{width:19px;height:19px;margin:1px 0 0;accent-color:#9f8064;flex:0 0 auto}.consent span{font-size:13px;line-height:1.7;color:#5c5046}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
-.actions .back,.actions button{padding:14px;border-radius:13px;font-size:14px;font-weight:700;text-align:center;text-decoration:none}
-.actions .back{border:1px solid #bca68d;background:#fffaf2;color:#655648}
-.actions .buy{border:0;background:#9f8064;color:#fff}.actions .buy:disabled{opacity:.45}
+:root{
+  --bg:#fffdfa;
+  --panel:#fbf7f2;
+  --ink:#2f2722;
+  --brown:#9f7654;
+  --brown-dark:#7d5d44;
+  --brown-light:#b58b68;
+  --muted:#8c827a;
+  --line:#e7ddd4;
+  --field:#fff;
+}
+html,body{
+  margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif
+}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 24px 64px}
+
+/* Header — preview pageと同じ */
+.purchase-header{display:flex;align-items:flex-end;gap:10px;margin-bottom:28px}
+.purchase-brand{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);line-height:1}
+.purchase-tag{font-size:13px;font-weight:700;color:var(--brown-dark);padding-bottom:3px}
+
+/* Progress — preview pageと同じ */
+.progress{
+  position:relative;display:grid;grid-template-columns:repeat(4,1fr);
+  margin:0 70px 38px
+}
+.progress::before{
+  content:"";position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;
+  background:#eee9e5;border-radius:999px;z-index:0
+}
+.progress-step{position:relative;z-index:1;text-align:center;color:#6f635a}
+.progress-dot{
+  width:46px;height:46px;border-radius:50%;margin:0 auto 9px;
+  display:grid;place-items:center;background:#f0ece8;color:#72665d;font-size:16px
+}
+.progress-step.current .progress-dot{background:var(--brown-light);color:#fff}
+.progress-label{font-size:15px;font-weight:800}
+.progress-step.current .progress-label{color:var(--brown-dark)}
+
+.top{text-align:center;margin-bottom:18px}
+.top .badge{
+  display:inline-block;background:#f2e9df;color:var(--brown-dark);
+  padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;margin-bottom:10px
+}
+.top h1{font-size:32px;line-height:1.3;margin:0;color:var(--ink)}
+.top p{font-size:14px;color:var(--muted);line-height:1.7;margin:8px 0 0}
+
+/* Main shell */
+.purchase-shell{
+  max-width:920px;margin:0 auto;
+  background:linear-gradient(135deg,#fcf9f5,#fffdfb);
+  border:1px solid #eee5dd;border-radius:22px;padding:24px;
+  box-shadow:0 10px 28px rgba(109,77,51,.04)
+}
+.section-title{
+  text-align:center;font-size:18px;font-weight:900;color:var(--ink);
+  margin:0 0 5px
+}
+.section-lead{
+  text-align:center;font-size:12px;color:var(--muted);line-height:1.65;margin:0 0 16px
+}
+
+/* What the customer is actually buying */
+.purchase-previews{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  max-width:680px;margin:0 auto 22px
+}
+.preview-item{
+  background:#fff;border:1px solid #ebe2da;border-radius:16px;
+  padding:10px;box-shadow:0 4px 14px rgba(85,62,44,.05)
+}
+.preview-label{text-align:center;margin:0 0 8px}
+.preview-label strong{display:block;font-size:14px;color:var(--ink)}
+.preview-label span{
+  display:block;margin-top:2px;font-size:9px;font-weight:700;
+  letter-spacing:.08em;color:#9a8f86
+}
+.preview-art{
+  position:relative;width:100%;aspect-ratio:1060/1484;
+  overflow:hidden;border-radius:9px;background:#f4efe9;border:1px solid #eee5dd
+}
+.preview-art img{display:block;width:100%;height:100%;object-fit:cover}
+.preview-art.voice{background:#faf7f2}
+.voice-stage{
+  position:absolute;inset:0;overflow:hidden;background:#faf7f2
+}
+.voice-stage iframe{
+  position:absolute;left:50%;top:0;
+  width:330%;height:330%;
+  border:0;background:#fffdfa;
+  transform:translateX(-50%) scale(.303);
+  transform-origin:top center;
+  pointer-events:none
+}
+.preview-fallback{
+  position:absolute;inset:0;display:none;place-items:center;padding:12px;text-align:center;
+  color:#8c827a;font-size:11px;line-height:1.6;background:#f7f2ec
+}
+.purchase-preview-note{
+  max-width:680px;margin:-8px auto 22px;padding:10px 12px;
+  text-align:center;font-size:12px;line-height:1.65;color:#75695f;
+  background:#f7f1eb;border-radius:12px
+}
+
+/* Price/product summary */
+.summary{
+  display:grid;grid-template-columns:minmax(120px,.85fr) 1.35fr;
+  gap:11px 22px;max-width:680px;margin:0 auto 24px;padding:18px 20px;
+  border-radius:16px;background:#f1e8db;font-size:14px;align-items:center
+}
+.summary b{font-weight:800;color:#51463d}
+.summary small{display:inline-block;margin-top:3px;color:#8a7867;font-size:12px}
+.priceValue{font-size:24px;font-weight:900;color:#655648}
+
+/* Legal/confirmation sections */
+.details{max-width:680px;margin:0 auto}
+.section{border-top:1px solid var(--line);padding-top:20px;margin-top:20px}
+.section h2{font-size:17px;margin:0 0 12px;color:#5f5145}
+ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.85;font-size:13px}
+.notice{
+  background:rgba(238,228,214,.48);border-left:3px solid #b69570;
+  padding:13px 14px;color:#66594d;line-height:1.8;font-size:12px
+}
+.consent{
+  display:flex;gap:11px;align-items:flex-start;margin-top:22px;padding:15px;
+  border:1px solid #d9c8b2;border-radius:14px;background:#fff
+}
+.consent input{width:21px;height:21px;margin:1px 0 0;accent-color:var(--brown);flex:0 0 auto}
+.consent span{font-size:13px;line-height:1.7;color:#5c5046}
+.consent a,.legal-links a{color:#745f4d;text-decoration:underline;text-underline-offset:3px}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.actions .back,.actions button{
+  min-height:56px;padding:14px 18px;border-radius:14px;font-size:15px;
+  font-weight:900;text-align:center;text-decoration:none;display:grid;place-items:center
+}
+.actions .back{border:1px solid #d7c7b8;background:#fff;color:var(--brown-dark)}
+.actions .buy{
+  border:0;background:linear-gradient(180deg,#a77d5a,#956c4c);
+  color:#fff;box-shadow:0 7px 18px rgba(128,87,54,.15);cursor:pointer
+}
+.actions .buy:disabled{opacity:.42;box-shadow:none;cursor:not-allowed}
 .status{min-height:20px;text-align:center;margin-top:12px;color:#817466;font-size:12px;line-height:1.6}
 .small{text-align:center;font-size:11px;color:#8e8176;line-height:1.7;margin:14px 4px 0}
-
+.legal-caption{text-align:center;font-size:11px;color:#827568;line-height:1.6;margin:13px 0 4px}
 .legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:14px 0 2px;font-size:12px}
-.legal-links a{color:#745f4d;text-decoration:underline;text-underline-offset:3px}
-.consent a{color:#745f4d;text-decoration:underline;text-underline-offset:3px}
-@media(max-width:520px){.actions{grid-template-columns:1fr}.actions .buy{order:1}.actions .back{order:2}}
+
+@media(max-width:760px){
+  .wrap{padding:18px 14px 48px}
+  .purchase-header{margin-bottom:22px;align-items:center}
+  .purchase-brand{font-size:25px}
+  .purchase-tag{font-size:11px;padding-bottom:0}
+  .progress{margin:0 6px 28px}
+  .progress::before{top:18px;height:3px}
+  .progress-dot{width:38px;height:38px;margin-bottom:7px;font-size:14px}
+  .progress-label{font-size:11px}
+  .top h1{font-size:26px}
+  .top p{font-size:13px}
+  .purchase-shell{padding:16px 14px 18px;border-radius:18px}
+  .purchase-previews{gap:8px}
+  .preview-item{padding:7px;border-radius:13px}
+  .preview-label strong{font-size:12px}
+  .preview-label span{font-size:8px}
+  .summary{padding:16px 15px;gap:10px 14px;font-size:13px}
+  .priceValue{font-size:21px}
+  .actions{grid-template-columns:1fr;gap:9px}
+  .actions .buy{order:1}.actions .back{order:2}
+}
+@media(max-width:390px){
+  .purchase-tag{display:none}
+  .progress-label{font-size:10px}
+  .preview-item{padding:6px}
+  .preview-label strong{font-size:11px}
+  .summary{grid-template-columns:42% 58%}
+}
 </style>
 </head>
 <body>
 <main class="wrap">
-<div class="flow">
-  <span class="step-future">1 入力</span><span class="arrow">→</span>
-  <span class="step-future">2 プレビュー</span><span class="arrow">→</span>
-  <span class="step-current">3 購入確認</span><span class="arrow">→</span>
-  <span class="step-future">4 完成</span>
-</div>
+<header class="purchase-header">
+  <div class="purchase-brand">コエフォト</div>
+  <div class="purchase-tag">写真と声で、想いを届ける</div>
+</header>
+
+<nav class="progress" aria-label="作成の進捗">
+  <div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
+  <div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div>
+  <div class="progress-step current"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div>
+  <div class="progress-step"><div class="progress-dot">4</div><div class="progress-label">完成</div></div>
+</nav>
+
 <div class="top">
-  <h1>購入内容の確認</h1>
-  <p>決済前に、料金・保存期間・データの取扱いをご確認ください。</p>
+  <span class="badge">Classic Birthday</span>
+  <h1>購入内容を確認</h1>
+  <p>プレビューで調整した内容と、料金・保存期間をご確認ください。</p>
 </div>
-<section class="panel">
+
+<section class="purchase-shell">
+  <h2 class="section-title">購入するデザイン</h2>
+  <p class="section-lead">決済後、この2つの完成版をご利用いただけます。</p>
+
+  <div class="purchase-previews">
+    <article class="preview-item">
+      <div class="preview-label">
+        <strong>贈るカード</strong>
+        <span>MESSAGE CARD</span>
+      </div>
+      <div class="preview-art">
+        <img id="cardPurchasePreview" alt="プレビューで調整したメッセージカード">
+        <div id="cardPreviewFallback" class="preview-fallback">プレビュー画像を読み込めませんでした。<br>「プレビューに戻る」から再確認できます。</div>
+      </div>
+    </article>
+
+    <article class="preview-item">
+      <div class="preview-label">
+        <strong>QRから見るページ</strong>
+        <span>VOICE PAGE</span>
+      </div>
+      <div class="preview-art voice">
+        <div class="voice-stage">
+          <iframe id="voicePurchasePreview" src="classic-birthday-voice.html" title="ボイスページ購入確認プレビュー" tabindex="-1"></iframe>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="purchase-preview-note">プレビュー画面で調整した写真の位置・拡大率が、そのまま完成版に反映されます。</div>
+
   <div class="summary">
     <b>商品</b><span>コエフォト 完成版<br><small>Classic Birthday</small></span>
     <b>料金</b><span class="priceValue">480円（税込）</span>
@@ -56,42 +242,63 @@ ul{margin:0;padding-left:1.25em;color:#655b52;line-height:1.8;font-size:13px}
     <b>閲覧・ダウンロード期限</b><span>購入日から1年間</span>
   </div>
 
-  <div class="section"><h2>ご購入前の確認事項</h2>
-  <ul>
-    <li>決済完了後、受け取り用のボイスページとQRコードが有効になります。</li>
-    <li>写真・音声はサービス提供のため、購入日から1年間保存されます。</li>
-    <li>保存期限を過ぎた写真・音声は削除対象となり、再取得できない場合があります。</li>
-    <li>通信環境、端末、ブラウザ等により、表示・音声再生に差が生じる場合があります。</li>
-    <li>アップロードする写真・音声・メッセージについて、必要な権利・許諾を得たものをご利用ください。</li>
-    <li>第三者のプライバシー、著作権、肖像権その他の権利を侵害する内容はアップロードしないでください。</li>
-  </ul></div>
+  <div class="details">
+    <div class="section">
+      <h2>ご購入前の確認事項</h2>
+      <ul>
+        <li>決済完了後、受け取り用のボイスページとQRコードが有効になります。</li>
+        <li>写真・音声はサービス提供のため、購入日から1年間保存されます。</li>
+        <li>保存期限を過ぎた写真・音声は削除対象となり、再取得できない場合があります。</li>
+        <li>通信環境、端末、ブラウザ等により、表示・音声再生に差が生じる場合があります。</li>
+        <li>アップロードする写真・音声・メッセージについて、必要な権利・許諾を得たものをご利用ください。</li>
+        <li>第三者のプライバシー、著作権、肖像権その他の権利を侵害する内容はアップロードしないでください。</li>
+      </ul>
+    </div>
 
-  <div class="section"><h2>キャンセル・返金について</h2>
-  <div class="notice">
-    デジタル商品の性質上、決済完了後にサービス提供が開始された後は、原則として購入者都合によるキャンセル・返金はお受けできません。
-    ただし、二重決済やサービス側の不具合など、当社側の事情がある場合は個別に確認します。
-  </div></div>
+    <div class="section">
+      <h2>キャンセル・返金について</h2>
+      <div class="notice">
+        デジタル商品の性質上、決済完了後にサービス提供が開始された後は、原則として購入者都合によるキャンセル・返金はお受けできません。
+        ただし、二重決済やサービス側の不具合など、当社側の事情がある場合は個別に確認します。
+      </div>
+    </div>
 
-  <label class="consent">
-    <input id="agree" type="checkbox">
-    <span>上記の購入条件と、<a href="terms.html" target="_blank" rel="noopener">利用規約</a>・<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>を確認し、同意します。</span>
-  </label>
+    <label class="consent">
+      <input id="agree" type="checkbox">
+      <span>上記の購入条件と、<a href="terms.html" target="_blank" rel="noopener">利用規約</a>・<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>を確認し、同意します。</span>
+    </label>
 
-  <div class="actions">
-    <a class="back" href="preview.html">プレビューに戻る</a>
-    <button id="buyBtn" class="buy" disabled>480円（税込）で購入する</button>
+    <div class="actions">
+      <a class="back" href="preview.html">← プレビューに戻る</a>
+      <button id="buyBtn" class="buy" disabled>480円（税込）で購入する →</button>
+    </div>
+
+    <p class="legal-caption">販売事業者情報は「特定商取引法に基づく表記」から確認できます。</p>
+    <nav class="legal-links" aria-label="法的情報">
+      <a href="terms.html" target="_blank" rel="noopener">利用規約</a>
+      <a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>
+      <a href="tokusho.html" target="_blank" rel="noopener">特定商取引法に基づく表記</a>
+    </nav>
+    <div id="purchaseStatus" class="status" aria-live="polite"></div>
+    <p class="small">決済はStripeの安全な決済画面で行います。カード情報はコエフォトのサーバーには保存しません。</p>
   </div>
-  <p style="text-align:center;font-size:11px;color:#827568;line-height:1.6;margin:12px 0 4px">販売事業者情報は「特定商取引法に基づく表記」から確認できます。</p>
-  <nav class="legal-links" aria-label="法的情報">
-    <a href="terms.html" target="_blank" rel="noopener">利用規約</a>
-    <a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>
-    <a href="tokusho.html" target="_blank" rel="noopener">特定商取引法に基づく表記</a>
-  </nav>
-  <div id="purchaseStatus" class="status" aria-live="polite"></div>
-  <p class="small">決済はStripeの安全な決済画面で行います。カード情報はコエフォトのサーバーには保存しません。</p>
 </section>
 </main>
-
+<script>
+(() => {
+  const img=document.getElementById('cardPurchasePreview');
+  const fallback=document.getElementById('cardPreviewFallback');
+  const src=sessionStorage.getItem('koephoto-purchase-card-preview')||'';
+  if(src){
+    img.onload=()=>{fallback.style.display='none'};
+    img.onerror=()=>{img.style.display='none';fallback.style.display='grid'};
+    img.src=src;
+  }else{
+    img.style.display='none';
+    fallback.style.display='grid';
+  }
+})();
+</script>
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 

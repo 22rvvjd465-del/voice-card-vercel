@@ -698,6 +698,21 @@ async function uploadSigned(path,token,file,contentType){
 }
 
 buyBtn?.addEventListener('click',()=>{
+  try{
+    const source=document.getElementById('card');
+    if(source){
+      // Store a lightweight snapshot of the exact adjusted card shown in preview.
+      // 360x504 keeps the 1060x1484 aspect ratio closely and avoids Safari sessionStorage limits.
+      const thumb=document.createElement('canvas');
+      thumb.width=360;
+      thumb.height=Math.round(360*1484/1060);
+      const tctx=thumb.getContext('2d');
+      tctx.drawImage(source,0,0,thumb.width,thumb.height);
+      sessionStorage.setItem('koephoto-purchase-card-preview',thumb.toDataURL('image/jpeg',0.88));
+    }
+  }catch(err){
+    console.warn('purchase preview snapshot failed',err);
+  }
   location.href='purchase.html';
 });
 </script>
