@@ -9,7 +9,7 @@
 :root{--card-w:min(94vw,540px);--navy:#0b347f;--paper:#fbf7ee;--ink:#2d2a25}
 *{box-sizing:border-box}
 html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.page{min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:24px 12px 32px}
+.page{display:flex;flex-direction:column;align-items:center;padding:24px 12px 14px}
 .card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper);box-shadow:0 10px 30px rgba(30,35,45,.09)}
 .photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
 .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
@@ -26,7 +26,7 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .seek::-moz-range-progress{height:3px;border-radius:999px;background:var(--navy)}
 .seek::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--navy)}
 .time{margin-top:-1px;font-size:11px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
-.brand{width:var(--card-w);text-align:center;padding-top:18px;line-height:1.25}
+.brand{width:var(--card-w);text-align:center;padding-top:14px;line-height:1.25;padding-bottom:0}
 .brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
 .tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 .state{width:var(--card-w);min-height:70vh;display:grid;place-items:center;text-align:center;color:#8a7d70;font-size:14px;line-height:1.8}
