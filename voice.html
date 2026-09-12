@@ -401,9 +401,9 @@ async function buildEpubBlob(){
   zip.file('OEBPS/styles.css',`
 @page{margin:0}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:1060px;height:1684px;overflow:hidden;background:#fff;color:#2d2a25}
+html,body{margin:0;padding:0;width:1060px;height:1570px;overflow:hidden;background:#fff;color:#2d2a25}
 body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.unit{position:relative;width:1060px;height:1684px;background:#fff}
+.unit{position:relative;width:1060px;height:1570px;background:#fff}
 .card{position:absolute;left:0;top:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee}
 .card-image{position:absolute;inset:0;width:1060px;height:1484px;z-index:1}
 .player{
@@ -446,10 +446,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
 }
 .brand{
   position:absolute;left:0;top:1484px;
-  width:1060px;text-align:center;padding-top:48px;line-height:1.25;
+  width:1060px;text-align:center;padding-top:20px;line-height:1.15;
 }
-.brand-name{font-size:49px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
-.tagline{margin-top:14px;font-family:Georgia,"Times New Roman",serif;font-size:27px;letter-spacing:.18em;color:#746c62}
+.brand-name{font-size:25px;font-weight:700;letter-spacing:.07em;color:#776c62}
+.tagline{margin-top:6px;font-family:Georgia,"Times New Roman",serif;font-size:13px;letter-spacing:.14em;color:#9a9188}
 `);
 
   zip.file('OEBPS/page.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
@@ -457,7 +457,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sa
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=1060,height=1684"/>
+  <meta name="viewport" content="width=1060,height=1570"/>
   <title>コエフォト 保存版</title>
   <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
