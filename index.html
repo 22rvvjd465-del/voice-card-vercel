@@ -578,7 +578,7 @@ $('form').addEventListener('submit',async e=>{
   await put('form',draftData);
   await put('photo',p);
   await put('audio',a);
-  location.href='preview.html';
+  location.href='preview.html?t='+Date.now();
 });
 </script>
 </body>

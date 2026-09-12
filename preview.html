@@ -339,7 +339,6 @@ function wrap(ctx,text,maxWidth){
     location.href='index.html';
     return;
   }
-  const pu=URL.createObjectURL(photo);
   const c=$('card'),ctx=c.getContext('2d');
 
   function loadImage(src){
@@ -351,16 +350,27 @@ function wrap(ctx,text,maxWidth){
     });
   }
 
+  function blobToDataURL(blob){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(reader.result);
+      reader.onerror=()=>reject(reader.error||new Error('file_read_failed'));
+      reader.readAsDataURL(blob);
+    });
+  }
+
   let base,img,decor;
   try{
+    // Safariで「入力を修正 → 再度プレビュー」の際にBlob URLが不安定になることがあるため、
+    // IndexedDBから取得した写真はData URLへ変換してから画像として読む。
+    const photoSrc=await blobToDataURL(photo);
     [base,img,decor]=await Promise.all([
       loadImage('classic-birthday-message.png'),
-      loadImage(pu),
+      loadImage(photoSrc),
       loadImage('classic-birthday-decor-overlay.png')
     ]);
   }catch(err){
     console.error('preview image load failed',err);
-    URL.revokeObjectURL(pu);
     alert('写真データの読み込みに失敗しました。入力画面で写真を選び直してください。');
     location.href='index.html';
     return;
