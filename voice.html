@@ -152,16 +152,45 @@ function setupAudio(url){
   audio.onended=()=>{btn.textContent='▶';audio.currentTime=0;sync()};
   seek.oninput=()=>{if(audio.duration){audio.currentTime=(Number(seek.value)/100)*audio.duration;sync()}};
 }
+function loadDataScript(id){
+  return new Promise((resolve,reject)=>{
+    window.__KOEPHOTO_DATA__=null;
+    const timeout=setTimeout(()=>reject(new Error('data timeout')),10000);
+    const done=()=>{
+      if(!window.__KOEPHOTO_DATA__)return;
+      clearTimeout(timeout);
+      window.removeEventListener('koephoto-data',done);
+      resolve(window.__KOEPHOTO_DATA__);
+    };
+    window.addEventListener('koephoto-data',done);
+    const sc=document.createElement('script');
+    sc.src=`${SUPABASE}?id=${encodeURIComponent(id)}&format=js&t=${Date.now()}`;
+    sc.async=true;
+    sc.onerror=()=>{
+      clearTimeout(timeout);
+      window.removeEventListener('koephoto-data',done);
+      reject(new Error('data script failed'));
+    };
+    document.head.appendChild(sc);
+  });
+}
+
 (async()=>{
   const id=new URLSearchParams(location.search).get('id')||'';
   if(!/^[0-9a-f-]{36}$/i.test(id)){fail('このコエフォトは表示できません。');return}
   try{
-    const r=await fetch(`${SUPABASE}?id=${encodeURIComponent(id)}&format=json`,{cache:'no-store'});
-    if(!r.ok){fail('このコエフォトは閲覧期限を過ぎているか、表示できません。');return}
-    const d=await r.json();
+    const d=await loadDataScript(id);
     $('recipient').textContent=[...(d.recipient||'')].slice(0,15).join('');
     $('sender').textContent=[...(d.sender||'')].slice(0,15).join('');
-    await renderPhoto(d);
+
+    try{
+      await renderPhoto(d);
+    }catch(e){
+      console.error('photo',e);
+      fail('写真の読み込みに失敗しました。');
+      return;
+    }
+
     setupAudio(d.audio_url);
     $('state').hidden=true;
     $('content').hidden=false;
@@ -171,8 +200,8 @@ function setupAudio(url){
       fitName($('sender'),310);
     }));
   }catch(e){
-    console.error(e);
-    fail('コエフォトの読み込みに失敗しました。');
+    console.error('data',e);
+    fail('コエフォトのデータ取得に失敗しました。');
   }
 })();
 </script>
