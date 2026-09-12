@@ -131,7 +131,7 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
 /* consent and submit */
 .bottom-area{max-width:760px;margin:22px auto 0}
 .consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.65;color:#665b53;padding:12px 14px;border-radius:12px;background:#f7f1eb}
-.consent input{width:auto;margin-top:3px}
+.consent input{width:24px;height:24px;min-width:24px;flex:0 0 24px;margin:1px 0 0;accent-color:var(--brown-light);cursor:pointer}
 #go{
   display:block;width:min(440px,100%);margin:26px auto 0;
   border:0;border-radius:999px;
@@ -236,7 +236,7 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
               <input id="photo" type="file" accept="image/*">
             </label>
           </div>
-          <div class="format-note">画像は1枚選択できます。</div>
+          <div class="format-note">画像は1枚選択できます。最大20MBまで。</div>
         </div>
       </div>
 
@@ -263,7 +263,7 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
           </div>
           <div id="recordStatus" class="record-status">この場で録音するか、録音済みの音声を選べます</div>
           <div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button></div>
-          <div class="format-note">音声は1つ選択できます。m4a / mp3 / aac / wav に対応しています。</div>
+          <div class="format-note">音声は1つ選択できます。最大3分まで。m4a / mp3 / aac / wav に対応しています。</div>
         </div>
       </div>
     </section>
@@ -339,7 +339,15 @@ function stopMic(){
 
 $('photo').addEventListener('change',()=>{
   const f=$('photo').files[0];
-  if(f){storedPhoto=f;showPhoto(f)}
+  if(!f)return;
+  const MAX_PHOTO_BYTES=20*1024*1024;
+  if(f.size>MAX_PHOTO_BYTES){
+    alert('写真は20MB以下のファイルを選んでください。');
+    $('photo').value='';
+    return;
+  }
+  storedPhoto=f;
+  showPhoto(f);
 });
 
 function resetRecording(){
@@ -388,7 +396,11 @@ async function startRecording(){
     recordBtn.innerHTML='<span class="action-icon">■</span><span>録音を停止</span>';
     const tick=()=>{
       const sec=Math.floor((Date.now()-recordStartedAt)/1000);
-      recordStatus.textContent=`録音中 ${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+      recordStatus.textContent=`録音中 ${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')} / 03:00`;
+      if(sec>=180 && mediaRecorder?.state==='recording'){
+        mediaRecorder.stop();
+        recordStatus.textContent='最大録音時間の3分に達したため、録音を終了しました';
+      }
     };
     tick();
     timerId=setInterval(tick,500);
@@ -405,7 +417,7 @@ recordBtn.addEventListener('click',()=>{
 });
 $('retryRecord').addEventListener('click',resetRecording);
 
-$('audioFile').addEventListener('change',()=>{
+$('audioFile').addEventListener('change',async()=>{
   const f=$('audioFile').files[0];
   if(!f)return;
   const name=(f.name||'').toLowerCase(),type=(f.type||'').toLowerCase();
@@ -415,6 +427,30 @@ $('audioFile').addEventListener('change',()=>{
     $('audioFile').value='';
     return;
   }
+
+  const duration=await new Promise(resolve=>{
+    const probe=document.createElement('audio');
+    const url=URL.createObjectURL(f);
+    let settled=false;
+    const finish=v=>{
+      if(settled)return;
+      settled=true;
+      URL.revokeObjectURL(url);
+      resolve(v);
+    };
+    probe.preload='metadata';
+    probe.onloadedmetadata=()=>finish(Number.isFinite(probe.duration)?probe.duration:null);
+    probe.onerror=()=>finish(null);
+    probe.src=url;
+    setTimeout(()=>finish(null),5000);
+  });
+
+  if(duration!==null && duration>180.5){
+    alert('音声は3分以内のファイルを選んでください。');
+    $('audioFile').value='';
+    return;
+  }
+
   if(mediaRecorder?.state==='recording')mediaRecorder.stop();
   stopMic();
   clearInterval(timerId);
@@ -529,6 +565,7 @@ $('form').addEventListener('submit',async e=>{
   const p=$('photo').files[0] || storedPhoto;
   const a=recordedAudio || storedAudio;
   if(!p){alert('写真を選んでください。');return}
+  if(p.size>20*1024*1024){alert('写真は20MB以下のファイルを選んでください。');return}
   if(!a){alert('声を録音するか、音声ファイルを選んでください。');return}
 
   const draftData={
