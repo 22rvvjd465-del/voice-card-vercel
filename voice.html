@@ -102,6 +102,7 @@ html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,Bl
 [hidden]{display:none!important}
 @media(max-width:390px){.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 <main class="page">
@@ -136,10 +137,10 @@ html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,Bl
   <div id="saveSheet" class="save-sheet-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
     <div class="save-sheet">
       <div id="saveSheetTitle" class="save-sheet-title">保存方法を選ぶ</div>
-      <p class="save-sheet-note">プレーヤー付き保存なら、1年後もファイルから声を再生できます。</p>
-      <button id="saveHtml" class="save-option" type="button">
-        <strong>プレーヤー付きで保存（HTML）</strong>
-        <span>写真・デザイン・音声・再生ボタンを1つのファイルにまとめて保存</span>
+      <p class="save-sheet-note">プレーヤー付き保存版は、Apple Booksで写真を見ながら声を再生できます。</p>
+      <button id="saveEpub" class="save-option" type="button">
+        <strong>プレーヤー付きで保存（EPUB）</strong>
+        <span>写真・デザイン・音声・再生プレーヤーをまとめてApple Booksに保存</span>
       </button>
       <button class="save-option" type="button" disabled aria-disabled="true" style="margin-top:10px">
         <strong>動画で保存（MP4）</strong>
@@ -273,108 +274,193 @@ function loadDataScript(id){
 
 let currentCardData=null;
 
-function blobToDataURL(blob){
+
+function canvasToBlob(canvas,type='image/png',quality=1){
   return new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=()=>resolve(r.result);
-    r.onerror=()=>reject(r.error||new Error('FileReader failed'));
-    r.readAsDataURL(blob);
+    canvas.toBlob(b=>b?resolve(b):reject(new Error('canvas export failed')),type,quality);
   });
 }
-async function fetchAsDataURL(url){
+async function fetchBlob(url){
   const res=await fetch(url,{cache:'no-store'});
   if(!res.ok)throw new Error(`asset fetch failed: ${res.status}`);
-  return blobToDataURL(await res.blob());
+  return await res.blob();
 }
-function escText(v){
+function escXml(v){
   return String(v??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'
   }[c]));
 }
-async function buildOfflineHtml(){
+async function buildEpubBlob(){
+  if(!window.JSZip)throw new Error('JSZip is not available');
   if(!currentCardData)throw new Error('card data is not ready');
 
-  // The photo is already rendered with the exact crop/zoom into this canvas.
-  const photoData=$('photoCanvas').toDataURL('image/png');
-  const overlayData=await fetchAsDataURL('koefoto_classic_birthday_overlay.png');
-  const audioData=await fetchAsDataURL(currentCardData.audio_url);
+  const photoBlob=await canvasToBlob($('photoCanvas'));
+  const overlayBlob=await fetchBlob('koefoto_classic_birthday_overlay.png');
+  const audioBlob=await fetchBlob(currentCardData.audio_url);
 
-  const recipient=escText([...(currentCardData.recipient||'')].slice(0,15).join(''));
-  const sender=escText([...(currentCardData.sender||'')].slice(0,15).join(''));
+  const recipient=escXml([...(currentCardData.recipient||'')].slice(0,15).join(''));
+  const sender=escXml([...(currentCardData.sender||'')].slice(0,15).join(''));
 
-  return `<!doctype html>
-<html lang="ja">
+  const zip=new JSZip();
+
+  // EPUB requires mimetype to be the first entry and stored without compression.
+  zip.file('mimetype','application/epub+zip',{compression:'STORE'});
+
+  zip.file('META-INF/container.xml',`<?xml version="1.0" encoding="UTF-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/package.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>`);
+
+  zip.file('META-INF/com.apple.ibooks.display-options.xml',`<?xml version="1.0" encoding="UTF-8"?>
+<display_options>
+  <platform name="*">
+    <option name="fixed-layout">true</option>
+    <option name="open-to-spread">false</option>
+  </platform>
+</display_options>`);
+
+  zip.file('OEBPS/package.opf',`<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid"
+         prefix="rendition: http://www.idpf.org/vocab/rendition/#">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="bookid">urn:uuid:koephoto-${Date.now()}</dc:identifier>
+    <dc:title>コエフォト 保存版</dc:title>
+    <dc:language>ja</dc:language>
+    <dc:creator>コエフォト</dc:creator>
+    <meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/,'Z')}</meta>
+    <meta property="rendition:layout">pre-paginated</meta>
+    <meta property="rendition:orientation">portrait</meta>
+    <meta property="rendition:spread">none</meta>
+  </metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="page" href="page.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+    <item id="css" href="styles.css" media-type="text/css"/>
+    <item id="js" href="player.js" media-type="application/javascript"/>
+    <item id="photo" href="photo.png" media-type="image/png"/>
+    <item id="overlay" href="overlay.png" media-type="image/png"/>
+    <item id="audio" href="voice.m4a" media-type="audio/mp4"/>
+  </manifest>
+  <spine page-progression-direction="ltr">
+    <itemref idref="page" properties="rendition:spread-none"/>
+  </spine>
+</package>`);
+
+  zip.file('OEBPS/nav.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="ja">
+<head><title>目次</title><meta charset="utf-8"/></head>
+<body><nav epub:type="toc"><ol><li><a href="page.xhtml">コエフォト</a></li></ol></nav></body>
+</html>`);
+
+  zip.file('OEBPS/styles.css',`
+@page{margin:0}
+html,body{margin:0;padding:0;width:1060px;height:1600px;overflow:hidden;background:#fff;color:#2d2a25}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.unit{position:relative;width:1060px;height:1600px;background:#fff}
+.card{position:absolute;left:0;top:0;width:1060px;height:1484px;overflow:hidden;background:#fbf7ee}
+.photo,.art{position:absolute;left:0;top:0;width:1060px;height:1484px}
+.photo{z-index:1}.art{z-index:3}
+.recipient,.sender{position:absolute;z-index:4;color:#0b347f;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-align:center}
+.recipient{left:338px;width:422px;top:272px;font-size:35px;line-height:1;transform:translateY(-100%)}
+.sender{left:421px;width:326px;top:1237px;font-size:32px;line-height:1;transform:translateY(-100%)}
+.player{position:absolute;z-index:4;left:118px;top:1041px;width:825px;height:110px;display:flex;align-items:center}
+.play{width:68px;height:68px;border:0;border-radius:50%;background:#0b347f;color:#fff;font-size:28px;line-height:68px;text-align:center;padding:0}
+.track{margin-left:28px;width:710px}
+.seek{width:100%;height:28px;margin:0;accent-color:#0b347f}
+.time{margin-top:2px;font-size:21px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.brand{position:absolute;left:0;top:1506px;width:1060px;text-align:center}
+.brand-name{font-size:34px;font-weight:800;letter-spacing:.08em;color:#5b4b3f}
+.tagline{margin-top:8px;font-family:Georgia,"Times New Roman",serif;font-size:18px;letter-spacing:.18em;color:#746c62}
+`);
+
+  zip.file('OEBPS/page.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>コエフォト | 保存版</title>
-<style>
-:root{--card-w:min(100vw,540px);--navy:#0b347f;--paper:#fbf7ee;--ink:#2d2a25}
-*{box-sizing:border-box}
-html,body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:max(18px,env(safe-area-inset-top)) 0 max(18px,env(safe-area-inset-bottom))}
-.unit{width:100%;display:flex;flex-direction:column;align-items:center}
-.card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper)}
-.photo,.art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.photo{z-index:1}.art{z-index:3;pointer-events:none}
-.recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-align:center}
-.recipient{left:31.887%;width:39.811%;top:18.329%;padding:0 3px;transform:translateY(calc(-100% + 1.6px));font-size:clamp(15px,3.5vw,22px)}
-.sender{left:39.717%;width:30.755%;top:83.356%;padding:0 3px;transform:translateY(calc(-100% + 1.6px));font-size:clamp(14px,3.2vw,21px)}
-.player{position:absolute;z-index:4;left:11.13%;top:70.35%;width:77.83%;height:7.41%;display:grid;grid-template-columns:34px 1fr;align-items:center;column-gap:14px;padding:8px 26px 10px 28px;transform:translateY(-3px)}
-.play{width:34px;height:34px;border:0;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:15px;line-height:1;cursor:pointer;padding:0;transform:translateY(-2px)}
-.track{min-width:0}.seek{--progress:0%;-webkit-appearance:none;appearance:none;display:block;width:100%;height:16px;margin:0;background:transparent}
-.seek::-webkit-slider-runnable-track{height:3px;border-radius:999px;background:linear-gradient(to right,var(--navy) 0 var(--progress),#d6c7ae var(--progress) 100%)}
-.seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;margin-top:-4.5px;background:#fff;border:2px solid var(--navy)}
-.time{margin-top:-1px;font-size:11px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
-.brand{width:var(--card-w);text-align:center;padding-top:18px;line-height:1.25}
-.brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
-.tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
-@media(max-width:390px){.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=1060,height=1600"/>
+  <title>コエフォト 保存版</title>
+  <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
 <body>
-<main class="page">
-<div class="unit">
-<section class="card">
-<img class="photo" src="${photoData}" alt="贈られた写真">
-<img class="art" src="${overlayData}" alt="">
-<div class="recipient">${recipient}</div>
-<div class="player">
-<button class="play" id="play" type="button" aria-label="再生">▶</button>
-<div class="track">
-<input id="seek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置">
-<div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
-</div>
-</div>
-<div class="sender">${sender}</div>
-<audio id="audio" preload="metadata" playsinline src="${audioData}"></audio>
-</section>
-<footer class="brand"><div class="brand-name">コエフォト</div><div class="tagline">A PHOTO, A VOICE, A MEMORY.</div></footer>
-</div>
-</main>
-<script>
-const a=document.getElementById('audio'),b=document.getElementById('play'),s=document.getElementById('seek'),c=document.getElementById('cur'),d=document.getElementById('dur');
-const f=x=>{if(!Number.isFinite(x))return'0:00';const m=Math.floor(x/60),q=Math.floor(x%60);return m+':'+String(q).padStart(2,'0')};
-function sync(){const p=a.duration?(a.currentTime/a.duration)*100:0;s.value=p;s.style.setProperty('--progress',p+'%');c.textContent=f(a.currentTime)}
-b.onclick=async()=>{if(a.paused){try{await a.play()}catch(e){}}else a.pause()};
-a.onplay=()=>b.textContent='❚❚';a.onpause=()=>b.textContent='▶';
-a.onloadedmetadata=()=>{d.textContent=f(a.duration);sync()};a.ondurationchange=()=>{d.textContent=f(a.duration);sync()};a.ontimeupdate=sync;
-a.onended=()=>{b.textContent='▶';a.currentTime=0;sync()};s.oninput=()=>{if(a.duration){a.currentTime=(Number(s.value)/100)*a.duration;sync()}};
-<\/script>
+  <div class="unit">
+    <section class="card">
+      <img class="photo" src="photo.png" alt="贈られた写真"/>
+      <img class="art" src="overlay.png" alt=""/>
+      <div class="recipient">${recipient}</div>
+      <div class="player">
+        <button class="play" id="play" type="button" aria-label="再生">▶</button>
+        <div class="track">
+          <input id="seek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置"/>
+          <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+        </div>
+      </div>
+      <div class="sender">${sender}</div>
+      <audio id="audio" preload="metadata" src="voice.m4a"></audio>
+    </section>
+    <footer class="brand">
+      <div class="brand-name">コエフォト</div>
+      <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
+    </footer>
+  </div>
+  <script type="text/javascript" src="player.js"><\/script>
 </body>
-</html>`;
+</html>`);
+
+  zip.file('OEBPS/player.js',`
+(function(){
+  var a=document.getElementById('audio');
+  var b=document.getElementById('play');
+  var s=document.getElementById('seek');
+  var c=document.getElementById('cur');
+  var d=document.getElementById('dur');
+  function fmt(x){
+    if(!isFinite(x))return '0:00';
+    var m=Math.floor(x/60),q=Math.floor(x%60);
+    return m+':'+(q<10?'0':'')+q;
+  }
+  function sync(){
+    var p=a.duration?(a.currentTime/a.duration)*100:0;
+    s.value=p;
+    c.textContent=fmt(a.currentTime);
+  }
+  b.addEventListener('click',function(){
+    if(a.paused){a.play();}else{a.pause();}
+  });
+  a.addEventListener('play',function(){b.textContent='❚❚';});
+  a.addEventListener('pause',function(){b.textContent='▶';});
+  a.addEventListener('loadedmetadata',function(){d.textContent=fmt(a.duration);sync();});
+  a.addEventListener('durationchange',function(){d.textContent=fmt(a.duration);sync();});
+  a.addEventListener('timeupdate',sync);
+  a.addEventListener('ended',function(){b.textContent='▶';a.currentTime=0;sync();});
+  s.addEventListener('input',function(){
+    if(a.duration){a.currentTime=(Number(s.value)/100)*a.duration;sync();}
+  });
+})();`);
+
+  zip.file('OEBPS/photo.png',photoBlob);
+  zip.file('OEBPS/overlay.png',overlayBlob);
+  zip.file('OEBPS/voice.m4a',audioBlob);
+
+  return await zip.generateAsync({
+    type:'blob',
+    mimeType:'application/epub+zip',
+    compression:'DEFLATE',
+    compressionOptions:{level:6}
+  });
 }
-async function saveOfflineHtml(){
-  const btn=$('saveHtml');
+async function saveEpub(){
+  const btn=$('saveEpub');
   const original=btn.innerHTML;
   btn.disabled=true;
-  btn.innerHTML='<strong>保存版を作成しています…</strong><span>写真と音声を1つのファイルにまとめています</span>';
+  btn.innerHTML='<strong>保存版を作成しています…</strong><span>写真と音声をEPUBにまとめています</span>';
   try{
-    const htmlText=await buildOfflineHtml();
-    const blob=new Blob([htmlText],{type:'text/html;charset=utf-8'});
-    const file=new File([blob],'koephoto-player.html',{type:'text/html'});
+    const blob=await buildEpubBlob();
+    const file=new File([blob],'koephoto-player.epub',{type:'application/epub+zip'});
 
-    // iPhone/iPad: share sheet lets the user save the .html file to Files.
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
       try{
         await navigator.share({files:[file],title:'コエフォト 保存版'});
@@ -387,13 +473,13 @@ async function saveOfflineHtml(){
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='koephoto-player.html';
+    a.download='koephoto-player.epub';
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),5000);
   }catch(e){
-    console.error('offline html export',e);
+    console.error('EPUB export',e);
     alert('プレーヤー付き保存版を作成できませんでした。もう一度お試しください。');
   }finally{
     btn.disabled=false;
@@ -405,7 +491,7 @@ async function saveOfflineHtml(){
 $('saveVoicePage').addEventListener('click',()=>{$('saveSheet').hidden=false});
 $('saveCancel').addEventListener('click',()=>{$('saveSheet').hidden=true});
 $('saveSheet').addEventListener('click',e=>{if(e.target===$('saveSheet'))$('saveSheet').hidden=true});
-$('saveHtml').addEventListener('click',saveOfflineHtml);
+$('saveEpub').addEventListener('click',saveEpub);
 
 (async()=>{
   const id=new URLSearchParams(location.search).get('id')||'';
