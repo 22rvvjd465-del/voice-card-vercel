@@ -10,27 +10,27 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
 .page{min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:24px 12px 42px}
-.card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper);box-shadow:0 10px 30px rgba(30,35,45,.09)}
+.card{position:relative;width:var(--card-w);aspect-ratio:1060/1484;overflow:hidden;background:var(--paper);border-radius:8px;box-shadow:0 10px 30px rgba(30,35,45,.09)}
 .photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
 .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
 .recipient,.sender{position:absolute;z-index:4;color:var(--navy);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:clip;text-align:center}
 .recipient{left:31%;width:43%;top:17.55%;transform:translateY(-100%)}
 .sender{left:32%;width:34%;top:83.55%;transform:translateY(-100%)}
-.player{position:absolute;z-index:4;left:13%;top:67%;width:74%;height:9.2%;display:grid;grid-template-columns:48px 1fr;column-gap:16px;align-items:center;padding:16px 28px 14px 26px}
-.play{width:46px;height:46px;border:1.5px solid rgba(201,149,47,.85);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:17px;line-height:1;box-shadow:0 5px 14px rgba(11,52,127,.20),inset 0 0 0 3px rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent}
+.player{position:absolute;z-index:4;left:14.2%;top:67.35%;width:72.0%;height:8.15%;display:grid;grid-template-columns:43px 1fr;column-gap:14px;align-items:center;padding:8px 16px 7px 12px}
+.play{width:43px;height:43px;border:1.5px solid rgba(201,149,47,.85);border-radius:50%;background:linear-gradient(145deg,#123f8d,#082b69);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;font-size:16px;line-height:1;box-shadow:0 5px 14px rgba(11,52,127,.20),inset 0 0 0 3px rgba(255,255,255,.08);-webkit-tap-highlight-color:transparent}
 .play:active{transform:scale(.97)}
-.player-main{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:6px}
-.wave-wrap{position:relative;height:42px;display:flex;align-items:center}
+.player-main{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.wave-wrap{position:relative;height:30px;display:flex;align-items:center}
 .waveform{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:2px;pointer-events:none}
 .wavebar{width:3px;min-width:2px;border-radius:999px;background:var(--gold-soft);opacity:.92;transition:background .08s linear,opacity .08s linear}
 .wavebar.played{background:var(--navy);opacity:1}
 .seek{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
-.time{display:flex;justify-content:space-between;color:#756a5b;font-size:10px;line-height:1;font-variant-numeric:tabular-nums;padding:0 1px}
+.time{display:flex;justify-content:space-between;color:#756a5b;font-size:9px;line-height:1;font-variant-numeric:tabular-nums;padding:0 1px}
 .brand{width:var(--card-w);text-align:center;padding-top:18px;line-height:1.25}
 .brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
 .tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
 body.embedded .page{min-height:0;padding-bottom:18px}
-@media(max-width:390px){.page{padding-left:8px;padding-right:8px}.player{grid-template-columns:40px 1fr;column-gap:11px;padding:12px 22px 11px 20px}.play{width:38px;height:38px;font-size:14px}.wave-wrap{height:34px}.wavebar{width:2.4px}.time{font-size:10px}}
+@media(max-width:390px){.page{padding-left:8px;padding-right:8px}.player{grid-template-columns:38px 1fr;column-gap:10px;padding:7px 13px 6px 10px}.play{width:38px;height:38px;font-size:14px}.wave-wrap{height:27px}.wavebar{width:2.2px}.time{font-size:8px}}.player{grid-template-columns:40px 1fr;column-gap:11px;padding:12px 22px 11px 20px}.play{width:38px;height:38px;font-size:14px}.wave-wrap{height:34px}.wavebar{width:2.4px}.time{font-size:10px}}
 </style>
 </head>
 <body>
