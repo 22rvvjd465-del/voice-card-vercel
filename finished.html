@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト｜完成版</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --bg:#f4f0e9;--paper:#fffdf9;--ink:#4d4339;--muted:#93877c;
@@ -227,9 +227,35 @@ function wrap(ctx,text,maxWidth){
 }
 async function makeQR(url,size=170){
   if(!window.QRCode) throw new Error('QR library unavailable');
-  const q=document.createElement('canvas');
-  await QRCode.toCanvas(q,url,{width:size,margin:0,errorCorrectionLevel:'M'});
-  return q;
+  const box=document.createElement('div');
+  box.style.position='fixed';
+  box.style.left='-9999px';
+  document.body.appendChild(box);
+  new QRCode(box,{
+    text:url,
+    width:size,
+    height:size,
+    colorDark:'#000000',
+    colorLight:'#ffffff',
+    correctLevel:QRCode.CorrectLevel.M
+  });
+  await new Promise(r=>setTimeout(r,50));
+  const canvas=box.querySelector('canvas');
+  const img=box.querySelector('img');
+  let result;
+  if(canvas){
+    result=document.createElement('canvas');
+    result.width=size; result.height=size;
+    result.getContext('2d').drawImage(canvas,0,0,size,size);
+  }else if(img){
+    await img.decode();
+    result=document.createElement('canvas');
+    result.width=size; result.height=size;
+    result.getContext('2d').drawImage(img,0,0,size,size);
+  }
+  box.remove();
+  if(!result) throw new Error('QR generation failed');
+  return result;
 }
 async function renderCard(d){
   const c=$('cardCanvas'),ctx=c.getContext('2d');
@@ -322,20 +348,34 @@ async function load(){
     payload=d;
     $('period').textContent=formatDate(d.expires_at)+'まで';
     $('templateBadge').textContent=d.template_key==='classic_birthday'?'Classic Birthday':(d.template_key||'Template');
-    $('voiceFrame').src=d.public_url;
-    $('voiceFrame').onload=()=>{
-      $('voiceLoading').hidden=true;
-      $('voiceFrame').hidden=false;
-    };
-    $('voiceFrame').onerror=()=>{
+    // SafariでEdge FunctionのHTMLがテキスト表示される場合があるため、
+    // HTML本文を取得してsrcdocとして描画する。
+    try{
+      const vr=await fetch(d.public_url,{cache:'no-store'});
+      if(!vr.ok) throw new Error('voice page '+vr.status);
+      const voiceHtml=await vr.text();
+      $('voiceFrame').srcdoc=voiceHtml;
+      $('voiceFrame').onload=()=>{
+        $('voiceLoading').hidden=true;
+        $('voiceFrame').hidden=false;
+      };
+    }catch(e){
+      console.error('voice page',e);
       $('voiceLoading').classList.add('error');
       $('voiceLoading').textContent='ボイスページを表示できませんでした。';
-    };
-    await renderCard(d);
+    }
+
+    try{
+      await renderCard(d);
+    }catch(e){
+      console.error('card render',e);
+      $('cardLoading').classList.add('error');
+      $('cardLoading').textContent='完成カードを表示できませんでした。再読み込みしてください。';
+    }
     $('note').textContent='贈るカードは画像として保存できます。QRコードからは受け取り用ページが開きます。';
   }catch(e){
     console.error(e);
-    fail('通信に失敗しました。少し待ってから再読み込みしてください。');
+    fail('完成版データを取得できませんでした。少し待ってから再読み込みしてください。');
   }
 }
 $('saveBtn').onclick=async()=>{
