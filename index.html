@@ -574,7 +574,10 @@ $('form').addEventListener('submit',async e=>{
     sender:$('sender').value.trim()
   };
   sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
-  await Promise.all([put('form',draftData),put('photo',p),put('audio',a)]);
+  // iPhone Safari対策: IndexedDBへの保存は並列ではなく順番に完了させてから遷移する
+  await put('form',draftData);
+  await put('photo',p);
+  await put('audio',a);
   location.href='preview.html';
 });
 </script>
