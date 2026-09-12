@@ -375,13 +375,14 @@ async function buildEpubBlob(){
          prefix="rendition: http://www.idpf.org/vocab/rendition/#">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="bookid">koephoto-${escXml(uniqueKey)}</dc:identifier>
-    <dc:title>コエフォト ${escXml(purchaseId||"")}</dc:title>
+    <dc:title>コエフォト</dc:title>
     <dc:language>ja</dc:language>
     <dc:creator>コエフォト</dc:creator>
     <meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/,'Z')}</meta>
     <meta property="rendition:layout">pre-paginated</meta>
     <meta property="rendition:orientation">portrait</meta>
     <meta property="rendition:spread">none</meta>
+    <meta name="cover" content="coverimg"/>
   </metadata>
   <manifest>
     <item id="cover" href="cover.xhtml" media-type="application/xhtml+xml"/>
@@ -397,6 +398,9 @@ async function buildEpubBlob(){
     <itemref idref="cover" properties="rendition:spread-none"/>
     <itemref idref="page" properties="rendition:spread-none"/>
   </spine>
+  <guide>
+    <reference type="cover" title="Cover" href="cover.xhtml"/>
+  </guide>
 </package>`);
 
   zip.file('OEBPS/cover.xhtml',`<?xml version="1.0" encoding="UTF-8"?>
@@ -450,7 +454,14 @@ async function buildEpubBlob(){
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="ja">
 <head><title>目次</title><meta charset="utf-8"/></head>
-<body><nav epub:type="toc"><ol><li><a href="cover.xhtml">コエフォト</a></li><li><a href="page.xhtml">ボイスページ</a></li></ol></nav></body>
+<body><nav epub:type="toc"><ol><li><a href="cover.xhtml">コエフォト</a></li><li><a href="page.xhtml">ボイスページ</a></li></ol></nav>
+<nav epub:type="landmarks">
+  <ol>
+    <li><a epub:type="cover" href="cover.xhtml">表紙</a></li>
+    <li><a epub:type="bodymatter" href="page.xhtml">ボイスページ</a></li>
+  </ol>
+</nav>
+</body>
 </html>`);
 
   zip.file('OEBPS/styles.css',`
