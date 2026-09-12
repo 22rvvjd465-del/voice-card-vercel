@@ -64,13 +64,51 @@ body{
 .voice-recipient,.voice-sender{position:absolute;z-index:4;color:#0b347f;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;white-space:nowrap;overflow:hidden;text-align:center}
 .voice-recipient{left:31.887%;width:39.811%;top:18.329%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(15px,3.5vw,22px)}
 .voice-sender{left:39.717%;width:30.755%;top:83.356%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(14px,3.2vw,21px)}
-.voice-player{position:absolute;z-index:4;left:11.13%;top:70.35%;width:77.83%;height:7.41%;display:grid;grid-template-columns:34px 1fr;align-items:center;column-gap:14px;padding:8px 26px 10px 28px;transform:translateY(-3px)}
-.voice-play{width:34px;height:34px;border:0;border-radius:50%;background:#0b347f;color:#fff;display:grid;place-items:center;font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;-webkit-tap-highlight-color:transparent;transform:translateY(-2px)}
-.voice-track{min-width:0}
-.voice-seek{-webkit-appearance:none;appearance:none;display:block;width:100%;height:16px;margin:0;background:transparent}
-.voice-seek::-webkit-slider-runnable-track{height:3px;border-radius:999px;background:linear-gradient(to right,#0b347f 0 var(--progress,0%),#d6c7ae var(--progress,0%) 100%)}
-.voice-seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;margin-top:-4.5px;background:#fff;border:2px solid #0b347f}
-.voice-time{margin-top:-1px;font-size:11px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.player{
+  position:absolute;z-index:4;
+  left:11.13%;top:70.35%;width:77.83%;height:7.41%;
+  display:grid;grid-template-columns:34px 1fr;
+  align-items:center;column-gap:14px;
+  padding:8px 26px 10px 28px;
+  transform:translateY(-3px);
+}
+.play{
+  width:34px;height:34px;border:0;border-radius:50%;
+  background:#0b347f;color:#fff;
+  display:grid;place-items:center;
+  font-size:15px;line-height:1;cursor:pointer;
+  flex:0 0 auto;padding:0;
+  -webkit-tap-highlight-color:transparent;
+  transform:translateY(-2px);
+}
+.track{min-width:0;align-self:center}
+.seek{
+  --progress:0%;
+  -webkit-appearance:none;appearance:none;
+  display:block;width:100%;height:16px;margin:0;
+  background:transparent;cursor:pointer;
+}
+.seek::-webkit-slider-runnable-track{
+  height:3px;border-radius:999px;
+  background:linear-gradient(to right,#0b347f 0 var(--progress),#d6c7ae var(--progress) 100%);
+}
+.seek::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:12px;height:12px;border-radius:50%;
+  margin-top:-4.5px;
+  background:#fff;border:2px solid #0b347f;
+  box-shadow:0 1px 3px rgba(0,0,0,.16);
+}
+.seek::-moz-range-track{height:3px;border-radius:999px;background:#d6c7ae}
+.seek::-moz-range-progress{height:3px;border-radius:999px;background:#0b347f}
+.seek::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0b347f}
+.time{
+  margin-top:-1px;
+  font-size:11px;line-height:1;
+  color:#756a5b;
+  display:flex;justify-content:space-between;
+  font-variant-numeric:tabular-nums;
+}
 .voice-brand{text-align:center;padding-top:14px}
 .voice-brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
 .voice-tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
@@ -92,7 +130,7 @@ body{
 .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
 .note{margin:14px 6px 0;text-align:center;color:#9a8e82;font-size:10.5px;line-height:1.7}
 
-@media(max-width:390px){.voice-player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.voice-play{width:30px;height:30px;font-size:13px}.voice-time{font-size:10px}}
+@media(max-width:390px){.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
 @media(max-width:420px){
   .wrap{padding-left:14px;padding-right:14px}
   .product{border-radius:27px}
@@ -154,11 +192,11 @@ body{
                 <canvas id="voicePhotoCanvas" class="voice-photo" width="1060" height="1484" aria-label="思い出の写真"></canvas>
                 <img class="voice-art" src="koefoto_classic_birthday_overlay.png" alt="">
                 <div id="voiceRecipient" class="voice-recipient"></div>
-                <div class="voice-player">
-                  <button class="voice-play" id="voicePlay" type="button" aria-label="再生">▶</button>
-                  <div class="voice-track">
-                    <input id="voiceSeek" class="voice-seek" type="range" min="0" max="100" value="0" step="0.1">
-                    <div class="voice-time"><span id="voiceCur">0:00</span><span id="voiceDur">0:00</span></div>
+                <div class="player">
+                  <button class="play" id="voicePlay" type="button" aria-label="再生">▶</button>
+                  <div class="track">
+                    <input id="voiceSeek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置">
+                    <div class="time"><span id="voiceCur">0:00</span><span id="voiceDur">0:00</span></div>
                   </div>
                 </div>
                 <div id="voiceSender" class="voice-sender"></div>
