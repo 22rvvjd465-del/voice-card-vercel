@@ -154,6 +154,36 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
   .template-meta strong{font-size:12.5px}
 }
 
+
+.required-mark,.optional-mark{
+  display:inline-flex;
+  align-items:center;
+  min-height:18px;
+  padding:0 6px;
+  margin-left:6px;
+  border-radius:999px;
+  font-size:8.5px;
+  font-weight:600;
+  vertical-align:2px;
+}
+.required-mark{background:#2d2e2e;color:#fff}
+.optional-mark{background:#efede9;color:#777}
+.display-choice{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  font-size:10.5px;
+  color:#555858;
+  cursor:pointer;
+}
+.display-choice input{
+  width:18px;
+  height:18px;
+  margin:0;
+  accent-color:#2d2e2e;
+}
+
 </style>
 
 
@@ -192,32 +222,34 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
     <section class="form-section">
       <div class="section-head">
         <div><div class="section-kicker">MESSAGE</div><h2>メッセージを入力</h2></div>
-        <p>「贈るカード」と「QRから見るページ」に表示する内容です。</p>
+        <p>名前は「QRから見るページ」に必須です。贈るカードへの表示はそれぞれ選べます。</p>
       </div>
 
       <div class="field-block">
-        <div class="field-title"><span class="field-no">01</span><strong>贈る相手のお名前</strong></div>
+        <div class="field-title"><span class="field-no">01</span><strong>贈る相手のお名前 <span class="required-mark">必須</span></strong></div>
         <div class="field-main">
           <input class="text-input" id="recipient" maxlength="15" required placeholder="例）おばあちゃん">
-          <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
+          <div class="field-help">「QRから見るページ」には必ず表示されます。</div>
+          <label class="display-choice"><input id="showRecipientOnCard" type="checkbox" checked><span>「贈るカード」にも表示する</span></label>
           <div class="count"><span id="rc">0</span> / 15文字</div>
         </div>
       </div>
 
       <div class="field-block">
-        <div class="field-title"><span class="field-no">02</span><strong>カードに載せるメッセージ</strong></div>
+        <div class="field-title"><span class="field-no">02</span><strong>カードに載せるメッセージ <span class="optional-mark">任意</span></strong></div>
         <div class="field-main">
-          <textarea id="message" maxlength="100" required placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea>
-          <div class="field-help">この文章は「贈るカード」に表示されます</div>
+          <textarea id="message" maxlength="100" placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea>
+          <div class="field-help">「贈るカード」に表示されます。空欄のまま進むと、完成後に手書きできます。</div>
           <div class="count"><span id="mc">0</span> / 100文字</div>
         </div>
       </div>
 
       <div class="field-block">
-        <div class="field-title"><span class="field-no">03</span><strong>贈り主のお名前</strong></div>
+        <div class="field-title"><span class="field-no">03</span><strong>贈り主のお名前 <span class="required-mark">必須</span></strong></div>
         <div class="field-main">
           <input class="text-input" id="sender" maxlength="15" required placeholder="例）ゆうき・あかり">
-          <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
+          <div class="field-help">「QRから見るページ」には必ず表示されます。</div>
+          <label class="display-choice"><input id="showSenderOnCard" type="checkbox" checked><span>「贈るカード」にも表示する</span></label>
           <div class="count"><span id="sc">0</span> / 15文字</div>
         </div>
       </div>
@@ -550,6 +582,8 @@ $('deleteAudio').addEventListener('click',async()=>{
       $('recipient').value=saved.recipient||'';
       $('message').value=saved.message||'';
       $('sender').value=saved.sender||'';
+      $('showRecipientOnCard').checked=saved.showRecipientOnCard!==false;
+      $('showSenderOnCard').checked=saved.showSenderOnCard!==false;
       $('rc').textContent=$('recipient').value.length;
       $('mc').textContent=$('message').value.length;
       $('sc').textContent=$('sender').value.length;
@@ -582,7 +616,9 @@ $('form').addEventListener('submit',async e=>{
   const draftData={
     recipient:$('recipient').value.trim(),
     message:$('message').value.trim(),
-    sender:$('sender').value.trim()
+    sender:$('sender').value.trim(),
+    showRecipientOnCard:$('showRecipientOnCard').checked,
+    showSenderOnCard:$('showSenderOnCard').checked
   };
   sessionStorage.setItem('koephoto-draft',JSON.stringify(draftData));
   // iPhone Safari対策: IndexedDBへの保存は並列ではなく順番に完了させてから遷移する
