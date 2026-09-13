@@ -4,183 +4,135 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>コエフォト｜作成</title>
+
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#fffdfa;
-  --panel:#fbf7f2;
-  --ink:#2f2722;
-  --brown:#9f7654;
-  --brown-dark:#7d5d44;
-  --brown-light:#b58b68;
-  --muted:#8c827a;
-  --line:#e7ddd4;
-  --field:#ffffff;
-  --danger:#a75748;
-  --danger-bg:#fff4f1;
+  --bg:#fbfaf8;--paper:#fff;--ink:#282929;--muted:#7c7e7e;--line:#e9e7e3;
+  --soft:#f6f4f0;--accent:#de8c7d;--button:#2d2e2e;--danger:#a55f56;
+  --ui:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
 }
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased}
 button,input,textarea{font:inherit}
-button,label{ -webkit-tap-highlight-color:transparent }
-.page{max-width:1120px;margin:0 auto;padding:22px 24px 64px}
+button,label{-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
 
-/* header */
-.topbar{display:flex;align-items:flex-end;gap:10px;margin:0 0 28px}
-.brand{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);line-height:1}
-.brand-tag{font-size:13px;font-weight:700;color:var(--brown-dark);padding-bottom:3px}
-.hero-copy{display:none}
+/* Header — same restrained brand language as top page */
+.site-header{background:#fff;border-bottom:1px solid var(--line)}
+.site-header-inner{max-width:1120px;height:78px;margin:0 auto;padding:0 28px;display:flex;align-items:center}
+.site-logo{display:block;width:190px}
+.site-logo img{display:block;width:100%;height:auto}
+.header-note{margin-left:auto;font-size:10px;letter-spacing:.12em;color:#9b9c9c}
 
-/* progress */
-.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 70px 38px}
-.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;background:#eee9e5;border-radius:999px;z-index:0}
-.progress-step{position:relative;z-index:1;text-align:center;color:#6f635a}
-.progress-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;background:#f0ece8;color:#72665d;font-size:16px}
-.progress-step.current .progress-dot{background:var(--brown-light);color:#fff}
-.progress-label{font-size:15px;font-weight:800}
-.progress-step.current .progress-label{color:var(--brown-dark)}
+/* Main shell */
+.page{max-width:880px;margin:0 auto;padding:0 24px 80px}
+.create-intro{padding:48px 0 24px}
+.template-label{font-size:10px;letter-spacing:.2em;color:#a09c96;margin-bottom:12px}
+.create-intro h1{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.45;letter-spacing:.035em;margin:0 0 10px}
+.create-intro p{font-size:12px;line-height:1.8;color:var(--muted);margin:0}
 
-/* form panel */
-.form-panel{background:linear-gradient(135deg,#fcf9f5,#fffdfb);border:1px solid #eee5dd;border-radius:22px;padding:30px 28px 24px;box-shadow:0 10px 28px rgba(109,77,51,.035)}
-.form-row{display:grid;grid-template-columns:235px minmax(0,1fr);gap:28px;padding:18px 0;align-items:start}
-.row-label{display:flex;align-items:center;gap:10px;padding-top:8px;font-size:18px;font-weight:900;line-height:1.4}
-.num{width:31px;height:31px;flex:0 0 31px;border:2px solid var(--brown-dark);border-radius:50%;display:grid;place-items:center;color:var(--brown-dark);font-size:15px;font-weight:900}
-.field-help{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.6}
-.field-stack{min-width:0}
-.text-input,textarea{
-  width:100%;
-  border:1px solid #cfc5bd;
-  border-radius:7px;
-  background:#fff;
-  color:var(--ink);
-  padding:15px 18px;
-  outline:none;
-  transition:border-color .15s,box-shadow .15s;
-}
-.text-input:focus,textarea:focus{border-color:var(--brown-light);box-shadow:0 0 0 3px rgba(181,139,104,.12)}
-textarea{min-height:118px;resize:vertical;line-height:1.6}
-.count{text-align:right;font-size:11px;color:var(--muted);margin-top:5px}
+/* Progress */
+.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:2px 0 42px}
+.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:17px;height:1px;background:#dfddd9}
+.progress-step{position:relative;text-align:center;color:#9a9b9b}
+.progress-dot{position:relative;z-index:1;width:35px;height:35px;border-radius:50%;margin:0 auto 8px;background:#f0efec;border:1px solid #ebe9e5;display:grid;place-items:center;font-family:var(--ui);font-weight:400;letter-spacing:.04em;font-size:12px}
+.progress-step.current{color:#333}
+.progress-step.current .progress-dot{background:#2d2e2e;border-color:#2d2e2e;color:#fff}
+.progress-label{font-size:10px;font-weight:600;letter-spacing:.02em}
 
-/* upload buttons */
-.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.upload-btn,.record-btn{
-  appearance:none;
-  border:0;
-  width:auto;
-  min-width:190px;
-  min-height:52px;
-  border-radius:10px;
-  padding:0 20px;
-  background:linear-gradient(180deg,#b78a65,#a47755);
-  color:#fff;
-  font-size:14px;
-  font-weight:800;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  cursor:pointer;
-  box-shadow:0 4px 10px rgba(120,82,52,.10)
-}
-.upload-btn input{display:none}
-.action-icon{font-size:18px;line-height:1}
-.record-btn.recording{background:#9a5b4c}
-.voice-file-title{font-weight:800}
+/* Section blocks */
+.form-section{background:#fff;border-top:1px solid var(--line);padding:36px 0 8px;margin-top:18px}
+.form-section:first-of-type{margin-top:0}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:0 2px 22px}
+.section-kicker{font-family:var(--ui);font-size:12px;font-weight:400;letter-spacing:.14em;color:#b8b2ab;margin-bottom:5px}
+.section-head h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.03em;margin:0}
+.section-head p{font-size:10px;line-height:1.7;color:#979898;margin:0;text-align:right}
 
-/* selected media cards */
-.media-card{
-  display:none;
-  align-items:center;
-  gap:14px;
-  width:100%;
-  border:1px solid #e3ddd7;
-  border-radius:16px;
-  background:#fff;
-  padding:14px;
-  margin-top:2px;
-}
+/* Individual fields */
+.field-block{display:grid;grid-template-columns:210px minmax(0,1fr);gap:28px;padding:26px 2px;border-top:1px solid #efeeeb}
+.field-block:first-of-type{border-top:0}
+.field-title{display:flex;gap:12px;align-items:baseline;padding-top:3px}
+.field-no{font-family:var(--ui);font-weight:400;letter-spacing:.06em;color:#bbb5ae;font-size:18px;line-height:1}
+.field-title strong{font-size:14px;line-height:1.55}
+.field-main{min-width:0}
+.text-input,textarea{width:100%;border:0;border-bottom:1px solid #cfcac4;border-radius:0;background:transparent;color:var(--ink);padding:11px 2px 12px;outline:none;transition:border-color .18s}
+.text-input:focus,textarea:focus{border-bottom-color:#2f3030}
+.text-input::placeholder,textarea::placeholder{color:#b3b1ad}
+textarea{min-height:116px;resize:vertical;line-height:1.8}
+.field-help{font-size:10px;line-height:1.7;color:#8e9090;margin-top:8px}
+.count{text-align:right;font-size:9.5px;color:#aaa;margin-top:4px}
+
+/* Media selection */
+.media-card{display:none;align-items:center;gap:13px;width:100%;background:#f8f7f4;border:1px solid var(--line);padding:12px;margin-bottom:12px}
 .media-card.show{display:flex}
-.photo-thumb{
-  width:102px;height:72px;flex:0 0 102px;
-  object-fit:cover;border-radius:9px;background:#f1ede9
-}
+.photo-thumb{width:84px;height:62px;flex:0 0 84px;object-fit:cover;background:#eee}
 .media-main{min-width:0;flex:1}
-.media-name{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.media-sub{font-size:12px;color:var(--muted);margin-top:3px}
-.media-delete{
-  width:auto;flex:0 0 auto;
-  border:1px solid #e5c6bf;
-  background:var(--danger-bg);
-  color:var(--danger);
-  border-radius:10px;
-  padding:10px 13px;
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer
-}
-.media-delete:active{transform:translateY(1px)}
-#audioPreview{width:100%;margin-top:10px;display:none}
+.media-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media-sub{font-size:9.5px;color:#8b8d8d;margin-top:4px}
+.media-delete{border:0;background:transparent;color:var(--danger);font-size:10px;font-weight:700;padding:8px;cursor:pointer}
 #photoPreview{display:none}
-.record-status{font-size:12px;color:var(--muted);min-height:18px;margin-top:8px}
+#audioPreview{width:100%;display:none;margin-top:9px}
+.action-row{display:flex;gap:9px;flex-wrap:wrap}
+.upload-btn,.record-btn{appearance:none;min-height:46px;min-width:176px;padding:0 20px;border-radius:999px;border:1px solid #3a3b3b;background:#fff;color:#303131;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.upload-btn input{display:none}
+.record-btn.recording{background:#2d2e2e;color:#fff}
+.action-icon{font-size:13px;line-height:1}
+.format-note,.record-status{font-size:9.5px;line-height:1.65;color:#999;margin-top:8px}
+.record-status{min-height:16px}
 .record-actions{display:none;margin-top:8px}
-.record-actions button{
-  width:auto;border:1px solid #d6c7ba;background:#fff;color:var(--brown-dark);
-  border-radius:9px;padding:9px 13px;font-size:12px;font-weight:800
-}
-.format-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.55}
+.record-actions button{border:0;border-bottom:1px solid #999;background:transparent;color:#666;padding:3px 0;font-size:10px}
 
-/* consent and submit */
-.bottom-area{max-width:760px;margin:22px auto 0}
-.consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.65;color:#665b53;padding:12px 14px;border-radius:12px;background:#f7f1eb}
-.consent input{width:24px;height:24px;min-width:24px;flex:0 0 24px;margin:1px 0 0;accent-color:var(--brown-light);cursor:pointer}
-#go{
-  display:block;width:min(440px,100%);margin:26px auto 0;
-  border:0;border-radius:999px;
-  padding:17px 24px;
-  background:linear-gradient(180deg,#a77d5a,#956c4c);
-  color:#fff;font-size:17px;font-weight:900;letter-spacing:.02em;
-  box-shadow:0 7px 18px rgba(128,87,54,.17);
-  cursor:pointer
-}
-#go:active{transform:translateY(1px)}
-.note{text-align:center;color:var(--muted);font-size:11px;margin-top:9px}
+/* Bottom */
+.bottom-area{max-width:660px;margin:34px auto 0}
+.consent{display:flex;gap:11px;align-items:flex-start;font-size:10.5px;line-height:1.8;color:#6f7272;padding:16px 17px;background:#f5f3ef}
+.consent input{width:24px;height:24px;min-width:24px;margin:0;accent-color:#2d2e2e}
+#go{display:block;width:min(430px,100%);min-height:54px;margin:28px auto 0;border:0;border-radius:999px;background:#2d2e2e;color:#fff;font-size:13px;font-weight:700;letter-spacing:.03em;cursor:pointer}
+.note{text-align:center;color:#989999;font-size:9.5px;margin-top:10px}
 
 @media(max-width:760px){
-  .page{padding:18px 14px 48px}
-  .topbar{margin-bottom:22px;align-items:center}
-  .brand{font-size:25px}
-  .brand-tag{font-size:11px;padding-bottom:0}
-  .progress{margin:0 6px 26px}
-  .progress::before{top:18px;height:3px}
-  .progress-dot{width:38px;height:38px;margin-bottom:7px;font-size:14px}
-  .progress-label{font-size:11px}
-  .form-panel{padding:16px 14px 18px;border-radius:18px}
-  .form-row{grid-template-columns:1fr;gap:10px;padding:16px 0;border-bottom:1px solid #eee5dd}
-  .form-row:last-of-type{border-bottom:0}
-  .row-label{padding-top:0;font-size:16px}
-  .num{width:29px;height:29px;flex-basis:29px;font-size:14px}
-  .text-input,textarea{padding:13px 14px}
-  textarea{min-height:105px}
+  .site-header-inner{height:68px;padding:0 24px}.site-logo{width:168px}.header-note{display:none}
+  .page{padding:0 20px 58px}
+  .create-intro{padding:34px 0 20px}
+  .template-label{font-size:9px;margin-bottom:9px}
+  .create-intro h1{font-size:28px;margin-bottom:7px}
+  .create-intro p{font-size:10.5px}
+  .progress{margin-bottom:32px}.progress::before{top:16px}
+  .progress-dot{width:33px;height:33px;margin-bottom:6px}.progress-label{font-size:9.5px}
+  .form-section{padding:30px 0 4px;margin-top:12px}
+  .section-head{padding-bottom:18px;display:block}
+  .section-head h2{font-size:22px}
+  .section-head p{text-align:left;margin-top:6px}
+  .field-block{grid-template-columns:1fr;gap:12px;padding:22px 0}
+  .field-title{gap:10px}.field-no{font-size:17px}.field-title strong{font-size:14px}
+  .text-input,textarea{font-size:15px;padding:10px 1px 11px}
+  textarea{min-height:108px}
   .action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .action-row.photo-action{display:block}
-  .upload-btn,.record-btn{min-width:0;width:100%;min-height:50px;padding:0 10px;font-size:13px}
-  .media-card{padding:10px;gap:10px}
-  .photo-thumb{width:78px;height:60px;flex-basis:78px}
-  .media-delete{padding:9px 10px;font-size:12px}
-}
-@media(max-width:390px){
-  .brand-tag{display:none}
-  .progress-label{font-size:10px}
-  .media-name{font-size:13px}
-  .action-row{gap:7px}
+  .upload-btn,.record-btn{min-width:0;width:100%;padding:0 10px;min-height:47px}
+  .media-card{padding:10px}.photo-thumb{width:72px;height:54px;flex-basis:72px}
+  .bottom-area{margin-top:26px}
 }
 </style>
+
+
 </head>
 <body>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-logo" href="top.html" aria-label="コエフォト トップ">
+      <img src="assets/logo-cropped.png" alt="コエフォト">
+    </a>
+    <div class="header-note">CREATE</div>
+  </div>
+</header>
+
 <main class="page">
-  <header class="topbar">
-    <div class="brand">コエフォト</div>
-    <div class="brand-tag">写真と声で、想いを届ける</div>
-  </header>
+  <section class="create-intro">
+    <div class="template-label">CLASSIC BIRTHDAY</div>
+    <h1>贈る内容を入力</h1>
+    <p>写真と声、メッセージを入力して、完成イメージを確認できます。</p>
+  </section>
 
   <nav class="progress" aria-label="作成の進捗">
     <div class="progress-step current"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
@@ -190,37 +142,49 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
   </nav>
 
   <form id="form">
-    <section class="form-panel">
-      <div class="form-row">
-        <div class="row-label"><span class="num">1</span><span>贈る相手のお名前</span></div>
-        <div class="field-stack">
+    <section class="form-section">
+      <div class="section-head">
+        <div><div class="section-kicker">01</div><h2>メッセージ</h2></div>
+        <p>カードと声のページに表示する内容です。</p>
+      </div>
+
+      <div class="field-block">
+        <div class="field-title"><span class="field-no">01</span><strong>贈る相手のお名前</strong></div>
+        <div class="field-main">
           <input class="text-input" id="recipient" maxlength="15" required placeholder="例）おばあちゃん">
           <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
           <div class="count"><span id="rc">0</span> / 15文字</div>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="row-label"><span class="num">2</span><span>カードに載せるメッセージ</span></div>
-        <div class="field-stack">
+      <div class="field-block">
+        <div class="field-title"><span class="field-no">02</span><strong>カードに載せるメッセージ</strong></div>
+        <div class="field-main">
           <textarea id="message" maxlength="100" required placeholder="例）いつもありがとう。これからも元気でいてね！"></textarea>
           <div class="field-help">この文章は「贈るカード」に表示されます</div>
           <div class="count"><span id="mc">0</span> / 100文字</div>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="row-label"><span class="num">3</span><span>贈り主のお名前</span></div>
-        <div class="field-stack">
+      <div class="field-block">
+        <div class="field-title"><span class="field-no">03</span><strong>贈り主のお名前</strong></div>
+        <div class="field-main">
           <input class="text-input" id="sender" maxlength="15" required placeholder="例）ゆうき・あかり">
           <div class="field-help">「贈るカード」と「QRから見るページ」に表示されます</div>
           <div class="count"><span id="sc">0</span> / 15文字</div>
         </div>
       </div>
+    </section>
 
-      <div class="form-row">
-        <div class="row-label"><span class="num">4</span><span>写真を選ぶ</span></div>
-        <div class="field-stack">
+    <section class="form-section">
+      <div class="section-head">
+        <div><div class="section-kicker">02</div><h2>写真と声</h2></div>
+        <p>写真は1枚、音声は1つ選択できます。</p>
+      </div>
+
+      <div class="field-block">
+        <div class="field-title"><span class="field-no">04</span><strong>写真を選ぶ</strong></div>
+        <div class="field-main">
           <div id="photoCard" class="media-card">
             <img id="photoThumb" class="photo-thumb" alt="">
             <div class="media-main">
@@ -232,17 +196,17 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
           <img id="photoPreview" alt="">
           <div class="action-row photo-action">
             <label class="upload-btn">
-              <span class="action-icon">▣</span><span>写真を選ぶ</span>
+              <span class="action-icon">＋</span><span>写真を選ぶ</span>
               <input id="photo" type="file" accept="image/*">
             </label>
           </div>
-          <div class="format-note">画像は1枚選択できます。最大20MBまで。</div>
+          <div class="format-note">最大20MBまで。</div>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="row-label"><span class="num">5</span><span>音声を追加する</span></div>
-        <div class="field-stack">
+      <div class="field-block">
+        <div class="field-title"><span class="field-no">05</span><strong>音声を追加する</strong></div>
+        <div class="field-main">
           <div id="audioCard" class="media-card">
             <div class="media-main">
               <div id="audioName" class="media-name">選択した音声</div>
@@ -254,7 +218,7 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
 
           <div class="action-row">
             <button id="recordBtn" class="record-btn" type="button">
-              <span class="action-icon">🎙</span><span>この場で録音</span>
+              <span class="action-icon">●</span><span>この場で録音</span>
             </button>
             <label class="upload-btn">
               <span class="action-icon">＋</span><span class="voice-file-title">音声ファイル</span>
@@ -263,7 +227,7 @@ textarea{min-height:118px;resize:vertical;line-height:1.6}
           </div>
           <div id="recordStatus" class="record-status">この場で録音するか、録音済みの音声を選べます</div>
           <div id="recordActions" class="record-actions"><button id="retryRecord" type="button">録り直す</button></div>
-          <div class="format-note">音声は1つ選択できます。最大3分まで。m4a / mp3 / aac / wav に対応しています。</div>
+          <div class="format-note">最大3分まで。m4a / mp3 / aac / wav に対応しています。</div>
         </div>
       </div>
     </section>
@@ -578,7 +542,7 @@ $('form').addEventListener('submit',async e=>{
   await put('form',draftData);
   await put('photo',p);
   await put('audio',a);
-  location.href='preview.html?t='+Date.now();
+  location.href='preview.html';
 });
 </script>
 </body>
