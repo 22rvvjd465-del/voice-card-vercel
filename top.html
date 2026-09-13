@@ -31,8 +31,8 @@ img{display:block;max-width:100%}
   backdrop-filter:blur(14px);border-bottom:1px solid rgba(232,232,230,.9)
 }
 .header-inner{height:76px;display:flex;align-items:center;gap:28px}
-.logo-link{display:flex;align-items:center;flex:0 0 auto}
-.logo-link img{width:168px;height:auto}
+.logo-link{display:flex;align-items:center;flex:0 0 auto;height:100%}
+.logo-link img{display:block;width:auto;height:54px;max-width:168px;object-fit:contain}
 .nav{display:flex;align-items:center;gap:28px;margin-left:auto;font-size:13px;color:#474848}
 .nav a{white-space:nowrap}
 .nav a:hover{opacity:.62}
@@ -44,7 +44,12 @@ img{display:block;max-width:100%}
   transition:.18s transform,.18s opacity
 }
 .header-cta:hover,.btn:hover{transform:translateY(-1px);opacity:.9}
-.menu-btn{display:none;border:0;background:transparent;font-size:24px;padding:6px}
+.menu-btn{display:none;width:44px;height:44px;border:0;background:transparent;padding:10px;align-items:center;justify-content:center;flex-direction:column;gap:5px;border-radius:50%;-webkit-tap-highlight-color:transparent}
+.menu-btn span{display:block;width:22px;height:1.5px;background:#2f3030;border-radius:2px;transition:transform .18s ease,opacity .18s ease}
+.menu-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
+.menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+#features,#story,#scenes,#price,#faq{scroll-margin-top:84px}
 
 .hero{position:relative;isolation:isolate;overflow:hidden}
 .hero-bg{
@@ -156,8 +161,11 @@ details p{font-size:12px;line-height:1.9;color:#6c7071;margin:12px 0 0;max-width
 .copyright{font-size:10px;color:#999;margin-left:10px}
 
 @media(max-width:900px){
-  .nav{display:none}.menu-btn{display:block;margin-left:auto}.header-cta{display:none}
-  .header-inner{height:68px}.logo-link img{width:145px}
+  .site-header{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .nav{display:none}.menu-btn{display:flex;margin-left:auto}.header-cta{display:none}
+  .header-inner{height:62px;gap:12px}
+  .logo-link img{width:auto;height:44px;max-width:72px}
+  #features,#story,#scenes,#price,#faq{scroll-margin-top:70px}
   .hero-grid{grid-template-columns:1fr;min-height:0;padding-block:44px}
   .hero-copy{padding:0 6px}.hero h1{font-size:39px}
   .product-area{min-height:410px}.product-card{right:7%;top:0;width:min(400px,80%)}
@@ -168,6 +176,10 @@ details p{font-size:12px;line-height:1.9;color:#6c7071;margin:12px 0 0;max-width
 }
 @media(max-width:560px){
   .wrap{width:min(var(--max),calc(100% - 28px))}
+  .header-inner{height:58px}
+  .logo-link img{height:40px;max-width:66px}
+  .menu-btn{width:40px;height:40px;padding:9px}
+  #features,#story,#scenes,#price,#faq{scroll-margin-top:66px}
   .hero-bg{background-position:64% center}
   .hero-bg:after{background:linear-gradient(180deg,rgba(251,251,250,.94) 0%,rgba(251,251,250,.82) 47%,rgba(251,251,250,.12) 100%)}
   .hero-grid{gap:18px;padding-top:36px}.hero h1{font-size:32px}.hero p{font-size:13px}
@@ -186,7 +198,7 @@ details p{font-size:12px;line-height:1.9;color:#6c7071;margin:12px 0 0;max-width
     <a class="logo-link" href="top.html" aria-label="コエフォト トップ">
       <img src="assets/logo-cropped.png" alt="コエフォト koephoto">
     </a>
-    <nav class="nav" aria-label="メインナビゲーション">
+    <nav class="nav" aria-label="メインナビゲーション" id="mainNav">
       <a href="#features">できること</a>
       <a href="#story">コエフォトとは</a>
       <a href="#scenes">シーンから選ぶ</a>
@@ -195,7 +207,7 @@ details p{font-size:12px;line-height:1.9;color:#6c7071;margin:12px 0 0;max-width
       <a class="mypage" href="mypage.html">マイページ</a>
     </nav>
     <a class="header-cta" href="#scenes">今すぐつくる <span>›</span></a>
-    <button class="menu-btn" type="button" aria-label="メニュー" id="menuBtn">☰</button>
+    <button class="menu-btn" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="mainNav" id="menuBtn"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -303,18 +315,39 @@ details p{font-size:12px;line-height:1.9;color:#6c7071;margin:12px 0 0;max-width
 
 <script>
 const btn=document.getElementById('menuBtn');
+const nav=document.getElementById('mainNav');
+function closeMenu(){
+  if(!btn||!nav)return;
+  btn.setAttribute('aria-expanded','false');
+  btn.setAttribute('aria-label','メニューを開く');
+  nav.dataset.open='0';
+  nav.removeAttribute('style');
+}
 btn?.addEventListener('click',()=>{
-  const nav=document.querySelector('.nav');
-  const open=nav.dataset.open==='1';
-  nav.dataset.open=open?'0':'1';
-  if(!open){
-    nav.style.display='flex';nav.style.position='absolute';nav.style.top='68px';nav.style.left='0';nav.style.right='0';
-    nav.style.padding='18px 20px';nav.style.background='#fff';nav.style.flexDirection='column';nav.style.alignItems='stretch';
-    nav.style.borderBottom='1px solid #e8e8e6';
-  }else{
-    nav.removeAttribute('style');
-  }
+  const open=btn.getAttribute('aria-expanded')==='true';
+  if(open){closeMenu();return;}
+  btn.setAttribute('aria-expanded','true');
+  btn.setAttribute('aria-label','メニューを閉じる');
+  nav.dataset.open='1';
+  nav.style.display='flex';
+  nav.style.position='absolute';
+  nav.style.top='100%';
+  nav.style.left='0';
+  nav.style.right='0';
+  nav.style.padding='14px 20px 18px';
+  nav.style.background='rgba(255,255,255,.98)';
+  nav.style.flexDirection='column';
+  nav.style.alignItems='stretch';
+  nav.style.gap='0';
+  nav.style.borderBottom='1px solid #e8e8e6';
+  nav.style.boxShadow='0 10px 24px rgba(0,0,0,.06)';
+  nav.querySelectorAll('a').forEach(a=>{
+    a.style.padding='12px 2px';
+    a.style.borderBottom='1px solid #f0f0ee';
+  });
 });
+nav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+window.addEventListener('resize',()=>{if(window.innerWidth>900)closeMenu();});
 </script>
 </body>
 </html>
