@@ -222,6 +222,47 @@ html,body{margin:0;background:#f4f1ea;color:var(--ink);font-family:-apple-system
 .tagline{margin-top:4px;font-family:Georgia,"Times New Roman",serif;font-size:8px;font-weight:400;letter-spacing:.22em;color:#9a9187}
 body.embedded .page{min-height:0;padding-bottom:18px}
 @media(max-width:390px){.page{padding-left:8px;padding-right:8px}}
+
+/* ===== Koephoto current site visual language ===== */
+html,body{
+  background:#fbfaf8;
+  color:#282929;
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+}
+.page{
+  min-height:100svh;
+  padding:28px 12px 34px;
+  background:#fbfaf8;
+}
+.card{
+  box-shadow:0 12px 34px rgba(30,32,32,.08);
+}
+.brand{
+  width:var(--card-w);
+  padding-top:18px;
+  text-align:center;
+}
+.brand-name{
+  width:145px;
+  height:48px;
+  margin:0 auto;
+  font-size:0;
+  background:url("assets/logo-cropped.png") center/contain no-repeat;
+}
+.tagline{display:none}
+body.embedded{background:#fff}
+body.embedded .page{
+  min-height:0;
+  padding:8px 0 10px;
+  background:#fff;
+}
+body.embedded .card{box-shadow:none}
+body.embedded .brand{padding-top:12px}
+body.embedded .brand-name{width:120px;height:38px;opacity:.78}
+@media(max-width:390px){
+  .page{padding-left:8px;padding-right:8px}
+}
+
 </style>
 </head>
 <body>
@@ -269,9 +310,8 @@ body.embedded .page{min-height:0;padding-bottom:18px}
   <div id="sender" class="sender"></div>
   <audio id="audio" preload="metadata"></audio>
 </section>
-<footer class="brand">
+<footer class="brand" aria-label="コエフォト">
   <div class="brand-name">コエフォト</div>
-  <div class="tagline">A PHOTO, A VOICE, A MEMORY.</div>
 </footer>
 </main>
 <script>
