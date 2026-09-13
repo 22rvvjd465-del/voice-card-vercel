@@ -20,6 +20,181 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);
 @media(max-width:560px){.features{overflow:visible}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;overflow:visible;scroll-snap-type:none}.feature{flex:none;min-width:0;width:auto;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;padding:20px 10px}.feature:nth-child(2n){border-right:0!important}.feature:nth-child(3),.feature:nth-child(4){border-bottom:0!important}.wrap{width:min(var(--max),calc(100% - 28px))}.header-inner{height:58px}.logo-link img{width:145px;max-height:43px}.menu-btn{width:40px;height:40px;padding:9px}#features,#story,#scenes,#price,#faq{scroll-margin-top:66px}.hero{min-height:610px}.hero-bg{background-image:url("assets/hero-bg-mobile.png");background-position:center center;background-size:cover}.hero-bg:after{background:linear-gradient(90deg,rgba(251,251,250,.20) 0%,rgba(251,251,250,.08) 48%,rgba(251,251,250,0) 72%)}.hero-grid{position:relative;display:flex;min-height:610px;padding:30px 0 24px;align-items:flex-start}.hero-copy{position:relative;z-index:2;width:74%;padding:0;max-width:none}.hero-kicker{font-size:9.5px;margin-bottom:13px}.hero h1{font-size:31px;line-height:1.42;margin-bottom:17px}.hero p{font-size:11.5px;line-height:1.85;max-width:none;margin-bottom:18px}.hero-line{display:block;white-space:nowrap}.desktop-break{display:none}.hero-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.btn{width:auto;min-width:190px;padding:0 22px}.text-link{font-size:11px}.english-note{margin-top:19px;font-size:8px}.features{overflow:hidden}.feature-grid{display:flex;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.feature-grid::-webkit-scrollbar{display:none}.feature{flex:0 0 50%;scroll-snap-align:start;border-right:1px solid var(--line)!important;border-bottom:0!important;padding:20px 10px}.feature:nth-child(2n){border-right:0!important}.icon{width:36px;height:36px;font-size:18px}.feature h3{font-size:13px}.feature p{font-size:10px}.story{grid-template-columns:1fr 1fr;min-height:300px}.story-image{min-height:300px;background-position:center}.story-copy{padding:28px 18px}.story h2{font-size:21px;line-height:1.5;margin-bottom:14px}.story p{font-size:10.5px;line-height:1.75;margin-bottom:15px}.outline{min-height:36px;padding:0 16px;font-size:10.5px}.scene-section{padding:34px 0 38px}.scene-layout{display:block}.scene-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px}.scene-head h2{font-size:24px}.scene-head p{font-size:11px;margin:6px 0 0;max-width:220px}.scene-note{display:none}.scene-grid{grid-template-columns:1fr 110px;gap:10px}.scene-card img{aspect-ratio:4/3}.scene-body{padding:12px}.scene-title{font-size:15px}.scene-desc{font-size:10.5px;line-height:1.55;margin-bottom:10px}.scene-ghost{min-height:100%}.scene-ghost b{font-size:22px}.scene-ghost span{font-size:9.5px}.price{padding:34px 0}.price-box{grid-template-columns:90px 1fr;padding:20px;gap:14px}.price-box h2{font-size:22px}.price-main{gap:8px}.amount{font-size:34px}.amount small{font-size:12px}.price-box p{font-size:10.5px}.faq{padding:38px 0 40px}.faq h2{font-size:24px;margin-bottom:15px}details{padding:13px 0}summary{font-size:12px}details p{font-size:10.5px}.final-cta{min-height:220px}.final-cta h2{font-size:25px}.final-inner .btn{min-width:220px}.footer-logo img{width:140px}.footer-links{font-size:10px;gap:14px}.copyright{font-size:9px}}
 
 </style>
+
+<style>
+@media (max-width:900px){
+  .features{overflow:visible!important}
+  .feature-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    width:100%!important;
+    overflow:visible!important;
+    scroll-snap-type:none!important;
+  }
+  .feature{
+    width:auto!important;
+    min-width:0!important;
+    flex:none!important;
+    scroll-snap-align:none!important;
+    border-right:1px solid var(--line)!important;
+    border-bottom:1px solid var(--line)!important;
+    padding:22px 10px!important;
+  }
+  .feature:nth-child(2n){border-right:0!important}
+  .feature:nth-child(3),
+  .feature:nth-child(4){border-bottom:0!important}
+}
+</style>
+
+
+<style>
+.icon-wrap{position:relative;width:58px;margin:0 auto 8px}
+.icon-wrap .icon{margin:0 auto}
+.step-no{
+  position:absolute;
+  left:-4px;
+  top:50%;
+  transform:translate(-100%,-50%);
+  font-family:var(--font-ui);
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.12em;
+  color:#9a9c9c;
+  line-height:1;
+}
+@media(max-width:900px){
+  .icon-wrap{width:54px}
+  .step-no{font-size:9px;left:-2px}
+}
+</style>
+
+
+<style>
+.icon-wrap{
+  position:relative;
+  width:58px;
+  margin:0 auto 10px;
+  padding-top:18px;
+}
+.icon-wrap .icon{margin:0 auto}
+.step-no{
+  position:absolute;
+  left:50%;
+  top:0;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:9px;
+  font-weight:400;
+  letter-spacing:.16em;
+  color:#a7a29c;
+  line-height:1;
+}
+.step-no::before,
+.step-no::after{
+  content:"";
+  display:block;
+  width:10px;
+  height:1px;
+  background:#d8d4cf;
+}
+@media(max-width:900px){
+  .icon-wrap{width:54px;padding-top:17px;margin-bottom:9px}
+  .step-no{font-size:8.5px;letter-spacing:.14em}
+  .step-no::before,.step-no::after{width:8px}
+}
+</style>
+
+
+<style>
+.feature{position:relative!important}
+.icon-wrap{
+  position:relative;
+  width:58px;
+  margin:0 auto 10px;
+  padding-top:0;
+}
+.step-no{
+  position:absolute;
+  left:auto;
+  top:auto;
+  transform:none;
+  display:block;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:18px;
+  font-weight:400;
+  letter-spacing:.04em;
+  color:#b9b5af;
+  line-height:1;
+  pointer-events:none;
+}
+.step-no::before,.step-no::after{display:none!important;content:none!important}
+.feature .step-no{
+  position:fixed;
+}
+@media(min-width:901px){
+  .feature .icon-wrap .step-no{
+    position:absolute;
+    left:-78px;
+    top:-5px;
+  }
+}
+@media(max-width:900px){
+  .feature{padding-top:34px!important}
+  .feature .icon-wrap .step-no{
+    position:absolute;
+    left:calc(-50vw + 50% + 26px);
+    top:-20px;
+    font-size:20px;
+    color:#b8b3ad;
+  }
+}
+</style>
+
+
+<style>
+.feature{
+  position:relative!important;
+}
+.icon-wrap{
+  position:static!important;
+  width:58px;
+  margin:0 auto 10px;
+  padding-top:0!important;
+}
+.feature .step-no{
+  position:absolute!important;
+  left:18px!important;
+  top:16px!important;
+  transform:none!important;
+  display:block!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:22px!important;
+  font-weight:400!important;
+  letter-spacing:.03em!important;
+  color:#b8b3ad!important;
+  line-height:1!important;
+  pointer-events:none;
+}
+.feature .step-no::before,
+.feature .step-no::after{
+  display:none!important;
+  content:none!important;
+}
+@media(max-width:900px){
+  .feature{
+    padding-top:42px!important;
+  }
+  .feature .step-no{
+    left:16px!important;
+    top:14px!important;
+    font-size:22px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header class="site-header">
@@ -58,10 +233,10 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);
 
 <section id="features" class="features">
   <div class="wrap feature-grid">
-    <div class="feature"><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5.5 17 4.5-4 3.2 2.8 2.3-2.1 3 3.3"/></svg></div><h3>写真を選ぶ</h3><p>大切な一枚を<br>アップロード</p></div>
-    <div class="feature"><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"/></svg></div><h3>声をのせる</h3><p>この場で録音<br>または音声を選ぶ</p></div>
-    <div class="feature"><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1 10.6-10.6a2.1 2.1 0 0 0-3-3L5.2 16 4 20Z"/><path d="m14.5 6.5 3 3"/></svg></div><h3>メッセージを添える</h3><p>伝えたい気持ちを<br>自由に入力</p></div>
-    <div class="feature"><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-7"/></svg></div><h3>できあがり</h3><p>Webでシェア<br>保存して贈れる</p></div>
+    <div class="feature"><div class="icon-wrap"><span class="step-no">01</span><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5.5 17 4.5-4 3.2 2.8 2.3-2.1 3 3.3"/></svg></div></div><h3>写真を選ぶ</h3><p>大切な一枚を<br>アップロード</p></div>
+    <div class="feature"><div class="icon-wrap"><span class="step-no">02</span><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"/></svg></div></div><h3>声をのせる</h3><p>この場で録音<br>または音声を選ぶ</p></div>
+    <div class="feature"><div class="icon-wrap"><span class="step-no">03</span><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1 10.6-10.6a2.1 2.1 0 0 0-3-3L5.2 16 4 20Z"/><path d="m14.5 6.5 3 3"/></svg></div></div><h3>メッセージを添える</h3><p>伝えたい気持ちを<br>自由に入力</p></div>
+    <div class="feature"><div class="icon-wrap"><span class="step-no">04</span><div class="icon"><svg class="feature-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-7"/></svg></div></div><h3>できあがり</h3><p>Webでシェア<br>保存して贈れる</p></div>
   </div>
 </section>
 
