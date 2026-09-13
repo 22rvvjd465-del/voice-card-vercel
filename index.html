@@ -74,10 +74,10 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
 #photoPreview{display:none}
 #audioPreview{width:100%;display:none;margin-top:9px}
 .action-row{display:flex;gap:9px;flex-wrap:wrap}
-.upload-btn,.record-btn{appearance:none;min-height:46px;min-width:176px;padding:0 20px;border-radius:999px;border:1px solid #3a3b3b;background:#fff;color:#303131;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.upload-btn,.record-btn{appearance:none;min-height:44px;min-width:176px;padding:0 20px;border-radius:999px;border:1px solid #777774;background:#fff;color:#303131;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 .upload-btn input{display:none}
 .record-btn.recording{background:#2d2e2e;color:#fff}
-.action-icon{font-size:13px;line-height:1}
+.action-icon{font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center}.inline-icon{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .format-note,.record-status{font-size:9.5px;line-height:1.65;color:#999;margin-top:8px}
 .record-status{min-height:16px}
 .record-actions{display:none;margin-top:8px}
@@ -101,15 +101,15 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
   .progress-dot{width:33px;height:33px;margin-bottom:6px}.progress-label{font-size:9.5px}
   .form-section{padding:30px 0 4px;margin-top:12px}
   .section-head{padding-bottom:18px;display:block}
-  .section-head h2{font-size:22px}
+  .section-head h2{font-size:15px}
   .section-head p{text-align:left;margin-top:6px}
   .field-block{grid-template-columns:1fr;gap:12px;padding:22px 0}
   .field-title{gap:10px}.field-no{font-size:17px}.field-title strong{font-size:14px}
   .text-input,textarea{font-size:15px;padding:10px 1px 11px}
   textarea{min-height:108px}
   .action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .action-row.photo-action{display:block}
-  .upload-btn,.record-btn{min-width:0;width:100%;padding:0 10px;min-height:47px}
+  .action-row.photo-action{display:flex}.action-row.photo-action .upload-btn{width:auto;min-width:190px}
+  .upload-btn,.record-btn{min-width:0;width:100%;padding:0 10px;min-height:44px}
   .media-card{padding:10px}.photo-thumb{width:72px;height:54px;flex-basis:72px}
   .bottom-area{margin-top:26px}
 }
@@ -144,7 +144,7 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
   <form id="form">
     <section class="form-section">
       <div class="section-head">
-        <div><div class="section-kicker">01</div><h2>メッセージ</h2></div>
+        <div><div class="section-kicker">MESSAGE</div><h2>メッセージを入力</h2></div>
         <p>カードと声のページに表示する内容です。</p>
       </div>
 
@@ -178,7 +178,7 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
 
     <section class="form-section">
       <div class="section-head">
-        <div><div class="section-kicker">02</div><h2>写真と声</h2></div>
+        <div><div class="section-kicker">PHOTO & VOICE</div><h2>写真と声を追加</h2></div>
         <p>写真は1枚、音声は1つ選択できます。</p>
       </div>
 
@@ -218,7 +218,7 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
 
           <div class="action-row">
             <button id="recordBtn" class="record-btn" type="button">
-              <span class="action-icon">●</span><span>この場で録音</span>
+              <span class="action-icon"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"></path></svg></span><span>この場で録音</span>
             </button>
             <label class="upload-btn">
               <span class="action-icon">＋</span><span class="voice-file-title">音声ファイル</span>
@@ -326,7 +326,7 @@ function resetRecording(){
   recordActions.style.display='none';
   recordBtn.style.display='inline-flex';
   recordBtn.classList.remove('recording');
-  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
+  recordBtn.innerHTML='<span class="action-icon"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"></path></svg></span><span>この場で録音</span>';
   recordStatus.textContent='この場で録音するか、録音済みの音声を選べます';
 }
 
@@ -423,7 +423,7 @@ $('audioFile').addEventListener('change',async()=>{
   showAudio(f);
   recordBtn.style.display='inline-flex';
   recordBtn.classList.remove('recording');
-  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
+  recordBtn.innerHTML='<span class="action-icon"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"></path></svg></span><span>この場で録音</span>';
   recordActions.style.display='none';
   recordStatus.textContent='音声ファイルを選択しました。再生して内容を確認できます';
 });
@@ -487,7 +487,7 @@ $('deleteAudio').addEventListener('click',async()=>{
   recordActions.style.display='none';
   recordBtn.style.display='inline-flex';
   recordBtn.classList.remove('recording');
-  recordBtn.innerHTML='<span class="action-icon">🎙</span><span>この場で録音</span>';
+  recordBtn.innerHTML='<span class="action-icon"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M9 21h6"></path></svg></span><span>この場で録音</span>';
   recordStatus.textContent='この場で録音するか、録音済みの音声を選べます';
   try{await del('audio')}catch(err){console.warn('音声の保存データ削除に失敗しました',err)}
 });
