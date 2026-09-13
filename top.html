@@ -195,6 +195,67 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);
 }
 </style>
 
+
+<style>
+.footer{
+  background:#fff;
+  border-top:1px solid var(--line);
+  padding:42px 0 30px;
+}
+.footer-inner{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  text-align:center;
+}
+.footer-logo{
+  display:block;
+  margin:0 auto 28px;
+}
+.footer-logo img{
+  width:176px!important;
+  height:auto;
+  max-height:none!important;
+  margin:0 auto;
+}
+.footer-links{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px 24px!important;
+  width:100%!important;
+  margin:0 auto!important;
+  order:initial!important;
+  font-size:11px;
+  color:#666969;
+}
+.copyright{
+  width:100%;
+  margin:24px auto 0!important;
+  text-align:center!important;
+  font-size:9.5px;
+  color:#9a9c9c;
+  letter-spacing:.02em;
+}
+@media(max-width:560px){
+  .footer{padding:36px 0 28px}
+  .footer-logo{margin-bottom:24px}
+  .footer-logo img{width:154px!important}
+  .footer-links{
+    gap:11px 18px!important;
+    font-size:10px!important;
+    line-height:1.7;
+  }
+  .copyright{
+    margin-top:22px!important;
+    font-size:9px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header class="site-header">
@@ -278,12 +339,16 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);
 
 <footer class="footer">
   <div class="wrap footer-inner">
-    <a class="footer-logo" href="top.html"><img src="assets/logo-cropped.png" alt="コエフォト"></a>
-    <div class="footer-links">
-      <a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a>
-      <a href="tokusho.html">特定商取引法に基づく表記</a><a href="mailto:">お問い合わせ</a>
-    </div>
-    <div class="copyright">© 2026 コエフォト</div>
+    <a class="footer-logo" href="top.html" aria-label="コエフォト トップ">
+      <img src="assets/footer-logo.png" alt="コエフォト">
+    </a>
+    <nav class="footer-links" aria-label="フッターナビゲーション">
+      <a href="terms.html">利用規約</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="tokusho.html">特定商取引法に基づく表記</a>
+      <a href="mailto:">お問い合わせ</a>
+    </nav>
+    <div class="copyright">© コエフォト</div>
   </div>
 </footer>
 
