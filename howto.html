@@ -1,0 +1,105 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>つくり方｜コエフォト</title><meta name="description" content="コエフォトの作り方を、写真選択から声の録音、メッセージ入力、プレビュー、購入、完成まで順番に紹介します。">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#fbfbfa;--paper:#fff;--ink:#242525;--muted:#6f7272;--line:#e7e7e4;--button:#2c2d2d;--max:1080px;
+  --font-display:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+  --font-ui:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{width:min(var(--max),calc(100% - 48px));margin-inline:auto}
+.site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header-inner{height:78px;display:flex;align-items:center;gap:28px}
+.logo-link img{width:190px;height:auto;max-height:54px;object-fit:contain}
+.nav{display:flex;align-items:center;gap:28px;margin-left:auto;font-size:13px;color:#474848}.nav a{white-space:nowrap}
+.header-cta,.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:48px;padding:0 26px;border-radius:999px;background:var(--button);color:#fff;font-weight:700;font-size:13px}
+.menu-btn{display:none;width:44px;height:44px;border:0;background:transparent;padding:10px;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.menu-btn span{display:block;width:24px;height:1.5px;background:#2f3030}
+.page-hero{background:#f7f5f1;padding:84px 0 70px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:#8b8d8d;margin-bottom:16px}
+.page-hero h1,.section-title{font-family:var(--font-display);font-weight:500;letter-spacing:.035em}
+.page-hero h1{font-size:46px;line-height:1.45;margin:0 0 18px}
+.page-hero p{max-width:650px;margin:0;color:#666a6b;font-size:14px;line-height:2}
+.section{padding:68px 0;background:#fff}.section.alt{background:#f8f8f7}
+.section-title{font-size:31px;line-height:1.5;margin:0 0 22px}
+.lead{font-size:14px;color:#616566;line-height:2;max-width:760px;margin:0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+.visual-card{background:#f3f1ed;border:1px solid var(--line);padding:24px}
+.visual-card img{width:100%;height:auto}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.info-card{border:1px solid var(--line);background:#fff;padding:28px 24px;min-height:190px}
+.info-card .num{font-family:Georgia,serif;color:#b6b1aa;font-size:22px;margin-bottom:22px}
+.info-card h3{margin:0 0 10px;font-size:16px}
+.info-card p{margin:0;color:#737777;font-size:12px;line-height:1.8}
+.flow{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line);margin-top:30px}
+.flow-item{position:relative;min-height:240px;padding:34px 28px 30px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
+.flow-item .step{font-family:Georgia,serif;font-size:24px;color:#b7b2ac;margin-bottom:24px}
+.flow-item h3{font-size:18px;margin:0 0 10px}
+.flow-item p{font-size:12px;line-height:1.85;color:#717576;margin:0}
+.note{margin-top:28px;padding:18px 20px;background:#f7f5f1;border-left:3px solid #d8b7a7;color:#666a6b;font-size:12px;line-height:1.8}
+.cta-band{padding:58px 0;background:#f7f5f1;text-align:center;border-top:1px solid var(--line)}
+.cta-band h2{font-family:var(--font-display);font-weight:500;font-size:28px;margin:0 0 20px}
+.footer{background:#fff;border-top:1px solid var(--line);padding:42px 0 30px}
+.footer-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
+.footer-logo{margin-bottom:26px}.footer-logo img{width:176px}
+.footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 24px;font-size:11px;color:#666969}
+.copyright{margin-top:24px;font-size:9.5px;color:#9a9c9c}
+@media(max-width:900px){
+  .nav{display:none}.menu-btn{display:flex;margin-left:auto}.header-cta{display:none}.header-inner{height:62px}.logo-link img{width:155px;max-height:46px}
+  .split{grid-template-columns:1fr;gap:28px}.cards{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .wrap{width:min(var(--max),calc(100% - 28px))}
+  .header-inner{height:58px}.logo-link img{width:145px;max-height:43px}
+  .page-hero{padding:54px 0 46px}.page-hero h1{font-size:34px}.page-hero p{font-size:12.5px}
+  .section{padding:48px 0}.section-title{font-size:25px}.lead{font-size:12.5px}
+  .visual-card{padding:12px}
+  .flow{grid-template-columns:1fr}.flow-item{min-height:0;padding:28px 22px}.flow-item .step{margin-bottom:18px}
+  .cta-band{padding:46px 0}.cta-band h2{font-size:24px}
+  .footer-logo img{width:154px}.footer-links{font-size:10px;gap:11px 18px}
+}
+</style></head><body>
+<header class="site-header"><div class="wrap header-inner">
+<a class="logo-link" href="top.html" aria-label="コエフォト トップ"><img src="assets/logo-cropped.png" alt="コエフォト"></a>
+<nav class="nav" aria-label="メインナビゲーション" id="mainNav">
+<a href="about.html">コエフォトとは</a><a href="howto.html">つくり方</a><a href="top.html#scenes">シーンから選ぶ</a><a href="top.html#price">料金</a><a href="top.html#faq">よくあるご質問</a><a href="mypage.html">マイページ</a>
+</nav>
+<a class="header-cta" href="top.html#scenes">今すぐつくる ›</a>
+<button class="menu-btn" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="mainNav" id="menuBtn"><span></span><span></span><span></span></button>
+</div></header>
+<main>
+<section class="page-hero"><div class="wrap"><div class="eyebrow">HOW TO MAKE</div><h1>コエフォトのつくり方</h1><p>写真を選んで、声をのせて、メッセージを添えるだけ。プレビューまでは無料で試せます。</p></div></section>
+
+<section class="section"><div class="wrap"><h2 class="section-title">作成から完成まで</h2><div class="flow">
+<div class="flow-item"><div class="step">01</div><h3>写真を選ぶ</h3><p>スマホやパソコンから写真をアップロードします。表示位置の移動、拡大・縮小もできます。</p></div>
+<div class="flow-item"><div class="step">02</div><h3>声をのせる</h3><p>その場で録音するか、手元の音声ファイルを選びます。音声は最大3分です。</p></div>
+<div class="flow-item"><div class="step">03</div><h3>メッセージを添える</h3><p>贈る相手の名前、メッセージ、差出人を入力します。入力内容はカードに反映されます。</p></div>
+<div class="flow-item"><div class="step">04</div><h3>プレビューする</h3><p>「贈るカード」と「QRから見るページ」の両方を確認できます。ここまでは無料です。</p></div>
+<div class="flow-item"><div class="step">05</div><h3>購入する</h3><p>完成版は480円（税込）。内容を確認して決済します。</p></div>
+<div class="flow-item"><div class="step">06</div><h3>完成</h3><p>購入後、声のページにつながるQRコード付きカードが完成します。閲覧・ダウンロード期間は購入日から1年間です。</p></div>
+</div>
+<div class="note">相手はアプリをインストールする必要はありません。QRコードからブラウザで声のページを開けます。</div>
+</div></section>
+
+<section class="section alt"><div class="wrap split">
+<div><h2 class="section-title">まずは無料で、<br>完成イメージまで。</h2><p class="lead">写真や声を選び、メッセージを入力して、プレビューを確認するところまでは料金はかかりません。仕上がりを見てから購入できます。</p></div>
+<div class="visual-card"><img src="assets/product-card.png" alt="コエフォトのカード完成イメージ"></div>
+</div></section>
+
+<section class="cta-band"><div class="wrap"><h2>誕生日のコエフォトをつくる</h2><a class="btn" href="index.html?template=classic_birthday">今すぐつくる ›</a></div></section>
+</main><footer class="footer"><div class="wrap footer-inner">
+<a class="footer-logo" href="top.html"><img src="assets/footer-logo.png" alt="コエフォト"></a>
+<nav class="footer-links" aria-label="フッターナビゲーション"><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a><a href="tokusho.html">特定商取引法に基づく表記</a><a href="mailto:">お問い合わせ</a></nav>
+<div class="copyright">© コエフォト</div>
+</div></footer>
+<script>
+const btn=document.getElementById('menuBtn'),nav=document.getElementById('mainNav');
+function closeMenu(){if(!btn||!nav)return;btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','メニューを開く');nav.removeAttribute('style');nav.querySelectorAll('a').forEach(a=>a.removeAttribute('style'))}
+btn?.addEventListener('click',()=>{const open=btn.getAttribute('aria-expanded')==='true';if(open){closeMenu();return;}btn.setAttribute('aria-expanded','true');btn.setAttribute('aria-label','メニューを閉じる');Object.assign(nav.style,{display:'flex',position:'absolute',top:'100%',left:'0',right:'0',padding:'14px 20px 18px',background:'rgba(255,255,255,.98)',flexDirection:'column',alignItems:'stretch',gap:'0',borderBottom:'1px solid #e8e8e6',boxShadow:'0 10px 24px rgba(0,0,0,.06)'});nav.querySelectorAll('a').forEach(a=>{a.style.padding='12px 2px';a.style.borderBottom='1px solid #f0f0ee'})});
+nav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));window.addEventListener('resize',()=>{if(innerWidth>900)closeMenu()});
+</script>
+</body></html>
