@@ -101,7 +101,7 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
   .progress-dot{width:33px;height:33px;margin-bottom:6px}.progress-label{font-size:9.5px}
   .form-section{padding:30px 0 4px;margin-top:12px}
   .section-head{padding-bottom:18px;display:block}
-  .section-head h2{font-size:15px}
+  .section-head h2{font-size:19px}
   .section-head p{text-align:left;margin-top:6px}
   .field-block{grid-template-columns:1fr;gap:12px;padding:22px 0}
   .field-title{gap:10px}.field-no{font-size:17px}.field-title strong{font-size:14px}
@@ -113,6 +113,47 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
   .media-card{padding:10px}.photo-thumb{width:72px;height:54px;flex-basis:72px}
   .bottom-area{margin-top:26px}
 }
+
+.template-current{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  max-width:520px;
+  margin:0 0 24px;
+  padding:13px 15px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+.template-meta{min-width:0}
+.template-caption{
+  display:block;
+  font-size:8.5px;
+  letter-spacing:.14em;
+  color:#a5a39f;
+  margin-bottom:4px;
+}
+.template-meta strong{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:#303131;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.template-change{
+  flex:0 0 auto;
+  font-size:10px;
+  color:#666;
+  border-bottom:1px solid #aaa;
+  padding-bottom:2px;
+}
+@media(max-width:760px){
+  .template-current{max-width:none;margin-bottom:22px;padding:12px 13px}
+  .template-meta strong{font-size:12.5px}
+}
+
 </style>
 
 
@@ -129,7 +170,13 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
 
 <main class="page">
   <section class="create-intro">
-    <div class="template-label">CLASSIC BIRTHDAY</div>
+    <div class="template-current" aria-label="選択中のテンプレート">
+      <div class="template-meta">
+        <span class="template-caption">選択中のテンプレート</span>
+        <strong id="selectedTemplateName">Classic Birthday</strong>
+      </div>
+      <a class="template-change" href="top.html#scenes">変更する</a>
+    </div>
     <h1>贈る内容を入力</h1>
     <p>写真と声、メッセージを入力して、完成イメージを確認できます。</p>
   </section>
@@ -145,7 +192,7 @@ textarea{min-height:116px;resize:vertical;line-height:1.8}
     <section class="form-section">
       <div class="section-head">
         <div><div class="section-kicker">MESSAGE</div><h2>メッセージを入力</h2></div>
-        <p>カードと声のページに表示する内容です。</p>
+        <p>「贈るカード」と「QRから見るページ」に表示する内容です。</p>
       </div>
 
       <div class="field-block">
@@ -545,5 +592,20 @@ $('form').addEventListener('submit',async e=>{
   location.href='preview.html';
 });
 </script>
+
+<script>
+(function(){
+  const map = {
+    classic_birthday: 'Classic Birthday',
+    'classic-birthday': 'Classic Birthday'
+  };
+  const params = new URLSearchParams(location.search);
+  const key = params.get('template') || 'classic_birthday';
+  const name = map[key] || key.replace(/[_-]+/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+  const el = document.getElementById('selectedTemplateName');
+  if(el) el.textContent = name;
+})();
+</script>
+
 </body>
 </html>
