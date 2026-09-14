@@ -6,26 +6,55 @@
 <title>コエフォト｜完成</title>
 <style>
 *{box-sizing:border-box}
-:root{--bg:#fffdfa;--panel:#fbf7f2;--ink:#2f2722;--brown:#9f7654;--brown-dark:#7d5d44;--brown-light:#b58b68;--muted:#8c827a;--line:#e7ddd4;--success:#eaf3eb;--success-ink:#59745e}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.wrap{max-width:1120px;margin:0 auto;padding:22px 24px 64px}
-.complete-header{display:flex;align-items:flex-end;gap:10px;margin-bottom:28px}.complete-brand{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);line-height:1}.complete-tag{font-size:13px;font-weight:700;color:var(--brown-dark);padding-bottom:3px}
-.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:0 70px 38px}.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;background:#eee9e5;border-radius:999px;z-index:0}.progress-step{position:relative;z-index:1;text-align:center;color:#6f635a}.progress-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;background:#f0ece8;color:#72665d;font-size:16px}.progress-step.current .progress-dot{background:var(--brown-light);color:#fff}.progress-label{font-size:15px;font-weight:800}.progress-step.current .progress-label{color:var(--brown-dark)}
-.card{max-width:760px;margin:0 auto;background:linear-gradient(135deg,#fcf9f5,#fffdfb);border:1px solid #eee5dd;border-radius:22px;padding:30px 28px;box-shadow:0 10px 28px rgba(109,77,51,.04)}.hero{text-align:center}.hero .brand{font-size:20px;font-weight:900;letter-spacing:.08em;color:var(--brown-dark);margin-bottom:18px}.icon{width:92px;height:92px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#b58b68,#9f7654);color:#fff;font-size:46px;font-weight:800;box-shadow:0 10px 26px rgba(132,92,59,.14)}.title{font-size:34px;line-height:1.3;margin:0;color:var(--ink)}.lead{font-size:15px;line-height:1.8;color:#75695f;margin:14px auto 0;max-width:560px}.status{max-width:560px;margin:22px auto 0;padding:14px 16px;border-radius:14px;background:var(--success);color:var(--success-ink);font-weight:800;font-size:15px;text-align:center}.status.err{background:#f8e8e6;color:#9c4c45}
-.summary{max-width:620px;margin:28px auto 0;border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;padding:20px 8px;border-bottom:1px solid var(--line)}.label{font-size:13px;color:#8b7d70}.value{font-size:18px;font-weight:800;color:#4d443d;text-align:right}.purchase-id{font-size:16px;letter-spacing:.03em}.btns{max-width:620px;margin:28px auto 0}.btn{min-height:58px;padding:15px 18px;border-radius:14px;text-decoration:none;font-size:16px;font-weight:900;text-align:center;display:grid;place-items:center}.btn.primary{color:#fff;background:linear-gradient(180deg,#a77d5a,#956c4c);box-shadow:0 7px 18px rgba(128,87,54,.15)}.note{max-width:620px;margin:18px auto 0;text-align:center;color:#8a7d72;font-size:12px;line-height:1.7}
-@media(max-width:760px){.wrap{padding:18px 14px 48px}.complete-header{margin-bottom:22px;align-items:center}.complete-brand{font-size:25px}.complete-tag{font-size:11px;padding-bottom:0}.progress{margin:0 6px 28px}.progress::before{top:18px;height:3px}.progress-dot{width:38px;height:38px;margin-bottom:7px;font-size:14px}.progress-label{font-size:11px}.card{padding:24px 18px;border-radius:18px}.hero .brand{font-size:18px}.icon{width:78px;height:78px;font-size:38px}.title{font-size:28px}.lead{font-size:14px}.status{font-size:14px}.row{grid-template-columns:110px 1fr;padding:18px 4px}.value{font-size:16px}.purchase-id{font-size:14px}}
-@media(max-width:390px){.complete-tag{display:none}.progress-label{font-size:10px}.row{grid-template-columns:100px 1fr}}
+:root{
+  --bg:#fbfaf8;--paper:#fff;--ink:#282929;--muted:#7c7e7e;
+  --line:#e9e7e3;--line-strong:#d9d7d2;--soft:#f6f4f0;
+  --button:#2d2e2e;
+  --ui:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+a{color:inherit}.wrap{max-width:920px;margin:0 auto;padding:0 24px 72px}
+.complete-header{height:78px;display:flex;align-items:center;margin:0 calc(50% - 50vw);padding:0 max(28px,calc((100vw - 1120px)/2));background:#fff;border-bottom:1px solid var(--line)}
+.complete-brand{display:block;font-size:0;width:190px;height:54px;background:url("assets/logo-cropped.png") left center/contain no-repeat}
+.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:34px 0 38px}
+.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:17px;height:1px;background:#dfddd9;z-index:0}
+.progress-step{position:relative;z-index:1;text-align:center;color:#9a9b9b}.progress-dot{width:35px;height:35px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:#f0efec;border:1px solid #ebe9e5;color:#777;font-size:12px}
+.progress-step.current .progress-dot{background:var(--button);border-color:var(--button);color:#fff}.progress-label{font-size:10px;font-weight:600}.progress-step.current .progress-label{color:#333}
+.top{margin-bottom:28px;text-align:center;padding:8px 0 4px}.top .eyebrow{display:block;font-size:8.5px;letter-spacing:.18em;color:#aaa;margin-bottom:12px}.top h1{font-family:var(--serif);font-size:33px;font-weight:500;line-height:1.5;letter-spacing:.035em;margin:0}.top h1 span{display:block}.top .thank-rule{width:42px;height:1px;background:var(--line);margin:17px auto 15px}.top .thank-message{font-family:var(--serif);font-size:13px;color:#555;line-height:1.95;letter-spacing:.025em;margin:0}.top .payment-note{font-size:10.5px;color:var(--muted);line-height:1.8;margin:8px 0 0}
+.complete-shell{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:34px 0 36px}.inner{max-width:760px;margin:0 auto}
+.hero{text-align:center;padding:4px 12px 30px}.icon{width:52px;height:52px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;border:1px solid #b8b8b5;color:#555;font-size:22px;font-weight:500;background:#fff}.title{font-family:var(--serif);font-size:27px;font-weight:500;line-height:1.45;letter-spacing:.03em;margin:0}.lead{max-width:560px;margin:10px auto 0;font-size:11px;line-height:1.85;color:var(--muted)}
+.status{max-width:560px;margin:18px auto 0;padding:11px 13px;border:1px solid var(--line);background:#f8f7f4;color:#6f7070;font-size:10.5px;line-height:1.7;text-align:center}.status.ok{border-color:#dddcd8;background:#f7f7f4;color:#555}.status.err{border-color:#e5d5d3;background:#faf5f4;color:#8b5d58}
+.summary-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin:4px 0 13px}.summary-head h2{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:.025em;margin:0}.summary-head span{font-size:8.5px;letter-spacing:.14em;color:#aaa}
+.summary{border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);margin:0 0 30px}.row{display:grid;grid-template-columns:180px 1fr;gap:20px;padding:14px 4px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.label{font-size:10.5px;font-weight:600;color:#777}.value{font-size:12px;color:#3c3d3d;line-height:1.65;text-align:left}.purchase-id{word-break:break-all;letter-spacing:.02em}
+.btns{display:grid;grid-template-columns:minmax(0,360px);justify-content:center;margin-top:24px}.btn{min-height:52px;padding:13px 18px;border-radius:999px;text-decoration:none;font-size:12px;font-weight:650;text-align:center;display:grid;place-items:center}.btn.primary{border:1px solid var(--button);background:var(--button);color:#fff}.btn.primary:active{transform:translateY(1px)}
+.note{max-width:620px;margin:16px auto 0;text-align:center;color:#929393;font-size:9.5px;line-height:1.8}
+.legal{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);text-align:center}.legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:7px 14px;margin:0;font-size:9.5px}.legal-links a{color:#555;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}.copyright{margin-top:14px;font-size:9px;color:#aaa}
+@media(max-width:760px){.wrap{padding:0 18px 52px}.complete-header{height:68px;padding:0 24px}.complete-brand{width:168px;height:50px}.progress{margin:28px 4px 30px}.progress::before{top:16px}.progress-dot{width:33px;height:33px;margin-bottom:6px}.progress-label{font-size:9.5px}.top h1{font-size:28px}.complete-shell{padding:28px 0 30px}.hero{padding:2px 6px 26px}.icon{width:48px;height:48px;font-size:20px}.title{font-size:25px}.row{grid-template-columns:40% 60%;gap:0;padding:12px 2px}.label{padding-right:10px}.btns{grid-template-columns:1fr}.legal-links{gap:9px 12px}}
+@media(max-width:390px){.row{grid-template-columns:42% 58%}.title{font-size:24px}}
 </style>
 </head>
 <body>
 <main class="wrap">
-<header class="complete-header"><div class="complete-brand">コエフォト</div><div class="complete-tag">写真と声で、想いを届ける</div></header>
-<nav class="progress" aria-label="作成の進捗"><div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div><div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div><div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div><div class="progress-step current"><div class="progress-dot">4</div><div class="progress-label">完成</div></div></nav>
-<section class="card"><div class="hero"><div class="icon" id="icon">…</div><h1 class="title" id="title">決済を確認しています</h1><p class="lead" id="lead">Stripeからの決済完了通知を確認しています。</p><div class="status" id="status">確認中…</div></div>
-<div class="summary" id="summary" hidden><div class="row"><div class="label">購入ID</div><div class="value purchase-id" id="purchaseId">—</div></div><div class="row"><div class="label">購入金額</div><div class="value">480円（税込）</div></div><div class="row"><div class="label">閲覧・ダウンロード期限</div><div class="value" id="expiresAt">—</div></div></div>
-<div class="btns" id="actions" hidden><a class="btn primary" id="openCard" href="#">完成版を開く →</a></div><p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。完成版では、贈るカードとQRから見るページをご確認いただけます。</p></section>
+<header class="complete-header"><a class="complete-brand" href="top.html" aria-label="コエフォト トップ">コエフォト</a></header>
+<nav class="progress" aria-label="作成の進捗">
+  <div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
+  <div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div>
+  <div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div>
+  <div class="progress-step current"><div class="progress-dot">4</div><div class="progress-label">完成</div></div>
+</nav>
+<div class="top"><span class="eyebrow">THANK YOU</span><h1><span>ご購入いただき、</span><span>ありがとうございます</span></h1><div class="thank-rule" aria-hidden="true"></div><p class="thank-message">大切な想いを届けるために、コエフォトをお選びいただきありがとうございます。</p><p class="payment-note">決済確認後、完成したコエフォトをご利用いただけます。</p></div>
+<section class="complete-shell"><div class="inner">
+  <div class="hero"><div class="icon" id="icon">…</div><h2 class="title" id="title">決済を確認しています</h2><p class="lead" id="lead">Stripeからの決済完了通知を確認しています。</p><div class="status" id="status">確認中…</div></div>
+  <div id="summary" hidden>
+    <div class="summary-head"><h2>ご購入内容</h2><span>ORDER DETAILS</span></div>
+    <div class="summary"><div class="row"><div class="label">購入ID</div><div class="value purchase-id" id="purchaseId">—</div></div><div class="row"><div class="label">購入金額</div><div class="value">480円（税込）</div></div><div class="row"><div class="label">閲覧・ダウンロード期限</div><div class="value" id="expiresAt">—</div></div></div>
+  </div>
+  <div class="btns" id="actions" hidden><a class="btn primary" id="openCard" href="#">完成版を開く</a></div>
+  <p class="note">購入IDはお問い合わせ時の確認番号としてご利用ください。完成版では、贈るカードとQRから見るページをご確認いただけます。</p>
+  <footer class="legal"><nav class="legal-links" aria-label="法的情報"><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a><a href="tokusho.html">特定商取引法に基づく表記</a></nav><div class="copyright">© コエフォト</div></footer>
+</div></section>
 </main>
-
 <script>
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
 const STATUS_URL=SUPABASE_URL+'/functions/v1/payment-status-v2';
@@ -97,6 +126,8 @@ async function check(){
 
         summary.hidden=false;
         actions.hidden=false;
+        const memberNote=document.getElementById('memberNote');
+        if(memberNote) memberNote.hidden=false;
 
         sessionStorage.setItem('koephoto-purchase-draft',JSON.stringify({
           public_id:publicId,
