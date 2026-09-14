@@ -140,7 +140,7 @@ body{min-height:100svh;padding-bottom:28px}
   </div>
   <div class="test">
     <p>確認用：音声を選ぶと再生できます。</p>
-    <label>音声を選ぶ<input id="audioFile" type="file" accept="audio/*"></label>
+    <label>音声を選ぶ<input id="audioFile" type="file" accept="audio/*,.m4a,.mp4,.aac,.wav,.mp3,.caf"></label>
   </div>
 </div>
 <audio id="audio" preload="metadata"></audio>
@@ -175,10 +175,46 @@ audio.onplay=()=>{player.classList.add('playing');setIcon(true)};
 audio.onpause=()=>{player.classList.remove('playing');setIcon(false)};
 audio.onended=()=>{player.classList.remove('playing');setIcon(false)};
 
-file.onchange=()=>{
+let currentAudioURL='';
+file.onchange=async()=>{
   const f=file.files?.[0];if(!f)return;
-  if(audio.src?.startsWith('blob:'))URL.revokeObjectURL(audio.src);
-  audio.src=URL.createObjectURL(f);audio.load();
+  try{
+    if(currentAudioURL){URL.revokeObjectURL(currentAudioURL);currentAudioURL='';}
+
+    // iPhoneのボイスメモ/ファイル選択でSafariがFileを直接扱えないケースを避ける。
+    const buffer=await f.arrayBuffer();
+    const ext=(f.name.split('.').pop()||'').toLowerCase();
+    let type=f.type||'';
+    if(!type){
+      if(ext==='m4a'||ext==='mp4') type='audio/mp4';
+      else if(ext==='aac') type='audio/aac';
+      else if(ext==='wav') type='audio/wav';
+      else if(ext==='mp3') type='audio/mpeg';
+      else if(ext==='caf') type='audio/x-caf';
+      else type='application/octet-stream';
+    }
+    const blob=new Blob([buffer],{type});
+    currentAudioURL=URL.createObjectURL(blob);
+    audio.src=currentAudioURL;
+    audio.load();
+
+    // Safariでmetadata取得が遅い場合にも明示的に読み込みを促す。
+    await new Promise((resolve,reject)=>{
+      if(audio.readyState>=1) return resolve();
+      const ok=()=>{cleanup();resolve()};
+      const ng=()=>{cleanup();reject(new Error('audio-load-error'))};
+      const cleanup=()=>{
+        audio.removeEventListener('loadedmetadata',ok);
+        audio.removeEventListener('error',ng);
+      };
+      audio.addEventListener('loadedmetadata',ok,{once:true});
+      audio.addEventListener('error',ng,{once:true});
+      setTimeout(()=>{cleanup();resolve()},5000);
+    });
+  }catch(err){
+    console.error(err);
+    alert('音声を読み込めませんでした。iPhoneの「ファイル」に保存してから、もう一度選択してください。');
+  }
 };
 
 function animate(t){
