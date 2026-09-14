@@ -59,30 +59,42 @@ body{min-height:100svh;padding-bottom:28px}
 }
 .sparkle{
   position:absolute;
-  width:8px;height:8px;
+  width:6px;height:6px;
   opacity:0;
-  transform:translate(-50%,-50%) scale(.2) rotate(0deg);
-  filter:drop-shadow(0 0 5px rgba(255,225,153,.78));
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(.35);
+  background:
+    radial-gradient(circle,
+      rgba(255,255,240,1) 0%,
+      rgba(255,244,205,.98) 22%,
+      rgba(238,205,133,.92) 46%,
+      rgba(211,164,73,.52) 68%,
+      rgba(211,164,73,0) 100%);
+  box-shadow:
+    0 0 5px rgba(255,244,210,.95),
+    0 0 11px rgba(235,198,118,.72),
+    0 0 18px rgba(199,147,46,.24);
+  filter:none;
 }
-.sparkle::before,.sparkle::after{
-  content:"";position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  border-radius:999px;
-  background:linear-gradient(180deg,#fff8dc 0%,#f1d58e 45%,#c89436 100%);
-}
-.sparkle::before{width:2px;height:100%}
-.sparkle::after{width:100%;height:2px}
-.sparkle.small{width:5px;height:5px}
-.sparkle.large{width:12px;height:12px}
+.sparkle.small{width:3px;height:3px}
+.sparkle.large{width:8px;height:8px}
 .start-burst .sparkle{
   animation:sparkleBurst var(--dur,1.9s) cubic-bezier(.2,.65,.25,1) var(--delay,0s) 1 both;
 }
 @keyframes sparkleBurst{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.12) rotate(0deg)}
-  18%{opacity:.35}
-  42%{opacity:1;transform:translate(-50%,-50%) scale(1.45) rotate(45deg)}
-  72%{opacity:.48;transform:translate(-50%,-50%) scale(.82) rotate(78deg)}
-  100%{opacity:0;transform:translate(-50%,-50%) scale(.28) rotate(105deg)}
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) translate(0,0) scale(.25);
+  }
+  16%{opacity:.95}
+  58%{
+    opacity:.78;
+    transform:translate(-50%,-50%) translate(var(--dx,0px),var(--dy,0px)) scale(1.05);
+  }
+  100%{
+    opacity:0;
+    transform:translate(-50%,-50%) translate(calc(var(--dx,0px) * 1.35),calc(var(--dy,0px) * 1.35)) scale(.52);
+  }
 }
 .ending .disc{animation:endDisc 1.8s ease-out 1}
 .ending .play{animation:endButton 1.65s ease-out 1}
@@ -93,9 +105,15 @@ body{min-height:100svh;padding-bottom:28px}
   animation:sparkleEnd 1.85s ease-out calc(var(--delay,0s) * .12) 1 both;
 }
 @keyframes sparkleEnd{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}
-  35%{opacity:.9;transform:translate(-50%,-50%) scale(1.15) rotate(45deg)}
-  100%{opacity:0;transform:translate(-50%,-60%) scale(.35) rotate(105deg)}
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) translate(0,0) scale(.25);
+  }
+  28%{opacity:.72}
+  100%{
+    opacity:0;
+    transform:translate(-50%,-50%) translate(var(--edx,0px),var(--edy,-12px)) scale(.45);
+  }
 }
 @keyframes endDisc{
   0%{filter:brightness(1)}
@@ -127,12 +145,15 @@ body{min-height:100svh;padding-bottom:28px}
     inset 0 0 0 6px rgba(255,255,255,.015);
 }
 .playing .play{
+  background:
+    radial-gradient(circle at 34% 25%,#fff3ca 0%,#efd79c 20%,#dfbd6d 48%,#c99238 78%,#9f6e1f 100%);
   box-shadow:
-    0 6px 13px rgba(77,51,7,.22),
-    0 0 11px rgba(255,225,157,.72),
-    0 0 26px rgba(204,151,50,.28),
-    inset 0 1px 0 rgba(255,255,255,.62),
-    inset 0 -6px 12px rgba(88,53,5,.10);
+    0 6px 13px rgba(77,51,7,.20),
+    0 0 10px rgba(255,244,210,.90),
+    0 0 22px rgba(236,199,115,.80),
+    0 0 38px rgba(205,154,57,.42),
+    inset 0 1px 0 rgba(255,255,255,.76),
+    inset 0 -6px 12px rgba(88,53,5,.08);
 }
 
 .core{
@@ -253,17 +274,29 @@ makeWave(document.getElementById('waveR'),true);
 // 再生中だけ現れるシャンパンゴールドの光。背景画像は変更せずHTML/CSSのみ。
 const sparkleLayer=document.getElementById('sparkles');
 [
-  [7,28,'small',0.10,1.65],[16,63,'',0.55,2.05],[25,18,'large',1.05,2.45],
-  [35,76,'small',1.35,1.80],[47,12,'',0.35,2.20],[58,78,'large',0.85,2.70],
-  [69,20,'small',1.50,1.95],[80,66,'',0.20,2.35],[92,32,'large',1.15,2.55],
-  [13,42,'',1.70,2.10],[88,49,'small',0.70,1.75]
-].forEach(([x,y,size,delay,dur])=>{
+  [47,49,'small',0.02,1.45,-18,-10],[53,48,'',0.06,1.70,20,-13],
+  [50,42,'small',0.10,1.55,0,-22],[44,45,'',0.13,1.85,-26,-18],
+  [57,44,'small',0.16,1.55,28,-18],[41,53,'small',0.18,1.70,-32,5],
+  [60,53,'',0.22,1.95,34,6],[46,58,'small',0.25,1.65,-18,24],
+  [55,59,'small',0.28,1.75,20,26],[37,47,'large',0.32,2.05,-42,-10],
+  [64,47,'large',0.36,2.10,44,-10],[39,61,'',0.40,2.00,-38,28],
+  [62,63,'',0.44,2.10,39,31],[32,40,'small',0.48,1.90,-48,-28],
+  [69,39,'small',0.52,1.95,49,-30],[29,57,'small',0.57,2.00,-52,16],
+  [72,58,'small',0.60,2.05,54,18],[34,70,'',0.66,2.10,-45,42],
+  [67,72,'',0.72,2.20,46,44],[24,49,'small',0.78,2.05,-58,0],
+  [77,50,'small',0.84,2.10,59,0],[42,33,'',0.92,2.00,-24,-44],
+  [59,31,'small',0.98,2.05,28,-47],[48,75,'small',1.05,2.00,-8,47]
+].forEach(([x,y,size,delay,dur,dx,dy],idx)=>{
   const sp=document.createElement('span');
   sp.className='sparkle '+size;
   sp.style.left=x+'%';
   sp.style.top=y+'%';
   sp.style.setProperty('--delay',delay+'s');
   sp.style.setProperty('--dur',dur+'s');
+  sp.style.setProperty('--dx',dx+'px');
+  sp.style.setProperty('--dy',dy+'px');
+  sp.style.setProperty('--edx',(dx*.35)+'px');
+  sp.style.setProperty('--edy',(dy*.35-10)+'px');
   sparkleLayer.appendChild(sp);
 });
 
@@ -334,6 +367,8 @@ audio.onpause=()=>{
   setIcon(false);
 };
 audio.onended=()=>{
+  btn.style.filter='';
+  btn.style.boxShadow='';
   player.classList.remove('playing','start-burst');
   replayClass('ending',2200);
   setIcon(false);
@@ -415,6 +450,25 @@ function animate(t){
   const on=!audio.paused&&!audio.ended;
   const real=on&&analyser&&freqData&&audioCtx&&audioCtx.state==='running';
   if(real)analyser.getByteFrequencyData(freqData);
+
+  // 声の強さに合わせて中央のシャンパンゴールドの発光もわずかに呼吸させる。
+  if(on){
+    let avg=.22;
+    if(real){
+      let sum=0,count=0;
+      const lo=3,hi=Math.min(freqData.length-1,48);
+      for(let i=lo;i<=hi;i++){sum+=freqData[i];count++}
+      avg=(sum/Math.max(1,count))/255;
+    }else{
+      avg=.28+.08*(.5+.5*Math.sin(t/210));
+    }
+    const pulse=Math.min(1,Math.pow(avg*1.9,.72));
+    btn.style.filter=`brightness(${1.02+.16*pulse}) saturate(${1.02+.10*pulse})`;
+    btn.style.boxShadow=`0 6px 13px rgba(77,51,7,.20),0 0 ${10+10*pulse}px rgba(255,244,210,.92),0 0 ${22+18*pulse}px rgba(236,199,115,.78),0 0 ${36+26*pulse}px rgba(205,154,57,.38),inset 0 1px 0 rgba(255,255,255,.76),inset 0 -6px 12px rgba(88,53,5,.08)`;
+  }else{
+    btn.style.filter='';
+    btn.style.boxShadow='';
+  }
 
   leftBars.forEach((b,i)=>{
     const e=real?sampledEnergy(i,leftBars.length):on?.18+.16*(.5+.5*Math.sin(t/170+i*.83)):0;
