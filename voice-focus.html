@@ -74,14 +74,44 @@ body{min-height:100svh;padding-bottom:28px}
 .sparkle::after{width:100%;height:2px}
 .sparkle.small{width:5px;height:5px}
 .sparkle.large{width:12px;height:12px}
-.playing .sparkle{
-  animation:sparklePulse var(--dur,1.9s) ease-in-out var(--delay,0s) infinite;
+.start-burst .sparkle{
+  animation:sparkleBurst var(--dur,1.9s) cubic-bezier(.2,.65,.25,1) var(--delay,0s) 1 both;
 }
-@keyframes sparklePulse{
-  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(0deg)}
-  16%{opacity:.25}
-  44%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(45deg)}
-  68%{opacity:.48;transform:translate(-50%,-50%) scale(.78) rotate(75deg)}
+@keyframes sparkleBurst{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.12) rotate(0deg)}
+  18%{opacity:.35}
+  42%{opacity:1;transform:translate(-50%,-50%) scale(1.45) rotate(45deg)}
+  72%{opacity:.48;transform:translate(-50%,-50%) scale(.82) rotate(78deg)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.28) rotate(105deg)}
+}
+.ending .disc{animation:endDisc 1.8s ease-out 1}
+.ending .play{animation:endButton 1.65s ease-out 1}
+.ending .sparkle:nth-child(2n){
+  animation:sparkleEnd 1.5s ease-out calc(var(--delay,0s) * .18) 1 both;
+}
+.ending .sparkle:nth-child(2n+1){
+  animation:sparkleEnd 1.85s ease-out calc(var(--delay,0s) * .12) 1 both;
+}
+@keyframes sparkleEnd{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}
+  35%{opacity:.9;transform:translate(-50%,-50%) scale(1.15) rotate(45deg)}
+  100%{opacity:0;transform:translate(-50%,-60%) scale(.35) rotate(105deg)}
+}
+@keyframes endDisc{
+  0%{filter:brightness(1)}
+  30%{filter:brightness(1.20);box-shadow:0 0 28px rgba(229,190,103,.38),0 8px 17px rgba(5,33,65,.19)}
+  100%{filter:brightness(1)}
+}
+@keyframes endButton{
+  0%{transform:translate(-50%,-50%) scale(1)}
+  28%{transform:translate(-50%,-50%) scale(1.08)}
+  100%{transform:translate(-50%,-50%) scale(1)}
+}
+.ending .bar{animation:waveFarewell 1.55s ease-out 1}
+@keyframes waveFarewell{
+  0%{filter:brightness(1.3);opacity:1}
+  35%{filter:brightness(1.65);opacity:1}
+  100%{filter:brightness(1);opacity:.96}
 }
 .playing .bar{
   filter:brightness(1.28) saturate(1.12);
@@ -116,13 +146,14 @@ body{min-height:100svh;padding-bottom:28px}
   border:1px solid rgba(205,163,77,.34);
   opacity:0;pointer-events:none;
 }
-.playing .r1{animation:ripple 2.25s ease-out infinite}
-.playing .r2{animation:ripple 2.25s .75s ease-out infinite}
-.playing .r3{animation:ripple 2.25s 1.5s ease-out infinite}
-@keyframes ripple{
-  0%{transform:scale(.96);opacity:0}
-  15%{opacity:.58}
-  100%{transform:scale(1.38);opacity:0}
+.start-burst .r1{animation:rippleStart 1.55s cubic-bezier(.15,.65,.25,1) 0s 1}
+.start-burst .r2{animation:rippleStart 1.55s cubic-bezier(.15,.65,.25,1) .18s 1}
+.start-burst .r3{animation:rippleStart 1.55s cubic-bezier(.15,.65,.25,1) .36s 1}
+@keyframes rippleStart{
+  0%{transform:scale(.86);opacity:0}
+  12%{opacity:.82}
+  60%{opacity:.28}
+  100%{transform:scale(1.55);opacity:0}
 }
 
 .disc{
@@ -247,13 +278,66 @@ function fmt(x){
 function setIcon(on){
   icon.innerHTML=on?'<path d="M7 5h4v14H7zm6 0h4v14h-4z"/>':'<path d="M8 5.2v13.6L18.4 12z"/>';
 }
+let audioCtx=null, analyser=null, mediaSource=null, freqData=null;
+let startFxTimer=0, endFxTimer=0;
+
+async function ensureAudioAnalysis(){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return false;
+  try{
+    if(!audioCtx){
+      audioCtx=new AC();
+      analyser=audioCtx.createAnalyser();
+      analyser.fftSize=256;
+      analyser.smoothingTimeConstant=.78;
+      freqData=new Uint8Array(analyser.frequencyBinCount);
+      mediaSource=audioCtx.createMediaElementSource(audio);
+      mediaSource.connect(analyser);
+      analyser.connect(audioCtx.destination);
+    }
+    if(audioCtx.state==='suspended')await audioCtx.resume();
+    return true;
+  }catch(err){
+    console.warn('Web Audio analyser unavailable; using fallback animation.',err);
+    return false;
+  }
+}
+
+function replayClass(name,duration){
+  player.classList.remove(name);
+  void player.offsetWidth;
+  player.classList.add(name);
+  const id=setTimeout(()=>player.classList.remove(name),duration);
+  if(name==='start-burst'){clearTimeout(startFxTimer);startFxTimer=id}
+  if(name==='ending'){clearTimeout(endFxTimer);endFxTimer=id}
+}
+
 btn.onclick=async()=>{
   if(!audio.src)return;
-  if(audio.paused){try{await audio.play()}catch(e){}}else audio.pause();
+  if(audio.paused){
+    try{
+      await ensureAudioAnalysis();
+      await audio.play();
+    }catch(e){console.error(e)}
+  }else{
+    audio.pause();
+  }
 };
-audio.onplay=()=>{player.classList.add('playing');setIcon(true)};
-audio.onpause=()=>{player.classList.remove('playing');setIcon(false)};
-audio.onended=()=>{player.classList.remove('playing');setIcon(false)};
+audio.onplay=()=>{
+  player.classList.remove('ending');
+  player.classList.add('playing');
+  replayClass('start-burst',2300);
+  setIcon(true);
+};
+audio.onpause=()=>{
+  if(!audio.ended)player.classList.remove('playing');
+  setIcon(false);
+};
+audio.onended=()=>{
+  player.classList.remove('playing','start-burst');
+  replayClass('ending',2200);
+  setIcon(false);
+};
 
 let currentAudioURL='';
 file.onchange=async()=>{
@@ -276,6 +360,8 @@ file.onchange=async()=>{
     const blob=new Blob([buffer],{type});
     currentAudioURL=URL.createObjectURL(blob);
     audio.src=currentAudioURL;
+    player.classList.remove('playing','start-burst','ending');
+    setIcon(false);
     audio.load();
 
     // Safariでmetadata取得が遅い場合にも明示的に読み込みを促す。
@@ -297,20 +383,47 @@ file.onchange=async()=>{
   }
 };
 
+const leftBars=[...document.querySelectorAll('#waveL .bar')];
+const rightBars=[...document.querySelectorAll('#waveR .bar')];
+
+function sampledEnergy(i,total){
+  if(!analyser||!freqData)return 0;
+  const minBin=2,maxBin=Math.min(freqData.length-1,54);
+  const pos=i/Math.max(1,total-1);
+  const center=Math.round(minBin+(maxBin-minBin)*pos);
+  let sum=0,count=0;
+  for(let k=-2;k<=2;k++){
+    const idx=Math.max(minBin,Math.min(maxBin,center+k));
+    sum+=freqData[idx];count++;
+  }
+  return (sum/count)/255;
+}
+
+function renderBar(b,energy,on){
+  const base=+b.dataset.base;
+  const response=on?Math.min(1,Math.pow(energy*1.9,.72)):0;
+  const h=on?Math.max(13,base*(.62+1.08*response)):base;
+  const glow=on?8+26*response:8;
+  b.style.height=h+'%';
+  b.style.opacity=on?(.78+.22*response):.96;
+  b.style.boxShadow=on
+    ?`0 0 5px rgba(255,244,205,.95),0 0 ${glow}px rgba(232,187,91,.82),0 0 ${glow+13}px rgba(198,145,42,.32)`
+    :'0 0 4px rgba(255,226,151,.38),0 0 10px rgba(223,178,82,.22),0 1px 2px rgba(110,73,15,.14)';
+}
+
 function animate(t){
   const on=!audio.paused&&!audio.ended;
-  document.querySelectorAll('.bar').forEach(b=>{
-    const base=+b.dataset.base,i=+b.dataset.i;
-    const shimmer=.5+.5*Math.sin(t/135+i*.88);
-    const k=on?.70+.56*shimmer:1;
-    b.style.height=(base*k)+'%';
-    b.style.opacity=on?.78+.22*(.5+.5*Math.sin(t/180+i*.72)):.96;
-    if(on){
-      const glow=8+10*shimmer;
-      b.style.boxShadow=`0 0 5px rgba(255,239,190,.9),0 0 ${glow}px rgba(230,184,85,.72),0 0 ${glow+12}px rgba(198,145,42,.26)`;
-    }else{
-      b.style.boxShadow='0 0 4px rgba(255,226,151,.38),0 0 10px rgba(223,178,82,.22),0 1px 2px rgba(110,73,15,.14)';
-    }
+  const real=on&&analyser&&freqData&&audioCtx&&audioCtx.state==='running';
+  if(real)analyser.getByteFrequencyData(freqData);
+
+  leftBars.forEach((b,i)=>{
+    const e=real?sampledEnergy(i,leftBars.length):on?.18+.16*(.5+.5*Math.sin(t/170+i*.83)):0;
+    renderBar(b,e,on);
+  });
+  rightBars.forEach((b,i)=>{
+    const mirror=rightBars.length-1-i;
+    const e=real?sampledEnergy(mirror,rightBars.length):on?.18+.16*(.5+.5*Math.sin(t/170+mirror*.83)):0;
+    renderBar(b,e,on);
   });
   requestAnimationFrame(animate);
 }
