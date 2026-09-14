@@ -32,19 +32,81 @@ body{min-height:100svh;padding-bottom:28px}
   gap:2.2%;
 }
 .wave{
+  position:relative;z-index:10;
   height:55%;display:flex;align-items:center;gap:2.4%;
 }
 .wave.left{justify-content:flex-end}
 .wave.right{justify-content:flex-start}
 .bar{
   width:2.4%;min-width:2px;border-radius:99px;
-  background:linear-gradient(180deg,var(--gold1),var(--gold2) 55%,var(--gold3));
-  box-shadow:0 1px 2px rgba(110,73,15,.13);
+  background:
+    linear-gradient(180deg,#fff2c7 0%,var(--gold1) 18%,#e4bd65 52%,var(--gold2) 72%,var(--gold3) 100%);
+  box-shadow:
+    0 0 4px rgba(255,226,151,.38),
+    0 0 10px rgba(223,178,82,.22),
+    0 1px 2px rgba(110,73,15,.14);
   transform-origin:center;
+  transition:filter .18s ease, box-shadow .18s ease;
+}
+
+
+.sparkles{
+  position:absolute;
+  inset:-18% -4%;
+  pointer-events:none;
+  z-index:8;
+  overflow:visible;
+}
+.sparkle{
+  position:absolute;
+  width:8px;height:8px;
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.2) rotate(0deg);
+  filter:drop-shadow(0 0 5px rgba(255,225,153,.78));
+}
+.sparkle::before,.sparkle::after{
+  content:"";position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff8dc 0%,#f1d58e 45%,#c89436 100%);
+}
+.sparkle::before{width:2px;height:100%}
+.sparkle::after{width:100%;height:2px}
+.sparkle.small{width:5px;height:5px}
+.sparkle.large{width:12px;height:12px}
+.playing .sparkle{
+  animation:sparklePulse var(--dur,1.9s) ease-in-out var(--delay,0s) infinite;
+}
+@keyframes sparklePulse{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(0deg)}
+  16%{opacity:.25}
+  44%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(45deg)}
+  68%{opacity:.48;transform:translate(-50%,-50%) scale(.78) rotate(75deg)}
+}
+.playing .bar{
+  filter:brightness(1.28) saturate(1.12);
+  box-shadow:
+    0 0 5px rgba(255,239,190,.82),
+    0 0 12px rgba(233,190,96,.72),
+    0 0 22px rgba(205,151,47,.30);
+}
+.playing .disc{
+  box-shadow:
+    0 8px 17px rgba(5,33,65,.19),
+    0 0 16px rgba(220,179,88,.14),
+    inset 0 0 0 6px rgba(255,255,255,.015);
+}
+.playing .play{
+  box-shadow:
+    0 6px 13px rgba(77,51,7,.22),
+    0 0 11px rgba(255,225,157,.72),
+    0 0 26px rgba(204,151,50,.28),
+    inset 0 1px 0 rgba(255,255,255,.62),
+    inset 0 -6px 12px rgba(88,53,5,.10);
 }
 
 .core{
-  position:relative;
+  position:relative;z-index:11;
   width:clamp(108px,27.5vw,146px);
   aspect-ratio:1;border-radius:50%;
   display:grid;place-items:center;
@@ -127,6 +189,7 @@ body{min-height:100svh;padding-bottom:28px}
 <div class="stage">
   <div class="card">
     <div class="player" id="player">
+      <div class="sparkles" id="sparkles" aria-hidden="true"></div>
       <div class="wave left" id="waveL"></div>
       <div class="core">
         <span class="ripple r1"></span><span class="ripple r2"></span><span class="ripple r3"></span>
@@ -155,6 +218,23 @@ function makeWave(el,rev=false){
 }
 makeWave(document.getElementById('waveL'));
 makeWave(document.getElementById('waveR'),true);
+
+// 再生中だけ現れるシャンパンゴールドの光。背景画像は変更せずHTML/CSSのみ。
+const sparkleLayer=document.getElementById('sparkles');
+[
+  [7,28,'small',0.10,1.65],[16,63,'',0.55,2.05],[25,18,'large',1.05,2.45],
+  [35,76,'small',1.35,1.80],[47,12,'',0.35,2.20],[58,78,'large',0.85,2.70],
+  [69,20,'small',1.50,1.95],[80,66,'',0.20,2.35],[92,32,'large',1.15,2.55],
+  [13,42,'',1.70,2.10],[88,49,'small',0.70,1.75]
+].forEach(([x,y,size,delay,dur])=>{
+  const sp=document.createElement('span');
+  sp.className='sparkle '+size;
+  sp.style.left=x+'%';
+  sp.style.top=y+'%';
+  sp.style.setProperty('--delay',delay+'s');
+  sp.style.setProperty('--dur',dur+'s');
+  sparkleLayer.appendChild(sp);
+});
 
 const audio=document.getElementById('audio'), file=document.getElementById('audioFile');
 const player=document.getElementById('player'), btn=document.getElementById('playBtn');
@@ -221,9 +301,16 @@ function animate(t){
   const on=!audio.paused&&!audio.ended;
   document.querySelectorAll('.bar').forEach(b=>{
     const base=+b.dataset.base,i=+b.dataset.i;
-    const k=on?.72+.48*(.5+.5*Math.sin(t/145+i*.91)):1;
+    const shimmer=.5+.5*Math.sin(t/135+i*.88);
+    const k=on?.70+.56*shimmer:1;
     b.style.height=(base*k)+'%';
-    b.style.opacity=on?.74+.24*(.5+.5*Math.sin(t/205+i*.77)):.96;
+    b.style.opacity=on?.78+.22*(.5+.5*Math.sin(t/180+i*.72)):.96;
+    if(on){
+      const glow=8+10*shimmer;
+      b.style.boxShadow=`0 0 5px rgba(255,239,190,.9),0 0 ${glow}px rgba(230,184,85,.72),0 0 ${glow+12}px rgba(198,145,42,.26)`;
+    }else{
+      b.style.boxShadow='0 0 4px rgba(255,226,151,.38),0 0 10px rgba(223,178,82,.22),0 1px 2px rgba(110,73,15,.14)';
+    }
   });
   requestAnimationFrame(animate);
 }
