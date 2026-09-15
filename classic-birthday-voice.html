@@ -260,6 +260,7 @@ function blobToDataURL(blob){
 function loadImage(src){
   return new Promise((resolve,reject)=>{
     const img=new Image();
+    img.crossOrigin='anonymous';
     img.onload=()=>resolve(img);
     img.onerror=()=>reject(new Error('image_load_failed'));
     img.src=src
@@ -275,34 +276,53 @@ async function normalizeAudioBlob(blob){
 let photoFocusX=.5,photoFocusY=.5,photoZoom=1,redrawPhoto=null;
 
 (async()=>{
-  let raw='{}';
-  try{
-    raw=(parent&&parent.sessionStorage?parent.sessionStorage.getItem('koephoto-draft'):null)
-      ||sessionStorage.getItem('koephoto-draft')||'{}'
-  }catch(e){
-    raw=sessionStorage.getItem('koephoto-draft')||'{}'
-  }
-  const d=JSON.parse(raw);
-  photoFocusX=Number.isFinite(Number(d.photoFocusX))?clamp(Number(d.photoFocusX),0,1):.5;
-  photoFocusY=Number.isFinite(Number(d.photoFocusY))?clamp(Number(d.photoFocusY),0,1):.5;
-  photoZoom=Number.isFinite(Number(d.photoZoom))?clamp(Number(d.photoZoom),1,2.5):1;
-  $('recipient').textContent=[...(d.recipient||'')].slice(0,15).join('');
-  $('sender').textContent=[...(d.sender||'')].slice(0,15).join('');
+  const publicId=new URLSearchParams(location.search).get('id')||'';
+  let d={},photoSource=null,audioSource=null,isPublic=false;
 
   try{
-    const [photo,audioBlob]=await Promise.all([get('photo'),get('audio')]);
+    if(/^[0-9a-f-]{36}$/i.test(publicId)){
+      const endpoint='https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/voice-card-public?id='
+        +encodeURIComponent(publicId)+'&format=json';
+      const res=await fetch(endpoint,{cache:'no-store'});
+      if(!res.ok)throw new Error('public_card_load_failed_'+res.status);
+      const p=await res.json();
+      if(!p||!p.ok)throw new Error('public_card_not_found');
+      d={
+        recipient:p.recipient||'',
+        sender:p.sender||'',
+        photoFocusX:Number(p.photo_focus_x??.5),
+        photoFocusY:Number(p.photo_focus_y??.5),
+        photoZoom:Number(p.photo_zoom??1)
+      };
+      photoSource=p.photo_url||null;
+      audioSource=p.audio_url||null;
+      isPublic=true;
+    }else{
+      let raw='{}';
+      try{
+        raw=(parent&&parent.sessionStorage?parent.sessionStorage.getItem('koephoto-draft'):null)
+          ||sessionStorage.getItem('koephoto-draft')||'{}'
+      }catch(e){
+        raw=sessionStorage.getItem('koephoto-draft')||'{}'
+      }
+      d=JSON.parse(raw);
+      const media=await Promise.all([get('photo'),get('audio')]);
+      if(media[0] instanceof Blob&&media[0].size)photoSource=await blobToDataURL(media[0]);
+      if(media[1] instanceof Blob&&media[1].size){
+        const safeBlob=await normalizeAudioBlob(media[1]);
+        audioSource=URL.createObjectURL(safeBlob)
+      }
+    }
 
-    if(photo instanceof Blob&&photo.size){
-      const img=await loadImage(await blobToDataURL(photo));
+    photoFocusX=Number.isFinite(Number(d.photoFocusX))?clamp(Number(d.photoFocusX),0,1):.5;
+    photoFocusY=Number.isFinite(Number(d.photoFocusY))?clamp(Number(d.photoFocusY),0,1):.5;
+    photoZoom=Number.isFinite(Number(d.photoZoom))?clamp(Number(d.photoZoom),1,2.5):1;
+    $('recipient').textContent=[...(d.recipient||'')].slice(0,15).join('');
+    $('sender').textContent=[...(d.sender||'')].slice(0,15).join('');
+
+    if(photoSource){
+      const img=await loadImage(photoSource);
       const c=$('photoCanvas'),ctx=c.getContext('2d');
-
-      // 新Classic Birthdayボイスページの写真枠内側。背景の金枠を隠さない。
-      const frame=[
-        {x:121,y:502},
-        {x:903,y:502},
-        {x:903,y:942},
-        {x:121,y:942}
-      ];
       const minX=121,maxX=903,minY=502,maxY=942;
       const fw=maxX-minX,fh=maxY-minY;
       const ir=img.width/img.height,fr=fw/fh;
@@ -315,21 +335,21 @@ let photoFocusX=.5,photoFocusY=.5,photoZoom=1,redrawPhoto=null;
         const sx=(img.width-sw)>0.5?(img.width-sw)*photoFocusX:0;
         const sy=(img.height-sh)>0.5?(img.height-sh)*photoFocusY:0;
         ctx.save();
-        ctx.beginPath();
-        ctx.rect(minX,minY,fw,fh);
-        ctx.clip();
+        ctx.beginPath();ctx.rect(minX,minY,fw,fh);ctx.clip();
         ctx.drawImage(img,sx,sy,sw,sh,minX,minY,fw,fh);
         ctx.restore()
       };
       redrawPhoto()
     }
 
-    if(audioBlob instanceof Blob&&audioBlob.size){
-      const safeBlob=await normalizeAudioBlob(audioBlob);
-      $('audio').src=URL.createObjectURL(safeBlob);
+    if(audioSource){
+      if(isPublic)$('audio').crossOrigin='anonymous';
+      $('audio').src=audioSource;
       $('audio').load()
     }
-  }catch(e){console.error(e)}
+  }catch(e){
+    console.error(e);
+  }
 })();
 
 window.addEventListener('message',e=>{
