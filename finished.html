@@ -7,153 +7,63 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
+
 :root{
-  --bg:#f4f0e9;--paper:#fffdf9;--ink:#4d4339;--muted:#93877c;
-  --line:#e5dbcf;--accent:#a88969;--accent-deep:#8e7054;--green:#5e755f;
+  --bg:#fbfaf8;--paper:#fff;--ink:#282929;--muted:#7c7e7e;
+  --line:#e9e7e3;--line-strong:#d9d7d2;--soft:#f6f4f0;--soft2:#f4f2ee;
+  --button:#2d2e2e;--ui:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
 }
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-
-html,body{margin:0;min-height:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
-  background:radial-gradient(circle at 50% -8%,rgba(255,255,255,.96),rgba(255,255,255,0) 35%),var(--bg);
-  color:var(--ink);
-}
-.wrap{width:min(100%,760px);margin:0 auto;padding:26px 18px 58px}
-.flow{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:26px;font-size:10.5px;color:#b1a79f;white-space:nowrap}
-.flow>span{display:inline-flex;align-items:center;height:18px;line-height:18px}
-.flow .arrow{color:#c8bfb6}
-.flow .current{position:relative;color:var(--ink);font-weight:700}
-.flow .current::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:999px;background:#b69570}
-
-.product{overflow:hidden;border:1px solid rgba(219,208,196,.95);border-radius:30px;background:rgba(255,253,249,.96);box-shadow:0 22px 55px rgba(83,67,52,.09)}
-.hero{
-  position:relative;padding:30px 22px 26px;text-align:center;border-bottom:1px solid var(--line);
-  background:radial-gradient(circle at 85% 5%,rgba(181,150,118,.13),transparent 32%),linear-gradient(180deg,#fffdf9 0%,#fbf7f2 100%);
-}
-.hero::before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;left:-105px;top:-95px;background:radial-gradient(circle,rgba(186,157,126,.13),rgba(186,157,126,0) 70%)}
-.title{margin:0 0 8px;font-size:24px;line-height:1.48;letter-spacing:.01em;font-weight:750}
-.lead{margin:0 auto;max-width:470px;color:#796e64;font-size:12.5px;line-height:1.75}
-.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:17px}
-.badge{display:inline-flex;align-items:center;min-height:28px;padding:6px 10px;border-radius:999px;border:1px solid #e5dbcf;background:rgba(255,255,255,.72);color:#776b61;font-size:11px;font-weight:700}
-.badge.ok{color:var(--green);background:#f4f8f3;border-color:#dce8da}
-
-.content{padding:22px 18px 24px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border-radius:18px;background:#ece5dc}
-.tabs button{position:relative;min-height:52px;border:0;border-radius:14px;background:transparent;color:#766a60;font:inherit;cursor:pointer}
-.tabs button .jp{display:block;font-size:14px;font-weight:800;line-height:1.2}
-.tabs button .en{display:block;margin-top:4px;font-size:8.5px;letter-spacing:.12em;color:#aa9e93;font-weight:700}
-.tabs button.on{color:var(--ink);background:#fffdf9;box-shadow:0 4px 13px rgba(77,62,48,.08)}
-.tabs button.on .en{color:#92775f}
-
-.panel{display:none}
-.panel.on{display:block}
-.preview-stage{
-  position:relative;margin-top:18px;padding:22px 16px 18px;border:1px solid #e7ded4;border-radius:24px;
-  background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,243,236,.94)),#f5f0ea;
-}
-.stage-label{display:flex;justify-content:space-between;align-items:center;margin:0 2px 14px;color:#8d8176;font-size:10.5px;letter-spacing:.04em}
-.stage-label strong{color:#65594f;font-size:11px}
-.product-frame{width:min(100%,360px);margin:0 auto;padding:11px;border-radius:20px;background:#fff;box-shadow:0 18px 36px rgba(83,67,52,.13)}
-#cardCanvas{display:block;width:100%;height:auto;border-radius:10px;background:#fff}
-.voice-wrap{width:min(100%,430px);margin:0 auto}
-.voice-card{position:relative;width:100%;aspect-ratio:1060/1484;overflow:hidden;background:#fbf7ee;box-shadow:0 10px 28px rgba(30,35,45,.08)}
-.voice-photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}
-.voice-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}a{color:inherit}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 72px}
+.finished-header{height:78px;display:flex;align-items:center;margin:0 calc(50% - 50vw);padding:0 max(28px,calc((100vw - 1120px)/2));background:#fff;border-bottom:1px solid var(--line)}
+.finished-brand{display:block;font-size:0;width:190px;height:54px;background:url("assets/logo-cropped.png") left center/contain no-repeat}
+.progress{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:34px 0 38px}
+.progress::before{content:"";position:absolute;left:12.5%;right:12.5%;top:17px;height:1px;background:#dfddd9;z-index:0}
+.progress-step{position:relative;z-index:1;text-align:center;color:#9a9b9b}.progress-dot{width:35px;height:35px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:#f0efec;border:1px solid #ebe9e5;color:#777;font-size:12px}
+.progress-step.current .progress-dot{background:var(--button);border-color:var(--button);color:#fff}.progress-label{font-size:10px;font-weight:600}.progress-step.current .progress-label{color:#333}
+.page-top{margin-bottom:24px}.page-top .eyebrow{display:block;font-size:8.5px;letter-spacing:.14em;color:#aaa;margin-bottom:8px}.page-top h1{font-family:var(--serif);font-size:31px;font-weight:500;line-height:1.4;letter-spacing:.035em;margin:0}.page-top p{font-size:11px;color:var(--muted);line-height:1.8;margin:8px 0 0}
+.product{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:30px 0 32px}
+.hero,.content{max-width:760px;margin:0 auto}.hero{position:relative;padding:0 0 26px;text-align:left;border-bottom:1px solid var(--line)}
+.title{font-family:var(--serif);margin:0;font-size:22px;line-height:1.55;letter-spacing:.025em;font-weight:500}.lead{margin:8px 0 0;color:var(--muted);font-size:10.5px;line-height:1.8}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.badge{display:inline-flex;align-items:center;min-height:28px;padding:6px 10px;border:1px solid var(--line);background:#fff;color:#777;font-size:9.5px;font-weight:500}.badge.ok{color:#555;background:#f8f7f4;border-color:var(--line-strong)}
+.content{padding-top:26px}.tabs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong)}
+.tabs button{position:relative;min-height:58px;border:0;border-right:1px solid var(--line);background:#fff;color:#929292;cursor:pointer}.tabs button:last-child{border-right:0}.tabs button .jp{display:block;font-size:11px;font-weight:600;line-height:1.2}.tabs button .en{display:block;margin-top:5px;font-size:7.5px;letter-spacing:.14em;color:#aaa;font-weight:500}.tabs button.on{color:#333;background:#f8f7f4}.tabs button.on::after{content:"";position:absolute;left:18px;right:18px;bottom:-1px;height:2px;background:var(--button)}
+.panel{display:none}.panel.on{display:block}
+.preview-stage{position:relative;margin-top:18px;background:var(--soft2);border:1px solid var(--line);padding:16px}
+.stage-label{display:flex;justify-content:space-between;align-items:baseline;margin:0 1px 10px;padding-bottom:8px;border-bottom:1px solid var(--line);color:#999;font-size:8px;letter-spacing:.12em}.stage-label strong{color:#555;font-size:10.5px;letter-spacing:0;font-weight:600}
+.product-frame{width:min(100%,430px);margin:0 auto;background:#fff}
+#cardCanvas{display:block;width:100%;height:auto;background:#fff}
+.voice-wrap{width:min(100%,430px);margin:0 auto}.voice-card{position:relative;width:100%;aspect-ratio:1060/1484;overflow:hidden;background:#fbf7ee}.voice-photo{position:absolute;inset:0;width:100%;height:100%;z-index:1;background:transparent}.voice-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:3;pointer-events:none}
 .voice-recipient,.voice-sender{position:absolute;z-index:4;color:#0b347f;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;font-weight:500;white-space:nowrap;overflow:hidden;text-align:center}
-.voice-recipient{left:31.887%;width:39.811%;top:18.329%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(15px,3.5vw,22px)}
-.voice-sender{left:39.717%;width:30.755%;top:83.356%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(14px,3.2vw,21px)}
-.player{
-  position:absolute;z-index:4;
-  left:11.13%;top:70.35%;width:77.83%;height:7.41%;
-  display:grid;grid-template-columns:34px 1fr;
-  align-items:center;column-gap:14px;
-  padding:8px 26px 10px 28px;
-  transform:translateY(-3px);
-}
-.play{
-  width:34px;height:34px;border:0;border-radius:50%;
-  background:#0b347f;color:#fff;
-  display:grid;place-items:center;
-  font-size:15px;line-height:1;cursor:pointer;
-  flex:0 0 auto;padding:0;
-  -webkit-tap-highlight-color:transparent;
-  transform:translateY(-2px);
-}
-.track{min-width:0;align-self:center}
-.seek{
-  --progress:0%;
-  -webkit-appearance:none;appearance:none;
-  display:block;width:100%;height:16px;margin:0;
-  background:transparent;cursor:pointer;
-}
-.seek::-webkit-slider-runnable-track{
-  height:3px;border-radius:999px;
-  background:linear-gradient(to right,#0b347f 0 var(--progress),#d6c7ae var(--progress) 100%);
-}
-.seek::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;
-  width:12px;height:12px;border-radius:50%;
-  margin-top:-4.5px;
-  background:#fff;border:2px solid #0b347f;
-  box-shadow:0 1px 3px rgba(0,0,0,.16);
-}
-.seek::-moz-range-track{height:3px;border-radius:999px;background:#d6c7ae}
-.seek::-moz-range-progress{height:3px;border-radius:999px;background:#0b347f}
-.seek::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0b347f}
-.time{
-  margin-top:-1px;
-  font-size:11px;line-height:1;
-  color:#756a5b;
-  display:flex;justify-content:space-between;
-  font-variant-numeric:tabular-nums;
-}
-.voice-brand{text-align:center;padding-top:14px}
-.voice-brand-name{font-size:18px;font-weight:900;letter-spacing:.08em;color:#5b4b3f}
-.voice-tagline{margin-top:5px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.18em;color:#746c62}
-.loading{
-  min-height:390px;display:grid;place-items:center;text-align:center;padding:28px;border-radius:12px;
-  color:#948778;font-size:12px;line-height:1.75;background:#fbf8f4;
-}
-.error{color:#9b5148}
+.voice-recipient{left:31.887%;width:39.811%;top:18.329%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(15px,3.5vw,22px)}.voice-sender{left:39.717%;width:30.755%;top:83.356%;transform:translateY(calc(-100% + 1.6px));font-size:clamp(14px,3.2vw,21px)}
+.voice-player{position:absolute;z-index:4;left:11.13%;top:70.35%;width:77.83%;height:7.41%;display:grid;grid-template-columns:34px 1fr;align-items:center;column-gap:14px;padding:8px 26px 10px 28px;transform:translateY(-3px)}.voice-play{width:34px;height:34px;border:0;border-radius:50%;background:#0b347f;color:#fff;display:grid;place-items:center;font-size:15px;line-height:1;cursor:pointer;padding:0;transform:translateY(-2px)}.voice-track{min-width:0}.voice-seek{-webkit-appearance:none;appearance:none;display:block;width:100%;height:16px;margin:0;background:transparent}.voice-seek::-webkit-slider-runnable-track{height:3px;border-radius:999px;background:linear-gradient(to right,#0b347f 0 var(--progress,0%),#d6c7ae var(--progress,0%) 100%)}.voice-seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;margin-top:-4.5px;background:#fff;border:2px solid #0b347f}.voice-time{margin-top:-1px;font-size:11px;line-height:1;color:#756a5b;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.voice-brand{text-align:center;padding-top:14px}.voice-brand-name{font-size:15px;font-weight:700;letter-spacing:.08em;color:#555}.voice-tagline{margin-top:4px;font-family:Georgia,"Times New Roman",serif;font-size:8px;letter-spacing:.16em;color:#999}
+.loading{min-height:390px;display:grid;place-items:center;text-align:center;padding:28px;color:#999;font-size:10.5px;line-height:1.75;background:#f8f7f4}.error{color:#8b5d58}
+.meta{margin-top:22px}.meta-card{display:grid;grid-template-columns:210px 1fr;gap:20px;padding:14px 4px;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);background:#fff}.meta-label{font-size:8.5px;letter-spacing:.1em;color:#999}.meta-value{font-size:11px;font-weight:500;color:#555}
+.actions{display:grid;gap:10px;margin-top:26px}.btn{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;border-radius:999px;text-decoration:none;font-size:11px;font-weight:600;cursor:pointer}.primary{color:#fff;background:var(--button);border:1px solid var(--button)}.secondary{color:#555;background:#fff;border:1px solid var(--line-strong)}.btn[disabled]{opacity:.45;cursor:not-allowed}.note{margin:12px 6px 0;text-align:center;color:#999;font-size:9.5px;line-height:1.7}
+@media(max-width:760px){.wrap{padding:0 18px 52px}.finished-header{height:70px;padding:0 20px}.finished-brand{width:164px;height:48px}.progress{margin:28px 0 32px}.page-top h1{font-size:27px}.product{margin:0 -18px;padding:26px 18px 30px}.hero,.content{max-width:none}.preview-stage{padding:12px}.meta-card{grid-template-columns:1fr;gap:5px}}
+@media(max-width:390px){.voice-player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.voice-play{width:30px;height:30px;font-size:13px}.voice-time{font-size:10px}}
 
-.meta{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}
-.meta-card{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fffdfb}
-.meta-label{font-size:10px;color:#a19589;margin-bottom:4px}
-.meta-value{font-size:12px;font-weight:750;color:#62564c}
-
-.actions{display:grid;gap:10px;margin-top:18px}
-.btn{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;border-radius:17px;border:0;text-decoration:none;font-size:15px;font-weight:800;cursor:pointer}
-.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-deep));box-shadow:0 12px 22px rgba(143,113,85,.18)}
-.secondary{color:var(--ink);background:#fff;border:1px solid #d5c8ba}
-.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
-.note{margin:14px 6px 0;text-align:center;color:#9a8e82;font-size:10.5px;line-height:1.7}
-
-@media(max-width:390px){.player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.play{width:30px;height:30px;font-size:13px}.time{font-size:10px}}
-@media(max-width:420px){
-  .wrap{padding-left:14px;padding-right:14px}
-  .product{border-radius:27px}
-  .hero{padding:28px 18px 24px}
-  .title{font-size:23px;line-height:1.5}
-  .content{padding:20px 14px 22px}
-  .preview-stage{padding:18px 12px 16px}
-  }
 </style>
 </head>
 <body>
 <main class="wrap">
-  <div class="flow" aria-label="作成ステップ">
-    <span>1 入力</span><span class="arrow">→</span>
-    <span>2 プレビュー</span><span class="arrow">→</span>
-    <span>3 購入確認</span><span class="arrow">→</span>
-    <span class="current">4 完成</span>
-  </div>
+  <header class="finished-header"><a class="finished-brand" href="index.html" aria-label="コエフォト">コエフォト</a></header>
+  <nav class="progress" aria-label="作成ステップ">
+    <div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
+    <div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div>
+    <div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div>
+    <div class="progress-step current"><div class="progress-dot">4</div><div class="progress-label">完成</div></div>
+  </nav>
+  <div class="page-top"><span class="eyebrow">FINISHED</span><h1>完成したコエフォト</h1><p>贈るカードと、QRコードから開くボイスページをご確認いただけます。</p></div>
 
   <section class="product">
     <header class="hero">
-      <h1 class="title">大切な人へ贈る<br>コエフォトができました</h1>
-      <p class="lead">贈るカードと、QRコードから開くページを確認できます。</p>
+      <h2 class="title">大切な人へ贈る<br>コエフォトができました</h2>
+      <p class="lead">カードの保存と、ボイスページの確認ができます。</p>
       <div class="badges">
         <span class="badge ok">✓ 購入済み</span>
         <span class="badge" id="templateBadge">Classic Birthday</span>
@@ -192,11 +102,11 @@ body{
                 <canvas id="voicePhotoCanvas" class="voice-photo" width="1060" height="1484" aria-label="思い出の写真"></canvas>
                 <img class="voice-art" src="koefoto_classic_birthday_overlay.png" alt="">
                 <div id="voiceRecipient" class="voice-recipient"></div>
-                <div class="player">
-                  <button class="play" id="voicePlay" type="button" aria-label="再生">▶</button>
-                  <div class="track">
-                    <input id="voiceSeek" class="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="再生位置">
-                    <div class="time"><span id="voiceCur">0:00</span><span id="voiceDur">0:00</span></div>
+                <div class="voice-player">
+                  <button class="voice-play" id="voicePlay" type="button" aria-label="再生">▶</button>
+                  <div class="voice-track">
+                    <input id="voiceSeek" class="voice-seek" type="range" min="0" max="100" value="0" step="0.1">
+                    <div class="voice-time"><span id="voiceCur">0:00</span><span id="voiceDur">0:00</span></div>
                   </div>
                 </div>
                 <div id="voiceSender" class="voice-sender"></div>
@@ -228,14 +138,19 @@ body{
   </section>
 </main>
 
-<script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 const SUPABASE_URL='https://qbutohdqtgzjejnwdqcx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_hdele7SzVbKtlpCuFJLQpQ_F5lu4ABF';
+const ACCOUNT_URL=SUPABASE_URL+'/functions/v1/account-cards-v1';
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const STATUS_URL=SUPABASE_URL+'/functions/v1/payment-status-v2';
 const $=id=>document.getElementById(id);
 
 const qs=new URLSearchParams(location.search);
 const sessionId=qs.get('session_id')||'';
 const publicId=qs.get('public_id')||'';
+const accountMode=qs.get('account')==='1';
 
 let current='card';
 let cardReady=false;
@@ -408,18 +323,38 @@ async function renderCard(d){
   $('saveBtn').disabled=false;
 }
 async function load(){
-  if(!sessionId.startsWith('cs_')||!/^[0-9a-f-]{36}$/i.test(publicId)){
+  if(!/^[0-9a-f-]{36}$/i.test(publicId)){
     fail('完成版の情報が不足しています。');
     return;
   }
   try{
-    const r=await fetch(STATUS_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({session_id:sessionId,public_id:publicId})
-    });
-    const d=await r.json().catch(()=>({}));
-    if(!r.ok||!d.ok||!d.paid){fail('購入済みの完成版を確認できませんでした。');return}
+    let d=null;
+    if(accountMode){
+      const {data:{session}}=await sb.auth.getSession();
+      if(!session){
+        const returnTo='finished.html?account=1&public_id='+encodeURIComponent(publicId);
+        sessionStorage.setItem('koephoto-auth-return',returnTo);
+        location.href='mypage.html';
+        return;
+      }
+      const r=await fetch(ACCOUNT_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+        body:JSON.stringify({public_id:publicId})
+      });
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok||!j.card){fail(r.status===410?'保存期間が終了しています。':'購入済みの完成版を確認できませんでした。');return}
+      d={...j.card,ok:true,paid:true};
+    }else{
+      if(!sessionId.startsWith('cs_')){fail('完成版の情報が不足しています。');return}
+      const r=await fetch(STATUS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({session_id:sessionId,public_id:publicId})
+      });
+      d=await r.json().catch(()=>({}));
+      if(!r.ok||!d.ok||!d.paid){fail('購入済みの完成版を確認できませんでした。');return}
+    }
     payload=d;
     $('period').textContent=formatDate(d.expires_at)+'まで';
     $('templateBadge').textContent=d.template_key==='classic_birthday'?'Classic Birthday':(d.template_key||'Template');
