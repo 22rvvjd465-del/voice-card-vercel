@@ -4,12 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コエフォト</title>
-<script>
-  location.replace('classic-birthday-voice.html' + location.search + location.hash);
-</script>
-<noscript>
-  <meta http-equiv="refresh" content="0; url=classic-birthday-voice.html">
-</noscript>
+<style>
+html,body{margin:0;background:#f4f1ea}#voiceFrame{display:block;width:100%;border:0;background:#f4f1ea;min-height:100svh}
+</style>
 </head>
-<body></body>
+<body>
+<iframe id="voiceFrame" title="コエフォト" scrolling="no"></iframe>
+<script>
+const frame=document.getElementById('voiceFrame');
+frame.src='classic-birthday-voice.html'+location.search+location.hash;
+function fit(){try{const d=frame.contentDocument;const p=d&&d.querySelector('.page');if(p)frame.style.height=Math.ceil(p.getBoundingClientRect().height+8)+'px'}catch(e){}}
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;if(!d)return;
+  const footer=d.querySelector('.brand');if(!footer)return;
+  const style=d.createElement('style');style.textContent=`
+    .route-save-area{width:var(--card-w);display:flex;justify-content:center;padding:22px 18px 8px}
+    .route-save-btn{width:min(100%,390px);min-height:56px;border:1px solid rgba(169,119,33,.42);border-radius:18px;background:#fbf7ee;color:#6b4a35;display:flex;align-items:center;justify-content:center;gap:11px;padding:0 22px;font:700 15px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;letter-spacing:.035em;box-shadow:0 8px 22px rgba(139,105,73,.12);cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .route-save-icon{width:25px;height:25px;border:1.5px solid #b98d61;border-radius:50%;display:grid;place-items:center;font-size:17px;line-height:1}
+    .route-save-btn:active{transform:translateY(1px)}
+  `;d.head.appendChild(style);
+  const area=d.createElement('div');area.className='route-save-area';area.innerHTML='<button class="route-save-btn" type="button"><span class="route-save-icon">↓</span><span>端末に保存</span></button>';
+  footer.parentNode.insertBefore(area,footer);
+  area.querySelector('button').addEventListener('click',async()=>{
+    const a=d.getElementById('audio');const src=a&&a.src;if(!src){alert('音声の読み込み後にもう一度お試しください。');return}
+    const btn=area.querySelector('button'),old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span>保存データを準備しています…</span>';
+    try{
+      const r=await fetch(src,{cache:'no-store'});if(!r.ok)throw new Error('audio');const blob=await r.blob();
+      const id=(new URLSearchParams(location.search).get('id')||'voice').replace(/[^A-Za-z0-9_-]/g,'');
+      const file=new File([blob],`koephoto-${id}.m4a`,{type:blob.type||'audio/mp4'});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:'コエフォト',text:'コエフォトの音声を保存'});
+      }else{
+        const u=URL.createObjectURL(blob),link=document.createElement('a');link.href=u;link.download=file.name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);
+      }
+    }catch(e){if(e&&e.name!=='AbortError')alert('保存データを作成できませんでした。もう一度お試しください。')}
+    finally{btn.disabled=false;btn.innerHTML=old}
+  });
+  fit();setTimeout(fit,500);setTimeout(fit,1500);
+  new ResizeObserver(fit).observe(d.documentElement);
+});
+window.addEventListener('resize',fit);
+</script>
+</body>
 </html>
