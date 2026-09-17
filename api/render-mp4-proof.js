@@ -28,8 +28,8 @@ export default async function handler(req,res){
   const out=path.join(tmp,'proof.mp4');
   // Preserve the already-approved MP4 (including its waveform) as input 0.
   // Only replace the central button area after 0.10 s using a crop from the pause-state card.
-  const filter="[1:v]scale=480:720,crop=112:112:184:402[pause];[0:v][pause]overlay=184:402:enable='gte(t,0.10)'[v]";
+  const filter="[1:v]scale=480:720,crop=50:50:215:438[pauseIcon];[0:v][pauseIcon]overlay=215:438:enable='gte(t,0.10)'[v]";
   await run(ffmpegPath,['-y','-i',sourceMp4,'-loop','1','-framerate','30','-i',pause,'-filter_complex',filter,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','ultrafast','-crf','27','-pix_fmt','yuv420p','-r','30','-c:a','copy','-shortest','-movflags','+faststart',out]);
-  const bytes=await readFile(out); res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','approved-v3-button-postprocess');return res.status(200).send(bytes);
+  const bytes=await readFile(out); res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','approved-v3-button-center-only');return res.status(200).send(bytes);
  }catch(e){return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
