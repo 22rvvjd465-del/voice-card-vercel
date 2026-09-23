@@ -32,8 +32,8 @@ export default async function handler(req,res){
   // from the full-card playing screenshot, then overlay at the identical x/y.
   // No DOM/page coordinate conversion and no generated button artwork.
   const X=190,Y=422,W=100,H=100;
-  const filter=`[1:v]crop=${W}:${H}:${X}:${Y}[patch];[0:v][patch]overlay=${X}:${Y}:enable='gte(t,0.10)':shortest=1[v]`;
+  const filter=`[1:v]scale=480:720,crop=${W}:${H}:${X}:${Y}[patch];[0:v][patch]overlay=${X}:${Y}:enable='gte(t,0.10)':shortest=1[v]`;
   await run(ffmpegPath,['-y','-i',src,'-loop','1','-framerate','30','-i',playing,'-filter_complex',filter,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','ultrafast','-crf','27','-pix_fmt','yuv420p','-r','30','-c:a','copy','-t','3','-movflags','+faststart',out]);
-  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','approved-v3-same-card-player-patch-v1');return res.status(200).send(bytes);
+  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','approved-v3-same-card-player-patch-v2');return res.status(200).send(bytes);
  }catch(e){return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
