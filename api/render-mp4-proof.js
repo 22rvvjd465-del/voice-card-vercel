@@ -31,6 +31,8 @@ export default async function handler(req,res){
   await page.evaluate(()=>clearInterval(window.__koePaintTimer)).catch(()=>{});
   await client.send('Page.stopScreencast').catch(()=>{});
   if(frames.length<8)throw new Error(`too_few_screencast_frames_${frames.length}`);
+  const diagFirst=frames[0]?.ts||0,diagLast=frames.at(-1)?.ts||diagFirst;
+  console.log('KOEPHOTO_CAPTURE_DIAG',JSON.stringify({frames:frames.length,span:+(diagLast-diagFirst).toFixed(3),targetDuration,first:frames.slice(0,5).map(x=>+(x.ts-diagFirst).toFixed(3)),last:frames.slice(-5).map(x=>+(x.ts-diagFirst).toFixed(3))}));
   await browser.close();browser=null;
   const firstTs=frames[0].ts||0;const duration=Math.max(.1,(frames.at(-1).ts||firstTs)-firstTs);
   // Resample the browser screencast to exactly 90 frames. These are the REAL Web player frames:
@@ -46,6 +48,6 @@ export default async function handler(req,res){
   const out=path.join(tmp,'proof.mp4');
   const crop=`crop=${Math.round(rect.w)}:${Math.round(rect.h)}:${Math.round(rect.x)}:${Math.round(rect.y)},scale=480:720`;
   await run(ffmpegPath,['-y','-framerate',String(targetFps),'-i',path.join(tmp,'frame-%03d.jpg'),'-i',audio,'-t',String(targetDuration),'-vf',`${crop},fps=15`,'-map','0:v','-map','1:a?','-c:v','libx264','-preset','ultrafast','-crf','28','-pix_fmt','yuv420p','-r','15','-c:a','aac','-b:a','96k','-shortest','-movflags','+faststart',out]);
-  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-full-audio-fast-v8');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));return res.status(200).send(bytes);
+  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-full-audio-fast-v8');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));res.setHeader('X-Koephoto-Target-Duration',String(targetDuration));return res.status(200).send(bytes);
  }catch(e){console.error('render-mp4-proof',e);return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
