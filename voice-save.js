@@ -15,7 +15,7 @@ frame.addEventListener('load',()=>{
   if(!/^[0-9a-f-]{36}$/i.test(id)){status.textContent='保存するボイスページの情報が見つかりませんでした。';return}
   btn.disabled=true;btn.textContent='動画を準備しています…';status.textContent='少し時間がかかる場合があります。';
   try{
-   const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
+   const r=await fetch('/api/render-video-save?id='+encodeURIComponent(id));
    const raw=await r.text();let data={};try{data=JSON.parse(raw)}catch(_){}
    const videoUrl=data.video_url||data.url||data.signed_url||'';
    if(!r.ok||!videoUrl)throw new Error((data&&data.error)||('render_failed:'+raw.slice(0,120)));
