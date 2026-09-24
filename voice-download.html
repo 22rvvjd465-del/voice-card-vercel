@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>コエフォト｜ボイスページを保存</title>
+<style>
+*{box-sizing:border-box}:root{--bg:#fbfbfa;--paper:#fff;--ink:#242525;--muted:#6f7272;--line:#e7e7e4;--button:#2c2d2d;--serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;--ui:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}
+.site-header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}.header-inner{max-width:1240px;height:78px;margin:auto;padding:0 24px;display:flex;align-items:center}.logo img{display:block;width:190px}.header-note{margin-left:auto;font-size:9px;letter-spacing:.22em;color:#979a9a}
+main{max-width:760px;margin:auto;padding:56px 24px 80px}.eyebrow{font-size:9px;letter-spacing:.22em;color:#979a9a}.intro h1{font-family:var(--serif);font-size:36px;line-height:1.5;font-weight:500;letter-spacing:.035em;margin:13px 0 10px}.intro p{font-size:12px;line-height:1.9;color:var(--muted);margin:0}
+.download-card{margin-top:34px;background:var(--paper);border:1px solid var(--line);padding:34px}.section-head{padding-bottom:22px;border-bottom:1px solid var(--line)}.section-head h2{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 7px}.section-head p{font-size:10.5px;line-height:1.8;color:var(--muted);margin:0}
+.video-stage{margin:24px auto 0;max-width:430px;background:#f6f6f4;border:1px solid var(--line);padding:12px}.video-stage video{display:block;width:100%;height:auto;background:#eee}.status{min-height:220px;display:grid;place-items:center;text-align:center;padding:24px;font-size:11px;line-height:1.8;color:#858787}.status.error{color:#8b5d58}
+.actions{max-width:430px;margin:24px auto 0;display:grid;gap:10px}.btn{min-height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer}.primary{border:1px solid var(--button);background:var(--button);color:#fff}.secondary{border:1px solid #cfcfcb;background:#fff;color:#555}.btn[hidden]{display:none}.note{text-align:center;font-size:9.5px;line-height:1.8;color:#999;margin:13px 0 0}
+@media(max-width:560px){.header-inner{height:58px;padding:0 14px}.logo img{width:145px}.header-note{display:none}main{padding:38px 18px 56px}.intro h1{font-size:29px}.intro p{font-size:10.5px}.download-card{margin:27px -4px 0;padding:26px 16px}.section-head h2{font-size:20px}.video-stage{padding:9px}}
+</style></head><body>
+<header class="site-header"><div class="header-inner"><a class="logo" href="top.html"><img src="assets/logo-cropped.png" alt="コエフォト"></a><div class="header-note">SAVE YOUR VOICE PAGE</div></div></header>
+<main><section class="intro"><div class="eyebrow">DOWNLOAD</div><h1>ボイスページを、<br>思い出として手元に。</h1><p>声が流れるボイスページを動画として保存できます。</p></section>
+<section class="download-card"><div class="section-head"><h2>ボイスページを保存</h2><p>保存用の動画を準備します。作成には少し時間がかかる場合があります。</p></div>
+<div class="video-stage"><div id="status" class="status">保存用の動画を準備しています…</div><video id="video" controls playsinline hidden></video></div>
+<div class="actions"><a id="download" class="btn primary" hidden download="koephoto-voice.mp4">動画を保存する</a><a class="btn secondary" href="top.html">トップページへ戻る</a></div>
+<p class="note">動画には、写真・声・ボイスプレーヤーの動きが含まれます。</p></section></main>
+<script>
+const id=new URLSearchParams(location.search).get('id')||'';
+const statusEl=document.getElementById('status'),video=document.getElementById('video'),download=document.getElementById('download');
+async function load(){
+ if(!/^[0-9a-f-]{36}$/i.test(id)){statusEl.classList.add('error');statusEl.textContent='ボイスページの情報が見つかりませんでした。';return}
+ try{
+  const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
+  const d=await r.json();
+  if(!r.ok||!d.ok||!d.video_url)throw new Error(d.error||'render_failed');
+  video.src=d.video_url;video.hidden=false;statusEl.hidden=true;download.href=d.video_url;download.hidden=false;
+ }catch(e){console.error(e);statusEl.classList.add('error');statusEl.textContent='保存用の動画を準備できませんでした。時間をおいてもう一度お試しください。'}
+}
+load();
+</script></body></html>
