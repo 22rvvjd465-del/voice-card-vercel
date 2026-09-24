@@ -17,10 +17,10 @@ frame.addEventListener('load',()=>{
   try{
    const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
    const data=await r.json();if(!r.ok||!data.ok||!data.video_url)throw new Error(data.error||'render_failed');
-   const a=d.createElement('a');a.href=data.video_url;a.download='koephoto-voice.mp4';a.target='_blank';a.rel='noopener';d.body.appendChild(a);a.click();a.remove();
-   status.textContent='動画を開きました。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
-  }catch(e){console.error(e);status.textContent='動画を準備できませんでした。時間をおいてもう一度お試しください。'}
-  finally{btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
+   status.textContent='動画を開きます。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
+   window.top.location.href=data.video_url;
+   return;
+  }catch(e){console.error(e);status.textContent='動画を準備できませんでした。時間をおいてもう一度お試しください。';btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
  };
  fit();setTimeout(fit,500);new ResizeObserver(fit).observe(d.documentElement);
 });
