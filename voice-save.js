@@ -16,9 +16,11 @@ frame.addEventListener('load',()=>{
   btn.disabled=true;btn.textContent='動画を準備しています…';status.textContent='少し時間がかかる場合があります。';
   try{
    const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
-   const data=await r.json();if(!r.ok||!data.video_url)throw new Error(data.error||'render_failed');
+   const raw=await r.text();let data={};try{data=JSON.parse(raw)}catch(_){}
+   const videoUrl=data.video_url||data.url||data.signed_url||'';
+   if(!r.ok||!videoUrl)throw new Error((data&&data.error)||('render_failed:'+raw.slice(0,120)));
    status.textContent='動画を開きます。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
-   window.top.location.href=data.video_url;
+   window.top.location.href=videoUrl;
    return;
   }catch(e){console.error(e);status.textContent='動画を準備できませんでした。時間をおいてもう一度お試しください。';btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
  };
