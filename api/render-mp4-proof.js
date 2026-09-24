@@ -23,12 +23,14 @@ export default async function handler(req,res){
   const client=await page.createCDPSession();const frames=[];let accepting=true;
   client.on('Page.screencastFrame',async ev=>{try{if(accepting&&frames.length<900)frames.push({data:ev.data,ts:ev.metadata?.timestamp||0});}finally{await client.send('Page.screencastFrameAck',{sessionId:ev.sessionId}).catch(()=>{})}});
   await client.send('Page.startScreencast',{format:'jpeg',quality:70,everyNthFrame:1});
+  await page.evaluate(()=>{window.__koeBarDiag=[];const bars=[...document.querySelectorAll('.bar')];const t0=performance.now();window.__koeBarTimer=setInterval(()=>{window.__koeBarDiag.push({t:performance.now()-t0,h:bars.map(b=>parseFloat(getComputedStyle(b).height)||0)})},33)});
   await page.click('#playBtn');
   // Keep Chromium painting continuously. The screencast otherwise becomes event-driven
   // and emits too few frames when only CSS/DOM properties are changing.
   await page.evaluate(()=>{window.__koePaintTick=0;window.__koePaintTimer=setInterval(()=>{window.__koePaintTick++;document.body.style.transform=`translateZ(${window.__koePaintTick%2}px)`;requestAnimationFrame(()=>{document.body.style.transform='translateZ(0)'})},16)});
   await new Promise(r=>setTimeout(r,Math.ceil(targetDuration*1000)+300));accepting=false;
-  await page.evaluate(()=>clearInterval(window.__koePaintTimer)).catch(()=>{});
+  const barDiag=await page.evaluate(()=>{clearInterval(window.__koePaintTimer);clearInterval(window.__koeBarTimer);return window.__koeBarDiag||[]}).catch(()=>[]);
+  if(barDiag.length){let changes=0,maxDelta=0;for(let i=1;i<barDiag.length;i++){let d=0;for(let j=0;j<barDiag[i].h.length;j++)d=Math.max(d,Math.abs(barDiag[i].h[j]-barDiag[i-1].h[j]));if(d>.5)changes++;maxDelta=Math.max(maxDelta,d)}console.log('KOEPHOTO_BAR_DIAG',JSON.stringify({samples:barDiag.length,span:+((barDiag.at(-1).t-barDiag[0].t)/1000).toFixed(3),changes,maxDelta:+maxDelta.toFixed(2),first:barDiag[0].h.slice(0,6),mid:barDiag[Math.floor(barDiag.length/2)].h.slice(0,6),last:barDiag.at(-1).h.slice(0,6)}))}
   await client.send('Page.stopScreencast').catch(()=>{});
   if(frames.length<8)throw new Error(`too_few_screencast_frames_${frames.length}`);
   const diagFirst=frames[0]?.ts||0,diagLast=frames.at(-1)?.ts||diagFirst;
@@ -48,6 +50,6 @@ export default async function handler(req,res){
   const out=path.join(tmp,'proof.mp4');
   const crop=`crop=${Math.round(rect.w)}:${Math.round(rect.h)}:${Math.round(rect.x)}:${Math.round(rect.y)},scale=480:720`;
   await run(ffmpegPath,['-y','-framerate',String(targetFps),'-i',path.join(tmp,'frame-%03d.jpg'),'-i',audio,'-t',String(targetDuration),'-vf',`${crop},fps=15`,'-map','0:v','-map','1:a?','-c:v','libx264','-preset','ultrafast','-crf','28','-pix_fmt','yuv420p','-r','15','-c:a','aac','-b:a','96k','-shortest','-movflags','+faststart',out]);
-  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-screencast-tune-v10');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));res.setHeader('X-Koephoto-Target-Duration',String(targetDuration));return res.status(200).send(bytes);
+  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-bar-diag-v11');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));res.setHeader('X-Koephoto-Target-Duration',String(targetDuration));return res.status(200).send(bytes);
  }catch(e){console.error('render-mp4-proof',e);return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
