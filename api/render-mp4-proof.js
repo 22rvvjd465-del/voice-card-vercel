@@ -32,18 +32,32 @@ export default async function handler(req,res){
   if(frames.length<8)throw new Error(`too_few_screencast_frames_${frames.length}`);
   await browser.close();browser=null;
   const firstTs=frames[0].ts||0;const duration=Math.max(.1,(frames.at(-1).ts||firstTs)-firstTs);
-  // Resample the browser screencast to exactly 90 frames. These are the REAL Web player frames:
-  // same AudioContext analyser, same 44 bars, same play/pause icon, same CSS/glow.
-  for(let i=0;i<90;i++){
-    const target=(i/30);
-    let best=frames[0],bestD=Infinity;
-    for(const fr of frames){const t=(fr.ts||firstTs)-firstTs;const d=Math.abs(t-target);if(d<bestD){best=fr;bestD=d}}
-    await writeFile(path.join(tmp,`frame-${String(i).padStart(3,'0')}.jpg`),Buffer.from(best.data,'base64'));
+  // Preserve the REAL capture timestamps instead of first duplicating frames to 30fps.
+  // ffmpeg concat durations reproduce Chromium's irregular timing; minterpolate then
+  // creates genuinely new intermediate frames at a constant 30fps.
+  const capFiles=[];
+  for(let i=0;i<frames.length;i++){
+    const name=`cap-${String(i).padStart(3,'0')}.jpg`;
+    await writeFile(path.join(tmp,name),Buffer.from(frames[i].data,'base64'));
+    capFiles.push(name);
   }
+  const lines=[];
+  for(let i=0;i<capFiles.length;i++){
+    lines.push(`file '${capFiles[i]}'`);
+    if(i<capFiles.length-1){
+      const a=(frames[i].ts||firstTs)-firstTs;
+      const b=(frames[i+1].ts||firstTs)-firstTs;
+      lines.push(`duration ${Math.max(0.008,Math.min(0.25,b-a)).toFixed(6)}`);
+    }
+  }
+  // concat demuxer requires the final file to be repeated for its duration to apply.
+  lines.push(`file '${capFiles.at(-1)}'`);
+  const concatFile=path.join(tmp,'frames.txt');
+  await writeFile(concatFile,lines.join('\\n'));
   const ar=await fetch(audioUrl);if(!ar.ok)throw new Error(`audio_fetch_${ar.status}`);const audio=path.join(tmp,'audio.bin');await writeFile(audio,new Uint8Array(await ar.arrayBuffer()));
   const out=path.join(tmp,'proof.mp4');
   const crop=`crop=${Math.round(rect.w)}:${Math.round(rect.h)}:${Math.round(rect.x)}:${Math.round(rect.y)},scale=480:720`;
-  await run(ffmpegPath,['-y','-framerate','30','-i',path.join(tmp,'frame-%03d.jpg'),'-i',audio,'-t','3','-vf',`${crop},minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`,'-map','0:v','-map','1:a?','-c:v','libx264','-preset','ultrafast','-crf','27','-pix_fmt','yuv420p','-r','30','-c:a','aac','-b:a','96k','-shortest','-movflags','+faststart',out]);
-  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-forced-paint-v3');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));return res.status(200).send(bytes);
+  await run(ffmpegPath,['-y','-f','concat','-safe','0','-i',concatFile,'-i',audio,'-t','3','-vf',`${crop},minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`,'-map','0:v','-map','1:a?','-c:v','libx264','-preset','ultrafast','-crf','27','-pix_fmt','yuv420p','-r','30','-c:a','aac','-b:a','96k','-shortest','-movflags','+faststart',out]);
+  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-timestamp-interpolation-exp1');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));return res.status(200).send(bytes);
  }catch(e){return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
