@@ -1,20 +1,27 @@
 const frame=document.getElementById('voiceFrame');
 frame.src='classic-birthday-voice.html'+location.search+location.hash;
 function fit(){try{const d=frame.contentDocument,p=d&&d.querySelector('.page');if(p)frame.style.height=Math.ceil(p.getBoundingClientRect().height+8)+'px'}catch(e){}}
-function wait(ms){return new Promise(r=>setTimeout(r,ms))}
-async function cardPng(d){
- const card=d.querySelector('.card'),photo=d.getElementById('photoCanvas');if(!card||!photo)throw Error('card missing');
- try{await d.fonts.ready;await d.fonts.load('500 20px "Zen Maru Gothic"');}catch(e){}
- const cs=d.defaultView.getComputedStyle(card),bg=cs.backgroundImage.match(/url\(["']?(data:image\/jpeg;base64,[^)"']+)["']?\)/);if(!bg)throw Error('background missing');
- const W=720,H=1080,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
- const load=src=>new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=src});const im=await load(bg[1]);x.drawImage(im,0,0,W,H);
- const rr=card.getBoundingClientRect(),pr=photo.getBoundingClientRect(),sx=W/rr.width,sy=H/rr.height;x.drawImage(photo,(pr.left-rr.left)*sx,(pr.top-rr.top)*sy,pr.width*sx,pr.height*sy);
- const drawText=el=>{if(!el)return;const r=el.getBoundingClientRect(),s=d.defaultView.getComputedStyle(el),size=parseFloat(s.fontSize)*sy;x.save();x.fillStyle=s.color;x.textAlign='center';x.textBaseline='middle';x.font=`${s.fontWeight} ${size}px "Zen Maru Gothic"`;x.fillText(el.textContent||'',(r.left-rr.left+r.width/2)*sx,(r.top-rr.top+r.height/2)*sy,r.width*sx);x.restore()};drawText(d.getElementById('recipient'));drawText(d.getElementById('sender'));
- const player=d.getElementById('player');if(player){const r=player.getBoundingClientRect(),px=(r.left-rr.left)*sx,py=(r.top-rr.top)*sy,pw=r.width*sx,ph=r.height*sy,cx=px+pw/2,cy=py+ph/2,rad=ph*.47;
-  const bars=[.30,.52,.72,.92,.62,.42,.78,.58,.34,.68,.88,.54];const drawWave=(start,dir)=>{for(let i=0;i<bars.length;i++){const h=ph*.55*bars[i],bw=Math.max(3,pw*.006),gap=pw*.018,pos=start+dir*i*gap;const g=x.createLinearGradient(0,cy-h/2,0,cy+h/2);g.addColorStop(0,'#fff2c7');g.addColorStop(.2,'#f2d997');g.addColorStop(.55,'#e4bd65');g.addColorStop(.78,'#d5aa51');g.addColorStop(1,'#a97721');x.fillStyle=g;x.beginPath();x.roundRect(pos-bw/2,cy-h/2,bw,h,bw/2);x.fill()}};drawWave(cx-rad-pw*.035,-1);drawWave(cx+rad+pw*.035,1);
-  x.save();x.shadowColor='rgba(169,119,33,.38)';x.shadowBlur=14;let g=x.createRadialGradient(cx-rad*.25,cy-rad*.32,rad*.08,cx,cy,rad);g.addColorStop(0,'#fff2c7');g.addColorStop(.16,'#e6c36f');g.addColorStop(.25,'#b9842c');g.addColorStop(.31,'#073b78');g.addColorStop(.76,'#052d5d');g.addColorStop(.87,'#0b4a91');g.addColorStop(.92,'#d5aa51');g.addColorStop(1,'#f2d997');x.fillStyle=g;x.beginPath();x.arc(cx,cy,rad,0,Math.PI*2);x.fill();x.restore();
-  x.strokeStyle='rgba(255,238,185,.82)';x.lineWidth=Math.max(2,rad*.025);x.beginPath();x.arc(cx,cy,rad*.76,0,Math.PI*2);x.stroke();x.fillStyle='#fff1bd';x.shadowColor='rgba(255,224,130,.7)';x.shadowBlur=8;x.beginPath();x.moveTo(cx-rad*.12,cy-rad*.22);x.lineTo(cx+rad*.23,cy);x.lineTo(cx-rad*.12,cy+rad*.22);x.closePath();x.fill();x.shadowBlur=0;
- }
- return c.toDataURL('image/png');
-}
-frame.addEventListener('load',()=>{const d=frame.contentDocument;if(!d)return;const footer=d.querySelector('.brand');if(!footer)return;const st=d.createElement('style');st.textContent='.route-save-area{width:var(--card-w);padding:28px 18px 10px;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}.route-save-panel{border-top:1px solid #e7e7e4;padding-top:24px;text-align:center}.route-save-kicker{font-size:9px;letter-spacing:.22em;color:#999;margin-bottom:8px}.route-save-title{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:20px;font-weight:500;letter-spacing:.03em;color:#242525;margin-bottom:7px}.route-save-copy{font-size:10px;line-height:1.8;color:#777;margin:0 auto 17px}.route-save-btn{width:min(100%,390px);min-height:52px;border:1px solid #2c2d2d;border-radius:999px;background:#2c2d2d;color:#fff;font:700 12px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;letter-spacing:.02em}.png-preview-bg{position:fixed;inset:0;z-index:9999;background:rgba(20,20,20,.78);overflow:auto;padding:18px}.png-preview{max-width:440px;margin:auto;background:#fff;border-radius:18px;padding:14px}.png-preview img{display:block;width:100%;height:auto}.png-preview button{width:100%;margin-top:12px;min-height:48px;border:0;border-radius:999px;background:#2c2d2d;color:#fff;font-weight:700}';d.head.appendChild(st);const area=d.createElement('div');area.className='route-save-area';area.innerHTML='<div class="route-save-panel"><div class="route-save-kicker">SAVE</div><div class="route-save-title">ボイスページを保存</div><p class="route-save-copy">大切な写真と声を、思い出として手元に残せます。</p><button class="route-save-btn" type="button">保存イメージを確認</button></div>';footer.parentNode.insertBefore(area,footer);area.querySelector('button').onclick=async()=>{try{const src=await cardPng(d),bg=d.createElement('div');bg.className='png-preview-bg';bg.innerHTML='<div class="png-preview"><img alt="完成PNGプレビュー"><button type="button">閉じる</button></div>';bg.querySelector('img').src=src;bg.querySelector('button').onclick=()=>bg.remove();d.body.appendChild(bg)}catch(e){console.error(e);alert('完成PNGを作成できませんでした。')}};fit();setTimeout(fit,500);new ResizeObserver(fit).observe(d.documentElement)});window.addEventListener('resize',fit);
+frame.addEventListener('load',()=>{
+ const d=frame.contentDocument;if(!d)return;const footer=d.querySelector('.brand');if(!footer)return;
+ const st=d.createElement('style');
+ st.textContent='.route-save-area{width:var(--card-w);padding:28px 18px 10px;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}.route-save-panel{border-top:1px solid #e7e7e4;padding-top:24px;text-align:center}.route-save-kicker{font-size:9px;letter-spacing:.22em;color:#999;margin-bottom:8px}.route-save-title{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:20px;font-weight:500;letter-spacing:.03em;color:#242525;margin-bottom:7px}.route-save-copy{font-size:10px;line-height:1.8;color:#777;margin:0 auto 17px}.route-save-btn{width:min(100%,390px);min-height:52px;border:1px solid #2c2d2d;border-radius:999px;background:#2c2d2d;color:#fff;font:700 12px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;letter-spacing:.02em}.route-save-btn:disabled{opacity:.55}.route-save-status{min-height:18px;margin:10px 0 0;font-size:9.5px;line-height:1.7;color:#888}';
+ d.head.appendChild(st);
+ const area=d.createElement('div');area.className='route-save-area';
+ area.innerHTML='<div class="route-save-panel"><div class="route-save-kicker">SAVE</div><div class="route-save-title">ボイスページを保存</div><p class="route-save-copy">写真と声を、動画として手元に残せます。</p><button class="route-save-btn" type="button">ボイスページを動画で保存</button><p class="route-save-status" aria-live="polite"></p></div>';
+ footer.parentNode.insertBefore(area,footer);
+ const btn=area.querySelector('.route-save-btn'),status=area.querySelector('.route-save-status');
+ btn.onclick=async()=>{
+  const id=new URLSearchParams(location.search).get('id')||new URLSearchParams(location.search).get('public_id')||'';
+  if(!/^[0-9a-f-]{36}$/i.test(id)){status.textContent='保存するボイスページの情報が見つかりませんでした。';return}
+  btn.disabled=true;btn.textContent='動画を準備しています…';status.textContent='少し時間がかかる場合があります。';
+  try{
+   const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
+   const data=await r.json();if(!r.ok||!data.ok||!data.video_url)throw new Error(data.error||'render_failed');
+   const a=d.createElement('a');a.href=data.video_url;a.download='koephoto-voice.mp4';a.target='_blank';a.rel='noopener';d.body.appendChild(a);a.click();a.remove();
+   status.textContent='動画を開きました。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
+  }catch(e){console.error(e);status.textContent='動画を準備できませんでした。時間をおいてもう一度お試しください。'}
+  finally{btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
+ };
+ fit();setTimeout(fit,500);new ResizeObserver(fit).observe(d.documentElement);
+});
+window.addEventListener('resize',fit);
