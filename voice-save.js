@@ -16,7 +16,7 @@ frame.addEventListener('load',()=>{
   btn.disabled=true;btn.textContent='動画を準備しています…';status.textContent='少し時間がかかる場合があります。';
   try{
    const r=await fetch('https://qbutohdqtgzjejnwdqcx.supabase.co/functions/v1/render-video-proof?id='+encodeURIComponent(id));
-   const data=await r.json();if(!r.ok||!data.ok||!data.video_url)throw new Error(data.error||'render_failed');
+   const data=await r.json();if(!r.ok||!data.video_url)throw new Error(data.error||'render_failed');
    status.textContent='動画を開きます。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
    window.top.location.href=data.video_url;
    return;
