@@ -2,7 +2,7 @@ import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 import ffmpegPath from 'ffmpeg-static';
 import {spawn} from 'node:child_process';
-import {mkdtemp,rm,readFile,writeFile} from 'node:fs/promises';
+import {mkdtemp,rm,readFile,writeFile,copyFile,mkdir} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 export const config={maxDuration:60};
@@ -23,19 +23,23 @@ export default async function handler(req,res){
   const client=await page.createCDPSession();const frames=[];let accepting=true;
   client.on('Page.screencastFrame',async ev=>{try{if(accepting&&frames.length<900)frames.push({data:ev.data,ts:ev.metadata?.timestamp||0});}finally{await client.send('Page.screencastFrameAck',{sessionId:ev.sessionId}).catch(()=>{})}});
   await client.send('Page.startScreencast',{format:'jpeg',quality:70,everyNthFrame:1});
-  await page.evaluate(()=>{window.__koeBarDiag=[];const bars=[...document.querySelectorAll('.bar')];const t0=performance.now();window.__koeBarTimer=setInterval(()=>{window.__koeBarDiag.push({t:performance.now()-t0,h:bars.map(b=>parseFloat(getComputedStyle(b).height)||0)})},33)});
+  await page.evaluate(()=>{window.__koeBarDiag=[];const bars=[...document.querySelectorAll('.bar')];const t0=performance.now();window.__koeBarTimer=setInterval(()=>{window.__koeBarDiag.push({t:performance.now()-t0,h:bars.map(b=>parseFloat(getComputedStyle(b).height)||0),o:bars.map(b=>getComputedStyle(b).opacity),s:bars.map(b=>getComputedStyle(b).boxShadow)})},33)});
   await page.click('#playBtn');
   // Keep Chromium painting continuously. The screencast otherwise becomes event-driven
   // and emits too few frames when only CSS/DOM properties are changing.
   await page.evaluate(()=>{window.__koePaintTick=0;window.__koePaintTimer=setInterval(()=>{window.__koePaintTick++;document.body.style.transform=`translateZ(${window.__koePaintTick%2}px)`;requestAnimationFrame(()=>{document.body.style.transform='translateZ(0)'})},16)});
   await new Promise(r=>setTimeout(r,Math.ceil(targetDuration*1000)+300));accepting=false;
   const barDiag=await page.evaluate(()=>{clearInterval(window.__koePaintTimer);clearInterval(window.__koeBarTimer);return window.__koeBarDiag||[]}).catch(()=>[]);
-  // Render the exact measured DOM bar heights in-browser at 15fps, then screenshot only the small waveform region.
-  // This avoids CDP screencast's ~3fps bottleneck while preserving the real Web player's measured animation.
+  // Capture only distinct measured Web-player waveform states. The real player changes
+  // materially far less often than 30fps; reusing identical states avoids ~180 screenshots.
   const waveRect=await page.evaluate(()=>{const bs=[...document.querySelectorAll('.bar')];const rs=bs.map(b=>b.getBoundingClientRect());const l=Math.min(...rs.map(r=>r.left))-14,t=Math.min(...rs.map(r=>r.top))-30,r=Math.max(...rs.map(r=>r.right))+14,b=Math.max(...rs.map(r=>r.bottom))+30;return{x:l,y:t,w:r-l,h:b-t}});
-  const overlayDir=path.join(tmp,'wave');await import('node:fs/promises').then(m=>m.mkdir(overlayDir,{recursive:true}));
+  const overlayDir=path.join(tmp,'wave');await mkdir(overlayDir,{recursive:true});
   const overlayFps=15,overlayFrames=Math.max(1,Math.ceil(targetDuration*overlayFps));
-  for(let i=0;i<overlayFrames;i++){const ms=i*1000/overlayFps;let s=barDiag[0];for(const q of barDiag){if(Math.abs(q.t-ms)<Math.abs((s?.t??0)-ms))s=q}await page.evaluate(h=>{[...document.querySelectorAll('.bar')].forEach((b,j)=>{b.style.height=(h[j]||0)+'px'})},s?.h||[]);const p=path.join(overlayDir,`w-${String(i).padStart(3,'0')}.png`);await page.screenshot({path:p,clip:{x:waveRect.x,y:waveRect.y,width:waveRect.w,height:waveRect.h},omitBackground:false})}
+  const chosen=[];for(let i=0;i<overlayFrames;i++){const ms=i*1000/overlayFps;let bi=0,bd=Infinity;for(let j=0;j<barDiag.length;j++){const d=Math.abs(barDiag[j].t-ms);if(d<bd){bd=d;bi=j}}chosen.push(bi)}
+  const unique=[...new Set(chosen)];const shot=new Map();
+  for(const bi of unique){const st=barDiag[bi];await page.evaluate(st=>{[...document.querySelectorAll('.bar')].forEach((b,j)=>{b.style.height=(st.h[j]||0)+'px';b.style.opacity=st.o[j]||'';b.style.boxShadow=st.s[j]||''})},st);const p=path.join(overlayDir,`u-${bi}.png`);await page.screenshot({path:p,clip:{x:waveRect.x,y:waveRect.y,width:waveRect.w,height:waveRect.h}});shot.set(bi,p)}
+  for(let i=0;i<overlayFrames;i++)await copyFile(shot.get(chosen[i]),path.join(overlayDir,`w-${String(i).padStart(3,'0')}.png`));
+  console.log('KOEPHOTO_OVERLAY_DIAG',JSON.stringify({overlayFrames,uniqueScreenshots:unique.length}));
   if(barDiag.length){let changes=0,maxDelta=0;for(let i=1;i<barDiag.length;i++){let d=0;for(let j=0;j<barDiag[i].h.length;j++)d=Math.max(d,Math.abs(barDiag[i].h[j]-barDiag[i-1].h[j]));if(d>.5)changes++;maxDelta=Math.max(maxDelta,d)}console.log('KOEPHOTO_BAR_DIAG',JSON.stringify({samples:barDiag.length,span:+((barDiag.at(-1).t-barDiag[0].t)/1000).toFixed(3),changes,maxDelta:+maxDelta.toFixed(2),first:barDiag[0].h.slice(0,6),mid:barDiag[Math.floor(barDiag.length/2)].h.slice(0,6),last:barDiag.at(-1).h.slice(0,6)}))}
   await client.send('Page.stopScreencast').catch(()=>{});
   if(frames.length<8)throw new Error(`too_few_screencast_frames_${frames.length}`);
@@ -56,6 +60,6 @@ export default async function handler(req,res){
   const out=path.join(tmp,'proof.mp4');
   const crop=`crop=${Math.round(rect.w)}:${Math.round(rect.h)}:${Math.round(rect.x)}:${Math.round(rect.y)},scale=480:720`;
   await run(ffmpegPath,['-y','-framerate',String(targetFps),'-i',path.join(tmp,'frame-%03d.jpg'),'-framerate','15','-i',path.join(overlayDir,'w-%03d.png'),'-i',audio,'-t',String(targetDuration),'-filter_complex',`[0:v]${crop},fps=15[base];[1:v]fps=15[wave];[base][wave]overlay=${Math.round(waveRect.x-rect.x)}:${Math.round(waveRect.y-rect.y)}:shortest=1[v]`,'-map','[v]','-map','2:a?','-c:v','libx264','-preset','ultrafast','-crf','28','-pix_fmt','yuv420p','-r','15','-c:a','aac','-b:a','96k','-shortest','-movflags','+faststart',out]);
-  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-measured-bars-v12');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));res.setHeader('X-Koephoto-Target-Duration',String(targetDuration));return res.status(200).send(bytes);
+  const bytes=await readFile(out);res.setHeader('Content-Type','video/mp4');res.setHeader('Content-Length',String(bytes.length));res.setHeader('Cache-Control','no-store');res.setHeader('X-Koephoto-Proof','real-web-player-distinct-bars-v13');res.setHeader('X-Koephoto-Frames',String(frames.length));res.setHeader('X-Koephoto-Capture-Duration',duration.toFixed(3));res.setHeader('X-Koephoto-Target-Duration',String(targetDuration));return res.status(200).send(bytes);
  }catch(e){console.error('render-mp4-proof',e);return res.status(500).json({ok:false,error:e instanceof Error?e.message:String(e)})}finally{if(browser)await browser.close().catch(()=>{});if(tmp)await rm(tmp,{recursive:true,force:true}).catch(()=>{})}
 }
