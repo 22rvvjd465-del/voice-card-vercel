@@ -17,7 +17,8 @@ export default async function handler(req,res){
   await page.goto(`${SITE}/classic-birthday-voice.html?id=${encodeURIComponent(id)}`,{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForFunction(()=>{const a=document.querySelector('#audio');return !!(a?.src&&document.querySelector('.card')&&document.querySelectorAll('.bar').length===44&&document.querySelector('#playBtn'))},{timeout:12000});
   await page.evaluate(async()=>{if(document.fonts?.ready)await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1800))]);});
-  const audioInfo=await page.$eval('#audio',async a=>{if(!Number.isFinite(a.duration)||a.duration<=0)await new Promise(r=>a.addEventListener('loadedmetadata',r,{once:true}));return{url:a.src,duration:Number.isFinite(a.duration)?a.duration:0}});\n  const audioUrl=audioInfo.url;const targetDuration=Math.max(1,Math.min(60,audioInfo.duration||3));
+  const audioInfo=await page.$eval('#audio',async a=>{if(!Number.isFinite(a.duration)||a.duration<=0)await new Promise(r=>a.addEventListener('loadedmetadata',r,{once:true}));return{url:a.src,duration:Number.isFinite(a.duration)?a.duration:0}});
+  const audioUrl=audioInfo.url;const targetDuration=Math.max(1,Math.min(60,audioInfo.duration||3));
   const rect=await page.$eval('.card',e=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height}});
   const client=await page.createCDPSession();const frames=[];let accepting=true;
   client.on('Page.screencastFrame',async ev=>{try{if(accepting&&frames.length<240)frames.push({data:ev.data,ts:ev.metadata?.timestamp||0});}finally{await client.send('Page.screencastFrameAck',{sessionId:ev.sessionId}).catch(()=>{})}});
