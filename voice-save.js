@@ -22,7 +22,7 @@ frame.addEventListener('load',()=>{
    status.textContent='動画を開きます。iPhoneでは共有ボタンから「ビデオを保存」を選んでください。';
    window.top.location.href=videoUrl;
    return;
-  }catch(e){console.error(e);status.textContent='動画を準備できませんでした。時間をおいてもう一度お試しください。';btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
+  }catch(e){console.error(e);status.textContent='エラー：'+(e&&e.message?e.message:String(e));btn.disabled=false;btn.textContent='ボイスページを動画で保存'}
  };
  fit();setTimeout(fit,500);new ResizeObserver(fit).observe(d.documentElement);
 });
