@@ -50,22 +50,71 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}a{color
 @media(max-width:390px){.voice-player{grid-template-columns:30px 1fr;column-gap:10px;padding:8px 20px 10px 22px;transform:translateY(-3px)}.voice-play{width:30px;height:30px;font-size:13px}.voice-time{font-size:10px}}
 
 </style>
+
+<style>
+/* 2026-09 brand refresh — align finished/download page with the current Koephoto site */
+:root{--bg:#fbfbfa;--ink:#242525;--muted:#6f7272;--line:#e7e7e4;--button:#2c2d2d}
+body{background:var(--bg)}
+.wrap{max-width:1240px;padding:0 24px 80px}
+.finished-header{height:78px;margin:0;max-width:none;padding:0;position:relative;background:rgba(255,255,255,.96);border-bottom:1px solid rgba(232,232,230,.9)}
+.finished-brand{width:190px;height:54px}
+.finished-header-note{margin-left:auto;font-size:9px;letter-spacing:.22em;color:#979a9a}
+.progress{max-width:880px;margin:34px auto 44px}
+.page-top{max-width:880px;margin:0 auto 34px;padding:14px 0 8px}
+.page-top .eyebrow{font-size:9px;letter-spacing:.22em;color:#979a9a;margin-bottom:15px}
+.page-top h1{font-size:38px;line-height:1.48;letter-spacing:.04em}
+.page-top p{font-size:12px;line-height:1.9;color:#6f7272;margin-top:12px}
+.product{max-width:880px;margin:0 auto;background:#fff;border:1px solid var(--line);padding:0}
+.hero,.content{max-width:none}
+.hero{padding:34px 38px 28px;background:#fff}
+.title{font-size:25px;line-height:1.5}
+.lead{max-width:570px;font-size:11px;line-height:1.9}
+.badges{margin-top:17px}
+.badge{border-radius:999px;padding:5px 11px;min-height:27px}
+.content{padding:0 38px 38px}
+.tabs{margin-top:0}
+.tabs button{min-height:64px}
+.preview-stage{margin-top:22px;padding:18px;background:#f8f8f7}
+.meta{margin-top:24px}
+.actions{max-width:430px;margin:28px auto 0}
+.btn{min-height:52px;font-size:12px}
+.note{margin-top:14px}
+@media(max-width:900px){
+ .finished-header{height:62px}.finished-brand{width:155px;height:46px}
+ .wrap{width:100%;padding:0 20px 60px}.progress{margin:28px auto 34px}
+ .page-top{padding-top:6px}.page-top h1{font-size:32px}
+}
+@media(max-width:560px){
+ .wrap{padding:0 14px 48px}.finished-header{height:58px;margin:0 -14px;padding:0 14px}
+ .finished-brand{width:145px;height:43px}.finished-header-note{display:none}
+ .progress{margin:24px 0 30px}.page-top{margin-bottom:26px;padding:2px 2px 4px}
+ .page-top .eyebrow{font-size:8px;margin-bottom:12px}.page-top h1{font-size:29px}.page-top p{font-size:10.5px}
+ .product{margin:0;border-left:0;border-right:0}
+ .hero{padding:27px 20px 24px}.title{font-size:22px}.lead{font-size:10.5px}
+ .content{padding:0 16px 30px}.tabs{margin:0 -16px}.tabs button{min-height:60px}
+ .preview-stage{margin:18px -4px 0;padding:10px}
+ .meta-card{padding:13px 2px}.actions{margin-top:24px}
+}
+</style>
 </head>
 <body>
 <main class="wrap">
-  <header class="finished-header"><a class="finished-brand" href="index.html" aria-label="コエフォト">コエフォト</a></header>
+  <header class="finished-header">
+  <a class="finished-brand" href="top.html" aria-label="コエフォト トップ">コエフォト</a>
+  <div class="finished-header-note">YOUR KOEPHOTO</div>
+</header>
   <nav class="progress" aria-label="作成ステップ">
     <div class="progress-step"><div class="progress-dot">1</div><div class="progress-label">入力</div></div>
     <div class="progress-step"><div class="progress-dot">2</div><div class="progress-label">プレビュー</div></div>
     <div class="progress-step"><div class="progress-dot">3</div><div class="progress-label">購入確認</div></div>
     <div class="progress-step current"><div class="progress-dot">4</div><div class="progress-label">完成</div></div>
   </nav>
-  <div class="page-top"><span class="eyebrow">FINISHED</span><h1>完成したコエフォト</h1><p>贈るカードと、QRコードから開くボイスページをご確認いただけます。</p></div>
+  <div class="page-top"><span class="eyebrow">YOUR KOEPHOTO</span><h1>大切な想いを、<br>いつでも手元に。</h1><p>完成したカードとボイスページを、こちらから確認・保存できます。</p></div>
 
   <section class="product">
     <header class="hero">
-      <h2 class="title">大切な人へ贈る<br>コエフォトができました</h2>
-      <p class="lead">カードの保存と、ボイスページの確認ができます。</p>
+      <h2 class="title">完成したコエフォト</h2>
+      <p class="lead">写真に声をのせた、大切な一枚。贈るカードとボイスページをご確認ください。</p>
       <div class="badges">
         <span class="badge ok">✓ 購入済み</span>
         <span class="badge" id="templateBadge">Classic Birthday</span>
@@ -112,7 +161,7 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}a{color
 
       <div class="actions">
         <button class="btn primary" type="button" id="saveBtn" disabled>贈るカードを保存する</button>
-        <a class="btn secondary" href="index.html">新しいコエフォトを作る</a>
+        <a class="btn secondary" href="top.html">トップページへ戻る</a>
       </div>
 
       <p class="note" id="note">完成版を読み込んでいます。</p>
